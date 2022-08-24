@@ -11,6 +11,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -38,42 +39,43 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
+        body: Container(
+      decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("assets/images/foto.png"),
-            fit: BoxFit.cover,
-          )
-        ),
-        child: InkWell(
-          onTap: (){
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) =>  SignUpPage()),
-            );
-          },
+        image: AssetImage("assets/images/foto.png"),
+        fit: BoxFit.cover,
+      )),
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => SignUpPage()),
+          );
+        },
+        child: Container(
+          padding: EdgeInsets.only(bottom: 50.0),
+          alignment: Alignment.bottomCenter,
           child: Container(
-            padding: EdgeInsets.only(bottom: 50.0),
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              alignment: Alignment.center,
-              width: 250.0,
-              height: 60.0,
-              decoration: BoxDecoration(
-                  color: Color(0xFFF82D00),
-                  borderRadius: BorderRadius.circular(20.0),
-
-              ),
-              child: Text("COMENZAR", style: TextStyle(
+            alignment: Alignment.center,
+            width: 250.0,
+            height: 60.0,
+            decoration: BoxDecoration(
+              color: Color(0xFFF82D00),
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            child: Text(
+              "COMENZAR",
+              style: TextStyle(
                 fontSize: 20.0,
                 fontWeight: FontWeight.w800,
-                  color: Colors.white,
-              ),),
+                color: Colors.white,
+              ),
             ),
           ),
         ),
-      )
-      // This trailing comma makes auto-formatting nicer for build methods.
-    );
+      ),
+    )
+        // This trailing comma makes auto-formatting nicer for build methods.
+        );
   }
 }
