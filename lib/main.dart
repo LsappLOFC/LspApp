@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lsapp/pages/sign-up-page.dart';
+import 'package:lsapp/pages/sign_up_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -40,7 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           image: DecorationImage(
         image: AssetImage("assets/images/foto.png"),
         fit: BoxFit.cover,
@@ -63,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
               color: Color(0xFFF82D00),
               borderRadius: BorderRadius.circular(20.0),
             ),
-            child: Text(
+            child: const Text(
               "COMENZAR",
               style: TextStyle(
                 fontSize: 20.0,

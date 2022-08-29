@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lsapp/pages/sign-in-page.dart';
+import 'package:lsapp/pages/sign_in_page.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -20,7 +20,7 @@ class _SignUpPageState extends State<SignUpPage> {
               height: 150.0,
             ),
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
                       topRight: Radius.circular(40.0),
@@ -35,7 +35,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         InkWell(
                           onTap: () {},
                           child: Container(
-                            child: Text(
+                            child: const Text(
                               "Registrarme",
                               style: TextStyle(
                                 fontWeight: FontWeight.w500,
@@ -55,7 +55,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             );
                           },
                           child: Container(
-                            child: Text(
+                            child: const Text(
                               "Ingresar",
                               style: TextStyle(
                                 fontWeight: FontWeight.w500,

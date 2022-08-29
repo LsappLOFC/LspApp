@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lsapp/pages/home_page.dart';
-import 'package:lsapp/pages/sign-up-page.dart';
+import 'package:lsapp/pages/sign_up_page.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({Key? key}) : super(key: key);
@@ -132,7 +132,10 @@ class _SignInPageState extends State<SignInPage> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => HomePage()),
+                            MaterialPageRoute(
+                                builder: (context) => const HomePage(
+                                      navCoord: 1,
+                                    )),
                           );
                         },
                         child: Container(
