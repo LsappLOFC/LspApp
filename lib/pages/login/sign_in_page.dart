@@ -134,7 +134,7 @@ class _SignInPageState extends State<SignInPage> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => const HomePage(
-                                      navCoord: 1,
+                                      navCoord: 0,
                                     )),
                           );
                         },
