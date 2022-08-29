@@ -1,9 +1,9 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lsapp/pages/configuration.dart';
-import 'package:lsapp/pages/files.dart';
-import 'package:lsapp/pages/translate.dart';
+import 'package:lsapp/pages/home/configuration.dart';
+import 'package:lsapp/pages/home/files.dart';
+import 'package:lsapp/pages/home/translate.dart';
 
 class HomePage extends StatefulWidget {
   final int navCoord;

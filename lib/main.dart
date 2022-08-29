@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lsapp/pages/sign_up_page.dart';
+import 'package:lsapp/pages/login/sign_up_page.dart';
 
 void main() {
   runApp(const MyApp());
