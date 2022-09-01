@@ -1,7 +1,10 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:lsapp/pages/sign-up-page.dart';
+import 'package:lsapp/pages/main_controller.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -28,19 +31,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           image: DecorationImage(
         image: AssetImage("assets/images/foto.png"),
         fit: BoxFit.cover,
@@ -49,21 +44,21 @@ class _MyHomePageState extends State<MyHomePage> {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => SignUpPage()),
+            MaterialPageRoute(builder: (context) => const MainControllerPage()),
           );
         },
         child: Container(
-          padding: EdgeInsets.only(bottom: 50.0),
+          padding: const EdgeInsets.only(bottom: 50.0),
           alignment: Alignment.bottomCenter,
           child: Container(
             alignment: Alignment.center,
             width: 250.0,
             height: 60.0,
             decoration: BoxDecoration(
-              color: Color(0xFFF82D00),
+              color: const Color(0xFFF82D00),
               borderRadius: BorderRadius.circular(20.0),
             ),
-            child: Text(
+            child: const Text(
               "COMENZAR",
               style: TextStyle(
                 fontSize: 20.0,
