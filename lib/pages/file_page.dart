@@ -10,7 +10,16 @@ class FilePage extends StatefulWidget {
 }
 
 class _FilePageState extends State<FilePage> {
-  bool tipeOfFile = false;
+  bool senasIsSelected = true;
+  bool textIsSelected = false;
+
+  bool showContent() {
+    if (senasIsSelected) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   void _pickFile() async {
     final res = await FilePicker.platform.pickFiles(allowMultiple: false);
@@ -58,33 +67,76 @@ class _FilePageState extends State<FilePage> {
                 ),
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Container(
-                    width: 66.0,
-                    height: 40.0,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(40.0)),
-                    child: const Center(
-                      child: Text(
-                        "Señas",
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black,
+                  senasIsSelected
+                      ? Container(
+                          width: 66.0,
+                          height: 40.0,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(40.0)),
+                          child: const Center(
+                            child: Text(
+                              "Señas",
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        )
+                      : InkWell(
+                          onTap: () {
+                            setState(() {
+                              textIsSelected = !textIsSelected;
+                              senasIsSelected = !senasIsSelected;
+                            });
+                          },
+                          child: const Text(
+                            "Señas",
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
-                  const Text(
-                    "Text",
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.black,
-                    ),
-                  ),
+                  textIsSelected
+                      ? Container(
+                          width: 66.0,
+                          height: 40.0,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(40.0)),
+                          child: const Center(
+                            child: Text(
+                              "Text",
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        )
+                      : InkWell(
+                          onTap: () {
+                            setState(() {
+                              textIsSelected = !textIsSelected;
+                              senasIsSelected = !senasIsSelected;
+                            });
+                          },
+                          child: const Text(
+                            "Text",
+                            style: TextStyle(
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
                 ],
               ),
             ),
@@ -92,10 +144,23 @@ class _FilePageState extends State<FilePage> {
           const SizedBox(
             height: 20.0,
           ),
-          Image.asset(
-            "assets/images/img_2.png",
-            scale: MediaQuery.of(context).size.height * 0.0025,
-          ),
+          showContent()
+              ? Image.asset(
+                  "assets/images/img_2.png",
+                  scale: MediaQuery.of(context).size.height * 0.0024,
+                )
+              : Padding(
+                  padding: const EdgeInsets.all(30.0),
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.35,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0),
+                        border: Border.all(
+                          color: Color(0XFF007AFF),
+                          width: 2.0,
+                        )),
+                  ),
+                ),
           Column(
             children: [
               Padding(
@@ -125,7 +190,7 @@ class _FilePageState extends State<FilePage> {
                 ),
               ),
               Container(
-                padding: EdgeInsets.only(top: 20.0, left: 40.0),
+                padding: const EdgeInsets.only(top: 20.0, left: 40.0),
                 alignment: Alignment.bottomLeft,
                 child: Text(
                   "Tipos de archivos admitidos: \nmp3, mp4, txt",
