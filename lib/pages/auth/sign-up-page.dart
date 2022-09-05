@@ -72,7 +72,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             style: GoogleFonts.lato(
                               fontWeight: FontWeight.w700,
                               fontSize: 24,
-                              color: Color(0xFF4285F4),
+                              color: const Color(0xFF4285F4),
                             ),
                           ),
                         ),
@@ -112,7 +112,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.email),
+                        prefixIcon: const Icon(Icons.email),
                         enabledBorder: OutlineInputBorder(
                           borderSide: const BorderSide(color: Colors.white),
                           borderRadius: BorderRadius.circular(35.0),
@@ -227,11 +227,9 @@ class _SignUpPageState extends State<SignUpPage> {
                   const SizedBox(
                     height: 15.0,
                   ),
-                  Container(
-                    child: Image.asset(
-                      "assets/images/img.png",
-                      scale: MediaQuery.of(context).size.height * 0.0021,
-                    ),
+                  Image.asset(
+                    "assets/images/img.png",
+                    scale: MediaQuery.of(context).size.height * 0.0021,
                   ),
                 ],
               ),

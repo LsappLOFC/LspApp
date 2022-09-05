@@ -74,7 +74,7 @@ class _SignInPageState extends State<SignInPage> {
                             style: GoogleFonts.lato(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 24,
-                                color: Color(0xFF4285F4)),
+                                color: const Color(0xFF4285F4)),
                           ),
                         ),
                       ],
@@ -102,7 +102,7 @@ class _SignInPageState extends State<SignInPage> {
                     child: TextField(
                       controller: _emailController,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.email),
+                        prefixIcon: const Icon(Icons.email),
                         enabledBorder: OutlineInputBorder(
                           borderSide: const BorderSide(color: Colors.white),
                           borderRadius: BorderRadius.circular(35.0),
@@ -141,7 +141,7 @@ class _SignInPageState extends State<SignInPage> {
                     child: TextField(
                       controller: _passwordController,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.lock_outline),
+                        prefixIcon: const Icon(Icons.lock_outline),
                         enabledBorder: OutlineInputBorder(
                           borderSide: const BorderSide(color: Colors.white),
                           borderRadius: BorderRadius.circular(35.0),
