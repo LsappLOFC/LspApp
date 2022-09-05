@@ -212,7 +212,7 @@ class _FilePageState extends State<FilePage> {
                       child: SingleChildScrollView(
                         child: text == ''
                             ? const Text(
-                                'El texto aparecerá en esta caja',
+                                'Esperando traducción...',
                                 style: TextStyle(color: Colors.grey),
                               )
                             : Text(
