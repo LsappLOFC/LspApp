@@ -51,7 +51,14 @@ class _MainPageState extends State<MainPage>
     'Y',
     'Z',
     'ENFERMO',
-    'HOSPITAL'
+    'HOSPITAL',
+    'PERU',
+    'MI',
+    'COMER',
+    'ESCUCHAR',
+    'TOMAR',
+    'MI',
+    'YO'
   ];
 
   @override
@@ -62,7 +69,7 @@ class _MainPageState extends State<MainPage>
     _firstLoad = true;
     _listening = false;
     controller = AnimationController(
-        duration: const Duration(milliseconds: 1500), vsync: this);
+        duration: const Duration(milliseconds: 1400), vsync: this);
 
     controller.addStatusListener((status) async {
       if (status == AnimationStatus.completed) {
@@ -123,32 +130,40 @@ class _MainPageState extends State<MainPage>
         _lastWords = removeDiacritics(_lastWords);
         _lastWords = _lastWords.toUpperCase();
       });
-      if (_signDictionary.contains(_lastWords)) {
-        setState(() {
-          _signToAnim = 'assets/sign/$_lastWords.json';
-        });
-        print(_signToAnim);
-      } else {
-        print('Inicio ELSE $_lastWords');
-        setState(() {
-          singleLetter = _lastWords.trim().split("");
-        });
-        print('Inicio ELSE $singleLetter');
-        for (String letter in singleLetter) {
-          if (letter == ' ') {
-            setState(() {
-              letter = 'ESPACIO';
-            });
-          }
+      List<String> _singleWords = _lastWords.trim().split(' ');
+      for (String word in _singleWords) {
+        if (_signDictionary.contains(word)) {
           setState(() {
             _signToAnim = 'assets/sign/IDLE.json';
           });
           await Future.delayed(const Duration(milliseconds: 100));
           setState(() {
-            _signToAnim = 'assets/sign/$letter.json';
+            _signToAnim = 'assets/sign/$word.json';
           });
           print(_signToAnim);
-          await Future.delayed(const Duration(milliseconds: 1850));
+          await Future.delayed(const Duration(milliseconds: 1500));
+        } else {
+          print('Inicio ELSE $word');
+          setState(() {
+            singleLetter = word.trim().split("");
+          });
+          print('Inicio ELSE $word');
+          for (String letter in singleLetter) {
+            if (letter == ' ') {
+              setState(() {
+                letter = 'ESPACIO';
+              });
+            }
+            setState(() {
+              _signToAnim = 'assets/sign/IDLE.json';
+            });
+            await Future.delayed(const Duration(milliseconds: 100));
+            setState(() {
+              _signToAnim = 'assets/sign/$letter.json';
+            });
+            print(_signToAnim);
+            await Future.delayed(const Duration(milliseconds: 1500));
+          }
         }
       }
     }
@@ -170,10 +185,38 @@ class _MainPageState extends State<MainPage>
                 style: TextStyle(fontSize: 20.0),
               ),
             ),
-            Expanded(
+            Padding(
+              padding: const EdgeInsets.all(30.0),
+              child: Container(
+                height: MediaQuery.of(context).size.height * 0.10,
+                width: MediaQuery.of(context).size.width * 0.85,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    border: Border.all(
+                      color: const Color(0XFF007AFF),
+                      width: 2.0,
+                    )),
+                child: SingleChildScrollView(
+                  child: _lastWords == 'IDLE'
+                      ? Text(
+                          textAlign: TextAlign.center,
+                          'Esperando traducción...',
+                          style: TextStyle(color: Colors.white, fontSize: 24),
+                        )
+                      : Text(
+                          textAlign: TextAlign.center,
+                          _lastWords,
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 24),
+                        ),
+                ),
+              ),
+            ),
+            /*Expanded(
               child: Container(
                 padding: const EdgeInsets.all(16),
                 child: Text(
+                    _lastWords /*
                   // If listening is active show the recognized words
                   _speechToText.isListening
                       ? _lastWords
@@ -183,19 +226,22 @@ class _MainPageState extends State<MainPage>
                       // the target device
                       : _speechEnabled
                           ? 'Tap the microphone to start listening...'
-                          : 'Speech not available',
-                ),
+                          : 'Speech not available',*/
+                    ),
               ),
-            ),
-            Container(
-                child: _firstLoad
-                    ? Lottie.asset('assets/sign/IDLE.json', animate: false)
-                    : _speechToText.isNotListening
-                        ? Lottie.asset(_signToAnim, controller: controller,
-                            onLoaded: (composition) {
-                            controller.forward();
-                          })
-                        : Lottie.asset('assets/sign/IDLE.json', animate: false))
+            ),*/
+            Expanded(
+                child: Align(
+                    alignment: FractionalOffset.bottomCenter,
+                    child: _firstLoad
+                        ? Lottie.asset('assets/sign/IDLE.json', animate: false)
+                        : _speechToText.isNotListening
+                            ? Lottie.asset(_signToAnim, controller: controller,
+                                onLoaded: (composition) {
+                                controller.forward();
+                              })
+                            : Lottie.asset('assets/sign/IDLE.json',
+                                animate: false)))
           ],
         ),
       ),
