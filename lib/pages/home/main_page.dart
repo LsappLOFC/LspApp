@@ -15,12 +15,13 @@ class _MainPageState extends State<MainPage>
     with SingleTickerProviderStateMixin {
   final SpeechToText _speechToText = SpeechToText();
   bool _speechEnabled = false;
-  String _lastWords = '';
+  String _lastWords = 'IDLE';
   late int _pos;
   late bool _listening;
   late bool _firstLoad;
   late String _signToAnim;
   late AnimationController controller;
+  late List<String> singleLetter;
   final _signDictionary = [
     'A',
     'B',
@@ -116,30 +117,41 @@ class _MainPageState extends State<MainPage>
   /// This is the callback that the SpeechToText plugin calls when
   /// the platform returns recognized words.
   void _onSpeechResult(SpeechRecognitionResult result) async {
-    setState(() async {
-      if (result.finalResult) {
+    if (result.finalResult) {
+      setState(() {
         _lastWords = result.recognizedWords;
         _lastWords = removeDiacritics(_lastWords);
         _lastWords = _lastWords.toUpperCase();
-        if (_signDictionary.contains(_lastWords)) {
+      });
+      if (_signDictionary.contains(_lastWords)) {
+        setState(() {
           _signToAnim = 'assets/sign/$_lastWords.json';
-          print(_signToAnim);
-        } else {
-          print('Inicio ELSE $_lastWords');
-          List<String> singleLetter = _lastWords.trim().split("");
-          print('Inicio ELSE $singleLetter');
-          for (String letter in singleLetter) {
-            if (letter == ' ') {
+        });
+        print(_signToAnim);
+      } else {
+        print('Inicio ELSE $_lastWords');
+        setState(() {
+          singleLetter = _lastWords.trim().split("");
+        });
+        print('Inicio ELSE $singleLetter');
+        for (String letter in singleLetter) {
+          if (letter == ' ') {
+            setState(() {
               letter = 'ESPACIO';
-            }
-            _signToAnim = 'assets/sign/$letter.json';
-            print(_signToAnim);
-            await Future.delayed(const Duration(milliseconds: 1500));
-            _signToAnim = 'assets/sign/IDLE.json';
+            });
           }
+          setState(() {
+            _signToAnim = 'assets/sign/IDLE.json';
+          });
+          await Future.delayed(const Duration(milliseconds: 100));
+          setState(() {
+            _signToAnim = 'assets/sign/$letter.json';
+          });
+          print(_signToAnim);
+          await Future.delayed(const Duration(milliseconds: 1850));
         }
       }
-    });
+    }
   }
 
   @override
