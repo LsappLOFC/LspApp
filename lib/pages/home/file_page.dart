@@ -1,13 +1,11 @@
-import 'package:ffmpeg_kit_flutter/ffmpeg_session.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:google_speech/google_speech.dart';
-import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
-import 'package:ffmpeg_kit_flutter/ffprobe_kit.dart';
-import 'package:ffmpeg_kit_flutter/ffmpeg_kit_config.dart';
+import 'package:ffmpeg_kit_flutter_full/ffmpeg_kit.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class FilePage extends StatefulWidget {
   const FilePage({Key? key}) : super(key: key);
@@ -40,7 +38,7 @@ class _FilePageState extends State<FilePage> {
         text = value.results
             .map((e) => e.alternatives.first.transcript)
             .join('\n');
-        print('TEXTO RECONOCIDO: $text');
+        //print('TEXTO RECONOCIDO: $text');
       });
     }).whenComplete(() => setState(() {
           recognizeFinished = true;
@@ -79,67 +77,20 @@ class _FilePageState extends State<FilePage> {
     });
     print('NOMBRE DEL ARCHIVO: ${res.files.single.name}');
     print('PATH DEL ARCHIVO ${res.files.single.path}');
-    FFprobeKit.getMediaInformation(path).then((session) async {
-      final information = await session.getMediaInformation();
-
-      if (information == null) {
-        // CHECK THE FOLLOWING ATTRIBUTES ON ERROR
-        final state =
-            FFmpegKitConfig.sessionStateToString(await session.getState());
-        final returnCode = await session.getReturnCode();
-        final failStackTrace = await session.getFailStackTrace();
-        final duration = await session.getDuration();
-        final output = await session.getOutput();
-        print('output NULL: $output');
-      }
-      final output = await session.getOutput();
-      print('STATE CONTENT: $output');
-    });
-    /*FFmpegKit.execute(
-            '-i $path -q:a 0 -map a /storage/emulated/0/download/ffmpeg_test.mp3')
+    var status = await Permission.storage.status;
+    if (!status.isGranted) {
+      await Permission.storage.request();
+    }
+    FFmpegKit.execute(
+            '-i $path -q:a 0 -map a -vn -acodec libmp3lame /storage/emulated/0/download/ffmpeg_test_full.mp3')
         .then((session) async {
-      // Unique session id created for this execution
-      final sessionId = session.getSessionId();
-      print('sessionId: $sessionId');
-
-      // Command arguments as a single string
-      final command = session.getCommand();
-      print('command: $command');
-
-      // Command arguments
-      final commandArguments = session.getArguments();
-      print('commandArguments: $commandArguments');
-
-      // State of the execution. Shows whether it is still running or completed
-      final state = await session.getState();
-      print('state: $state');
-
-      // Return code for completed sessions. Will be undefined if session is still running or FFmpegKit fails to run it
-      final returnCode = await session.getReturnCode();
-      print('returnCode: $returnCode');
-
-      final startTime = session.getStartTime();
-      print('startTime: $startTime');
-      final endTime = await session.getEndTime();
-      print('endTime: $endTime');
-      final duration = await session.getDuration();
-      print('duration: $duration');
-
-      // Console output generated for this execution
-      final output = await session.getOutput();
-      print('output: $output');
-      // The stack trace if FFmpegKit fails to run a command
-      final failStackTrace = await session.getFailStackTrace();
-      print('failStackTrace: $failStackTrace');
-      // The list of logs generated for this execution
       final logs = await session.getLogs();
-      print('logs: $logs');
+      for (var log in logs) {
+        print(log.getMessage());
+      }
+    });
 
-      // The list of statistics generated for this execution (only available on FFmpegSession)
-      final statistics = await (session as FFmpegSession).getStatistics();
-    });*/
-
-    /*if (!recognizing)*/ recognize();
+    recognize();
   }
 
   @override
