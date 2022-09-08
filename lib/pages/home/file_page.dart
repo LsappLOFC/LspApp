@@ -39,7 +39,7 @@ class _FilePageState extends State<FilePage> {
         text = value.results
             .map((e) => e.alternatives.first.transcript)
             .join('\n');
-        //print('TEXTO RECONOCIDO: $text');
+        print('TEXTO RECONOCIDO: $text');
       });
     }).whenComplete(() => setState(() {
           recognizeFinished = true;
@@ -74,14 +74,19 @@ class _FilePageState extends State<FilePage> {
         text = '';
       });
       print('NOMBRE DEL ARCHIVO: ${res.files.single.name}');
+      print('EXTENSION DEL ARCHIVO: ${res.files.single.extension}');
       print('PATH DEL ARCHIVO ${res.files.single.path}');
       var status = await Permission.storage.status;
       if (!status.isGranted) {
         await Permission.storage.request();
       }
       //TODO: No almacenar en memoria interna, guardar en una variable o caché y traducirlo
-      final convertedFilePath =
-          '/storage/emulated/0/download/${res.files.single.name}.mp3';
+
+      var fileName = res.files.single.name;
+      var fileFormat = fileName.substring(fileName.lastIndexOf('.'));
+      fileName = fileName.replaceAll(fileFormat, '');
+
+      final convertedFilePath = '/storage/emulated/0/download/$fileName.mp3';
       FFmpegKit.execute(
               '-i $path -q:a 0 -map a -vn -acodec libmp3lame $convertedFilePath')
           .then((session) async {
@@ -90,8 +95,8 @@ class _FilePageState extends State<FilePage> {
           print(log.getMessage());
         }
         //this.audio = File(convertedFilePath).readAsBytesSync().toList();
+        recognize(convertedFilePath);
       });
-      recognize(convertedFilePath);
     } else {
       return;
     }
