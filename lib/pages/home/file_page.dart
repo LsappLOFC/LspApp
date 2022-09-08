@@ -20,10 +20,10 @@ class _FilePageState extends State<FilePage> {
   bool recognizing = false;
   bool recognizeFinished = false;
   String text = '';
-  String path = '';
+  String convertedPath = '';
   //final FlutterFFmpeg FFmpeg = FlutterFFmpeg();
 
-  void recognize() async {
+  void recognize(String path) async {
     setState(() {
       recognizing = true;
     });
@@ -31,7 +31,8 @@ class _FilePageState extends State<FilePage> {
         .loadString('assets/sign/cedar-abacus-275721-efb57f834e66.json')));
     final speechToText = SpeechToText.viaServiceAccount(serviceAccount);
     final config = _getConfig();
-    final audio = await _getAudioContent();
+    final audio =
+        File(path).readAsBytesSync().toList(); //await _getAudioContent();
 
     await speechToText.recognize(config, audio).then((value) {
       setState(() {
@@ -53,9 +54,9 @@ class _FilePageState extends State<FilePage> {
       sampleRateHertz: 8000,
       languageCode: 'es-PE');
 
-  Future<List<int>> _getAudioContent() async {
+  /*Future<List<int>> _getAudioContent() async {
     return File(path).readAsBytesSync().toList();
-  }
+  }*/
 
   bool showContent() {
     if (senasIsSelected) {
@@ -67,30 +68,33 @@ class _FilePageState extends State<FilePage> {
 
   void _pickFile() async {
     final res = await FilePicker.platform.pickFiles(allowMultiple: false);
-
-    if (res == null) {
+    if (res != null) {
+      final path = res.files.single.path!;
+      setState(() {
+        text = '';
+      });
+      print('NOMBRE DEL ARCHIVO: ${res.files.single.name}');
+      print('PATH DEL ARCHIVO ${res.files.single.path}');
+      var status = await Permission.storage.status;
+      if (!status.isGranted) {
+        await Permission.storage.request();
+      }
+      //TODO: No almacenar en memoria interna, guardar en una variable o caché y traducirlo
+      final convertedFilePath =
+          '/storage/emulated/0/download/${res.files.single.name}.mp3';
+      FFmpegKit.execute(
+              '-i $path -q:a 0 -map a -vn -acodec libmp3lame $convertedFilePath')
+          .then((session) async {
+        final logs = await session.getLogs();
+        for (var log in logs) {
+          print(log.getMessage());
+        }
+        //this.audio = File(convertedFilePath).readAsBytesSync().toList();
+      });
+      recognize(convertedFilePath);
+    } else {
       return;
     }
-    setState(() {
-      text = '';
-      path = res.files.single.path!;
-    });
-    print('NOMBRE DEL ARCHIVO: ${res.files.single.name}');
-    print('PATH DEL ARCHIVO ${res.files.single.path}');
-    var status = await Permission.storage.status;
-    if (!status.isGranted) {
-      await Permission.storage.request();
-    }
-    FFmpegKit.execute(
-            '-i $path -q:a 0 -map a -vn -acodec libmp3lame /storage/emulated/0/download/ffmpeg_test_full.mp3')
-        .then((session) async {
-      final logs = await session.getLogs();
-      for (var log in logs) {
-        print(log.getMessage());
-      }
-    });
-
-    recognize();
   }
 
   @override
