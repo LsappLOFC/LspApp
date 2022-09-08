@@ -209,24 +209,6 @@ class _MainPageState extends State<MainPage>
                 ),
               ),
             ),
-            /*Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                child: Text(
-                    _lastWords /*
-                  // If listening is active show the recognized words
-                  _speechToText.isListening
-                      ? _lastWords
-                      // If listening isn't active but could be tell the user
-                      // how to start it, otherwise indicate that speech
-                      // recognition is not yet ready or not supported on
-                      // the target device
-                      : _speechEnabled
-                          ? 'Tap the microphone to start listening...'
-                          : 'Speech not available',*/
-                    ),
-              ),
-            ),*/
             Expanded(
                 child: Align(
                     alignment: FractionalOffset.bottomCenter,
