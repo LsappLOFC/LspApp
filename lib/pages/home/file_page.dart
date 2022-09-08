@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -79,6 +81,22 @@ class _FilePageState extends State<FilePage> {
       var status = await Permission.storage.status;
       if (!status.isGranted) {
         await Permission.storage.request();
+      }
+      final file = File(path);
+      Stream<String> lines = file
+          .openRead()
+          .transform(utf8.decoder) // Decode bytes to UTF-8.
+          .transform(LineSplitter()); // Convert stream to individual lines.
+      try {
+        await for (var line in lines) {
+          print(line);
+          setState(() {
+            text = line;
+          });
+        }
+        print('File is now closed.');
+      } catch (e) {
+        print('Error: $e');
       }
       //TODO: No almacenar en memoria interna, guardar en una variable o caché y traducirlo
 
