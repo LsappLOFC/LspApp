@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -16,8 +18,6 @@ class _MainPageState extends State<MainPage>
   final SpeechToText _speechToText = SpeechToText();
   bool _speechEnabled = false;
   String _lastWords = 'IDLE';
-  late int _pos;
-  late bool _listening;
   late bool _firstLoad;
   late String _signToAnim;
   late AnimationController controller;
@@ -65,9 +65,7 @@ class _MainPageState extends State<MainPage>
   void initState() {
     super.initState();
     _signToAnim = '';
-    _pos = 0;
     _firstLoad = true;
-    _listening = false;
     controller = AnimationController(
         duration: const Duration(milliseconds: 1400), vsync: this);
 
@@ -110,9 +108,9 @@ class _MainPageState extends State<MainPage>
 
   String removeDiacritics(String str) {
     var withDia =
-        'ÀÁÂÃÄÅàáâãäåÒÓÔÕÕÖØòóôõöøÈÉÊËèéêëðÇçÐÌÍÎÏìíîïÙÚÛÜùúûüŠšŸÿýŽž';
+        'ÀÁÂÃÄÅàáâãäåÒÓÔÕÕÖØòóôõöøÈÉÊËèéêëðÇçÐÌÍÎÏìíîïÙÚÛÜùúûüŠšŸÿýŽž,.';
     var withoutDia =
-        'AAAAAAaaaaaaOOOOOOOooooooEEEEeeeeeCcDIIIIiiiiUUUUuuuuSsYyyZz';
+        'AAAAAAaaaaaaOOOOOOOooooooEEEEeeeeeCcDIIIIiiiiUUUUuuuuSsYyyZz  ';
 
     for (int i = 0; i < withDia.length; i++) {
       str = str.replaceAll(withDia[i], withoutDia[i]);
@@ -130,8 +128,8 @@ class _MainPageState extends State<MainPage>
         _lastWords = removeDiacritics(_lastWords);
         _lastWords = _lastWords.toUpperCase();
       });
-      List<String> _singleWords = _lastWords.trim().split(' ');
-      for (String word in _singleWords) {
+      List<String> singleWords = _lastWords.trim().split(' ');
+      for (String word in singleWords) {
         if (_signDictionary.contains(word)) {
           setState(() {
             _signToAnim = 'assets/sign/IDLE.json';
@@ -140,14 +138,13 @@ class _MainPageState extends State<MainPage>
           setState(() {
             _signToAnim = 'assets/sign/$word.json';
           });
-          print(_signToAnim);
+
           await Future.delayed(const Duration(milliseconds: 1500));
         } else {
-          print('Inicio ELSE $word');
           setState(() {
             singleLetter = word.trim().split("");
           });
-          print('Inicio ELSE $word');
+
           for (String letter in singleLetter) {
             if (letter == ' ') {
               setState(() {
@@ -161,7 +158,7 @@ class _MainPageState extends State<MainPage>
             setState(() {
               _signToAnim = 'assets/sign/$letter.json';
             });
-            print(_signToAnim);
+
             await Future.delayed(const Duration(milliseconds: 1500));
           }
         }
@@ -212,24 +209,6 @@ class _MainPageState extends State<MainPage>
                 ),
               ),
             ),
-            /*Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                child: Text(
-                    _lastWords /*
-                  // If listening is active show the recognized words
-                  _speechToText.isListening
-                      ? _lastWords
-                      // If listening isn't active but could be tell the user
-                      // how to start it, otherwise indicate that speech
-                      // recognition is not yet ready or not supported on
-                      // the target device
-                      : _speechEnabled
-                          ? 'Tap the microphone to start listening...'
-                          : 'Speech not available',*/
-                    ),
-              ),
-            ),*/
             Expanded(
                 child: Align(
                     alignment: FractionalOffset.bottomCenter,
