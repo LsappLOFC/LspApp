@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -11,6 +13,27 @@ class SugerenciasPage extends StatefulWidget {
 }
 
 class _SugerenciasPageState extends State<SugerenciasPage> {
+  final _textSugerencias = TextEditingController();
+
+  Future saveData() async {
+    final now = DateTime.now();
+    final auth = FirebaseAuth.instance;
+    User? user = auth.currentUser;
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    final city = <String, dynamic>{
+      "Sugerencia": _textSugerencias.text,
+      "fechaHoraRegistro": now,
+      "fechaHoraActualizacion": now,
+      "eliminado": false,
+      "user_Id": user!.uid
+    };
+    await db
+        .collection("suggestions")
+        .doc()
+        .set(city)
+        .onError((e, _) => print("Error writing document: $e"));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,16 +111,17 @@ class _SugerenciasPageState extends State<SugerenciasPage> {
                     ),
                   ),
                   child: TextField(
+                    controller: _textSugerencias,
                     decoration: const InputDecoration(
                         border: InputBorder.none,
                         hintText: "Ingrese sus sugerencias aquí...",
                         filled: true,
                         fillColor: Colors.white),
                     style: GoogleFonts.poppins(
-                      fontSize: 10.0,
+                      fontSize: 14.0,
                     ),
                     textAlign: TextAlign.start,
-                    maxLines: 20,
+                    maxLines: 10,
                   ),
                 ),
               ),
@@ -105,7 +129,12 @@ class _SugerenciasPageState extends State<SugerenciasPage> {
                 height: 30.0,
               ),
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  saveData();
+                  Navigator.pop(
+                    context,
+                  );
+                },
                 child: Container(
                   padding: EdgeInsets.symmetric(
                       horizontal: MediaQuery.of(context).size.width * 0.35),
