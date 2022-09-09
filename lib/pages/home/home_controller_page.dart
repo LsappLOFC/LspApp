@@ -25,7 +25,7 @@ class _HomeControllerPageState extends State<HomeControllerPage> {
     return Scaffold(
       body: pages[_index],
       bottomNavigationBar: CurvedNavigationBar(
-        height: 60.0,
+        height: 50.0,
         animationCurve: Curves.linear,
         color: Colors.black12,
         buttonBackgroundColor: Colors.blue,

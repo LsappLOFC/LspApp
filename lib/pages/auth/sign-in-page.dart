@@ -35,14 +35,14 @@ class _SignInPageState extends State<SignInPage> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 40.0),
+              padding: const EdgeInsets.only(top: 50.0),
               child: Image.asset(
                 "assets/images/img_1.png",
-                scale: MediaQuery.of(context).size.height * 0.0024,
+                scale: MediaQuery.of(context).size.height * 0.0020,
               ),
             ),
             Container(
-              height: MediaQuery.of(context).size.height * 0.60,
+              height: MediaQuery.of(context).size.height * 0.70,
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(

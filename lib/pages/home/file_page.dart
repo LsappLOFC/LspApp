@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:google_speech/google_speech.dart';
-import 'package:path_provider/path_provider.dart';
 
 class FilePage extends StatefulWidget {
   const FilePage({Key? key}) : super(key: key);
@@ -196,7 +195,7 @@ class _FilePageState extends State<FilePage> {
             showContent()
                 ? Image.asset(
                     "assets/images/img_2.png",
-                    scale: MediaQuery.of(context).size.height * 0.0024,
+                    scale: MediaQuery.of(context).size.height * 0.0030,
                   )
                 : Padding(
                     padding: const EdgeInsets.all(30.0),

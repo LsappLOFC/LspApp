@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lsapp/pages/auth/auth_page.dart';
-import 'package:lsapp/pages/home/home_controller_page.dart';
+import 'package:lsapp/pages/home/user_controller_page.dart';
 
 class MainControllerPage extends StatefulWidget {
   const MainControllerPage({Key? key}) : super(key: key);
@@ -18,7 +18,7 @@ class _MainControllerPageState extends State<MainControllerPage> {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: ((context, snapshot) {
           if (snapshot.hasData) {
-            return const HomeControllerPage();
+            return const UserControllerPage();
           } else {
             return const AuthPage();
           }
