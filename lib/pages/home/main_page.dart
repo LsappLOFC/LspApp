@@ -2,9 +2,17 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:speech_to_text/speech_to_text.dart';
+import 'package:flutter/services.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:lottie/lottie.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:google_speech/google_speech.dart';
+import 'package:audio_session/audio_session.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_sound/flutter_sound.dart';
+
+const int tSampleRate = 16000;
+typedef _Fn = void Function();
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -15,8 +23,12 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage>
     with SingleTickerProviderStateMixin {
-  final SpeechToText _speechToText = SpeechToText();
-  bool _speechEnabled = false;
+  //final SpeechToText _speechToText = SpeechToText();
+  //bool _speechEnabled = false;
+  FlutterSoundRecorder? _mRecorder = FlutterSoundRecorder();
+  late StreamSubscription? _mRecordingDataSubscription;
+  bool _mplaybackReady = false;
+  bool _mRecorderIsInited = false;
   String _lastWords = 'IDLE';
   late bool _firstLoad;
   late String _signToAnim;
@@ -75,15 +87,126 @@ class _MainPageState extends State<MainPage>
         controller.reset();
       }
     });
-    _initSpeech();
+    //_initSpeech();
+    _openRecorder();
   }
 
   @override
   void dispose() {
     controller.dispose();
+    stopRecorder();
+    _mRecorder!.closeRecorder();
+    _mRecorder = null;
     super.dispose();
   }
 
+  Future<void> stopRecorder() async {
+    await _mRecorder!.stopRecorder();
+    if (_mRecordingDataSubscription != null) {
+      await _mRecordingDataSubscription!.cancel();
+      _mRecordingDataSubscription = null;
+    }
+    _mplaybackReady = true;
+  }
+
+  Future<void> _openRecorder() async {
+    var status = await Permission.microphone.request();
+    if (status != PermissionStatus.granted) {
+      throw RecordingPermissionException('Microphone permission not granted');
+    }
+    await _mRecorder!.openRecorder();
+    setState(() {
+      _mRecorderIsInited = true;
+    });
+  }
+
+  Future<void> setAudioConfig() async {
+    final session = await AudioSession.instance;
+    await session.configure(AudioSessionConfiguration(
+      avAudioSessionCategory: AVAudioSessionCategory.playAndRecord,
+      avAudioSessionCategoryOptions:
+          AVAudioSessionCategoryOptions.allowBluetooth,
+      avAudioSessionMode: AVAudioSessionMode.spokenAudio,
+      avAudioSessionRouteSharingPolicy:
+          AVAudioSessionRouteSharingPolicy.defaultPolicy,
+      avAudioSessionSetActiveOptions: AVAudioSessionSetActiveOptions.none,
+      androidAudioAttributes: const AndroidAudioAttributes(
+        contentType: AndroidAudioContentType.speech,
+        flags: AndroidAudioFlags.none,
+        usage: AndroidAudioUsage.voiceCommunication,
+      ),
+      androidAudioFocusGainType: AndroidAudioFocusGainType.gain,
+      androidWillPauseWhenDucked: true,
+    ));
+  }
+
+  // ----------------------  Here is the code to record to a Stream ------------
+
+  late StreamSubscription<List<int>> audioStreamSubscription;
+  late BehaviorSubject<List<int>> audioStream;
+
+  Future<void> record() async {
+    assert(_mRecorderIsInited);
+    var recordingDataController = StreamController<Food>();
+
+    audioStream = BehaviorSubject<List<int>>();
+    _mRecordingDataSubscription =
+        recordingDataController.stream.listen((buffer) {
+      if (buffer is FoodData) {
+        audioStream.add(buffer.data!);
+      }
+    });
+
+    await setAudioConfig().then((value) async {
+      await _mRecorder!.startRecorder(
+        toStream: recordingDataController.sink,
+        codec: Codec.pcm16,
+        numChannels: 1,
+        sampleRate: tSampleRate,
+      );
+    });
+
+    final serviceAccount = ServiceAccount.fromString((await rootBundle
+        .loadString('assets/cedar-abacus-275721-efb57f834e66.json')));
+    final speechToText = SpeechToText.viaServiceAccount(serviceAccount);
+    final config = _getConfig();
+
+    final responseStream = speechToText.streamingRecognize(
+        StreamingRecognitionConfig(config: config, interimResults: true),
+        audioStream);
+    String text = '';
+    responseStream.listen((data) async {
+      if (data.results.first.isFinal == true) {
+        text =
+            data.results.map((e) => e.alternatives.first.transcript).join('\n');
+        print("Google translate results: $text");
+        _onTextResultToSign(text);
+      }
+    }, onDone: () async {});
+
+    setState(() {});
+  }
+
+  RecognitionConfig _getConfig() => RecognitionConfig(
+      encoding: AudioEncoding.ENCODING_UNSPECIFIED,
+      model: RecognitionModel.basic,
+      enableAutomaticPunctuation: true,
+      sampleRateHertz: 8000,
+      languageCode: 'es-PE');
+  // -----
+
+  _Fn? getRecorderFn() {
+    if (!_mRecorderIsInited) {
+      return null;
+    }
+    return _mRecorder!.isStopped
+        ? record
+        : () {
+            stopRecorder().then((value) => setState(() {}));
+          };
+  }
+
+/*
   /// This has to happen only once per app
   void _initSpeech() async {
     _speechEnabled = await _speechToText.initialize();
@@ -106,6 +229,7 @@ class _MainPageState extends State<MainPage>
     setState(() {});
   }
 
+*/
   String removeDiacritics(String str) {
     var withDia =
         'ÀÁÂÃÄÅàáâãäåÒÓÔÕÕÖØòóôõöøÈÉÊËèéêëðÇçÐÌÍÎÏìíîïÙÚÛÜùúûüŠšŸÿýŽž,.';
@@ -121,46 +245,43 @@ class _MainPageState extends State<MainPage>
 
   /// This is the callback that the SpeechToText plugin calls when
   /// the platform returns recognized words.
-  void _onSpeechResult(SpeechRecognitionResult result) async {
-    if (result.finalResult) {
-      setState(() {
-        _lastWords = result.recognizedWords;
-        _lastWords = removeDiacritics(_lastWords);
-        _lastWords = _lastWords.toUpperCase();
-      });
-      List<String> singleWords = _lastWords.trim().split(' ');
-      for (String word in singleWords) {
-        if (_signDictionary.contains(word)) {
+  void _onTextResultToSign(String result) async {
+    setState(() {
+      result = removeDiacritics(result);
+      result = result.toUpperCase();
+    });
+    List<String> singleWords = result.trim().split(' ');
+    for (String word in singleWords) {
+      if (_signDictionary.contains(word)) {
+        setState(() {
+          _signToAnim = 'assets/sign/IDLE.json';
+        });
+        await Future.delayed(const Duration(milliseconds: 100));
+        setState(() {
+          _signToAnim = 'assets/sign/$word.json';
+        });
+
+        await Future.delayed(const Duration(milliseconds: 1500));
+      } else {
+        setState(() {
+          singleLetter = word.trim().split("");
+        });
+
+        for (String letter in singleLetter) {
+          if (letter == ' ') {
+            setState(() {
+              letter = 'ESPACIO';
+            });
+          }
           setState(() {
             _signToAnim = 'assets/sign/IDLE.json';
           });
           await Future.delayed(const Duration(milliseconds: 100));
           setState(() {
-            _signToAnim = 'assets/sign/$word.json';
+            _signToAnim = 'assets/sign/$letter.json';
           });
 
           await Future.delayed(const Duration(milliseconds: 1500));
-        } else {
-          setState(() {
-            singleLetter = word.trim().split("");
-          });
-
-          for (String letter in singleLetter) {
-            if (letter == ' ') {
-              setState(() {
-                letter = 'ESPACIO';
-              });
-            }
-            setState(() {
-              _signToAnim = 'assets/sign/IDLE.json';
-            });
-            await Future.delayed(const Duration(milliseconds: 100));
-            setState(() {
-              _signToAnim = 'assets/sign/$letter.json';
-            });
-
-            await Future.delayed(const Duration(milliseconds: 1500));
-          }
         }
       }
     }
@@ -175,13 +296,6 @@ class _MainPageState extends State<MainPage>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Container(
-              padding: const EdgeInsets.all(16),
-              child: const Text(
-                'Recognized words:',
-                style: TextStyle(fontSize: 20.0),
-              ),
-            ),
             Padding(
               padding: const EdgeInsets.all(30.0),
               child: Container(
@@ -214,7 +328,7 @@ class _MainPageState extends State<MainPage>
                     alignment: FractionalOffset.bottomCenter,
                     child: _firstLoad
                         ? Lottie.asset('assets/sign/IDLE.json', animate: false)
-                        : _speechToText.isNotListening
+                        : _mRecorder!.isStopped
                             ? Lottie.asset(_signToAnim, controller: controller,
                                 onLoaded: (composition) {
                                 controller.forward();
@@ -225,11 +339,9 @@ class _MainPageState extends State<MainPage>
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed:
-            // If not yet listening for speech start, otherwise stop
-            _speechToText.isNotListening ? _startListening : _stopListening,
+        onPressed: getRecorderFn(),
         tooltip: 'Listen',
-        child: Icon(_speechToText.isNotListening ? Icons.mic_off : Icons.mic),
+        child: Icon(_mRecorder!.isStopped ? Icons.mic_off : Icons.mic),
       ),
     ));
   }
