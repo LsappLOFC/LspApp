@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:lottie/lottie.dart';
+import 'package:get/get.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:google_speech/google_speech.dart';
 import 'package:audio_session/audio_session.dart';
@@ -167,7 +168,7 @@ class _MainPageState extends State<MainPage>
     });
 
     final serviceAccount = ServiceAccount.fromString((await rootBundle
-        .loadString('assets/cedar-abacus-275721-efb57f834e66.json')));
+        .loadString('assets/sign/cedar-abacus-275721-efb57f834e66.json')));
     final speechToText = SpeechToText.viaServiceAccount(serviceAccount);
     final config = _getConfig();
 
@@ -181,6 +182,9 @@ class _MainPageState extends State<MainPage>
             data.results.map((e) => e.alternatives.first.transcript).join('\n');
         print("Google translate results: $text");
         _onTextResultToSign(text);
+        setState(() {
+          _firstLoad = false;
+        });
       }
     }, onDone: () async {});
 
@@ -188,12 +192,12 @@ class _MainPageState extends State<MainPage>
   }
 
   RecognitionConfig _getConfig() => RecognitionConfig(
-      encoding: AudioEncoding.ENCODING_UNSPECIFIED,
-      model: RecognitionModel.basic,
-      enableAutomaticPunctuation: true,
-      sampleRateHertz: 8000,
-      languageCode: 'es-PE');
-  // -----
+        encoding: AudioEncoding.LINEAR16,
+        model: RecognitionModel.basic,
+        enableAutomaticPunctuation: false,
+        sampleRateHertz: 16000,
+        languageCode: 'es-PE',
+      );
 
   _Fn? getRecorderFn() {
     if (!_mRecorderIsInited) {
@@ -249,6 +253,7 @@ class _MainPageState extends State<MainPage>
     setState(() {
       result = removeDiacritics(result);
       result = result.toUpperCase();
+      _lastWords = result;
     });
     List<String> singleWords = result.trim().split(' ');
     for (String word in singleWords) {
@@ -291,58 +296,62 @@ class _MainPageState extends State<MainPage>
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
-      backgroundColor: Colors.blue,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(30.0),
-              child: Container(
-                height: MediaQuery.of(context).size.height * 0.10,
-                width: MediaQuery.of(context).size.width * 0.85,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.0),
-                    border: Border.all(
-                      color: const Color(0XFF007AFF),
-                      width: 2.0,
-                    )),
-                child: SingleChildScrollView(
-                  child: _lastWords == 'IDLE'
-                      ? Text(
-                          textAlign: TextAlign.center,
-                          'Esperando traducción...',
-                          style: TextStyle(color: Colors.white, fontSize: 24),
-                        )
-                      : Text(
-                          textAlign: TextAlign.center,
-                          _lastWords,
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 24),
-                        ),
-                ),
+            backgroundColor: Colors.blue,
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(30.0),
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * 0.10,
+                      width: MediaQuery.of(context).size.width * 0.85,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          border: Border.all(
+                            color: const Color(0XFF007AFF),
+                            width: 2.0,
+                          )),
+                      child: SingleChildScrollView(
+                        child: _lastWords == 'IDLE'
+                            ? Text(
+                                textAlign: TextAlign.center,
+                                'Esperando traducción...',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 24),
+                              )
+                            : Text(
+                                textAlign: TextAlign.center,
+                                _lastWords,
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 24),
+                              ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                      child: Align(
+                          alignment: FractionalOffset.bottomCenter,
+                          child: _firstLoad
+                              ? Lottie.asset('assets/sign/IDLE.json',
+                                  animate: false)
+                              : _mRecorder!.isRecording
+                                  ? Lottie.asset('assets/sign/IDLE.json',
+                                      animate: false)
+                                  : Lottie.asset(_signToAnim,
+                                      controller: controller,
+                                      onLoaded: (composition) {
+                                      controller.forward();
+                                    }))),
+                ],
               ),
             ),
-            Expanded(
-                child: Align(
-                    alignment: FractionalOffset.bottomCenter,
-                    child: _firstLoad
-                        ? Lottie.asset('assets/sign/IDLE.json', animate: false)
-                        : _mRecorder!.isStopped
-                            ? Lottie.asset(_signToAnim, controller: controller,
-                                onLoaded: (composition) {
-                                controller.forward();
-                              })
-                            : Lottie.asset('assets/sign/IDLE.json',
-                                animate: false)))
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: getRecorderFn(),
-        tooltip: 'Listen',
-        child: Icon(_mRecorder!.isStopped ? Icons.mic_off : Icons.mic),
-      ),
-    ));
+            floatingActionButton: FloatingActionButton(
+              onPressed: getRecorderFn(),
+              tooltip: 'Listen',
+              child: Icon(
+                _mRecorder!.isRecording ? Icons.mic : Icons.mic_off,
+              ),
+            )));
   }
 }

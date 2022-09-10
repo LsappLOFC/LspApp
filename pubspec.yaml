@@ -48,6 +48,7 @@ dependencies:
   flutter_sound: ^9.2.13
   rxdart: ^0.27.5
   audio_session: ^0.1.10
+  get: ^4.6.5
 
 dev_dependencies:
   flutter_test:
