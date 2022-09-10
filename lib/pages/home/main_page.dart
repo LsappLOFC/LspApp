@@ -24,8 +24,6 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage>
     with SingleTickerProviderStateMixin {
-  //final SpeechToText _speechToText = SpeechToText();
-  //bool _speechEnabled = false;
   FlutterSoundRecorder? _mRecorder = FlutterSoundRecorder();
   late StreamSubscription? _mRecordingDataSubscription;
   bool _mplaybackReady = false;
@@ -181,15 +179,25 @@ class _MainPageState extends State<MainPage>
         text =
             data.results.map((e) => e.alternatives.first.transcript).join('\n');
         print("Google translate results: $text");
-        _onTextResultToSign(text);
         setState(() {
           _firstLoad = false;
         });
         await stopRecorder();
+        //Enviar el backend de NLP
+        var textoNLP = await _sendToNlp();
+        //Este recibiría textoNLP
+        _onTextResultToSign(text);
       }
     }, onDone: () async {});
 
     setState(() {});
+  }
+
+  Future<String> _sendToNlp() async {
+    print("enviando al backend");
+    await Future.delayed(Duration(seconds: 3));
+    print("recibe del backend");
+    return 'A';
   }
 
   RecognitionConfig _getConfig() => RecognitionConfig(
