@@ -185,6 +185,7 @@ class _MainPageState extends State<MainPage>
         setState(() {
           _firstLoad = false;
         });
+        await stopRecorder();
       }
     }, onDone: () async {});
 
