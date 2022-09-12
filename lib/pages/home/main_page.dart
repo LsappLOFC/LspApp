@@ -94,7 +94,6 @@ class _MainPageState extends State<MainPage>
         controller.reset();
       }
     });
-    //_initSpeech();
     _openRecorder();
   }
 
@@ -237,8 +236,15 @@ class _MainPageState extends State<MainPage>
   }
 
   Future<void> _victorPlayer() async {
+    //TODO: ELIMINAR SEÑAS YA REPRODUCIDAS DE LA COLA
+    //CUANDO SE EMPIECE A GRABAR UN NUEVO AUDIO, SE PAUSA LA REPRODUCCIÓN ACTUAL Y LUEGO SE REANUDA LA REPRODUCCIÓN CON FALTANTES Y NUEVAS
     if (_victorQueue.isNotEmpty) {
-      for (String sign in _victorQueue) {
+      var victorQueueCopy = _victorQueue;
+      for (String sign in victorQueueCopy) {
+        if (_mRecorder!.isRecording) {
+          break;
+        }
+        //TODO: MEJORAR REPRODUCCIÓN DE LOTTIE
         setState(() {
           _signToAnim = sign;
         });
@@ -278,6 +284,7 @@ class _MainPageState extends State<MainPage>
   }
 
   void _onPressedTranslateText() async {
+    _victorQueue.clear();
     setState(() {
       _textController.text = removeDiacritics(_textController.text);
       _textController.text = _textController.text.toUpperCase();
@@ -287,14 +294,9 @@ class _MainPageState extends State<MainPage>
     for (String word in singleWords) {
       if (_signDictionary.contains(word)) {
         setState(() {
-          _signToAnim = 'assets/sign/IDLE.json';
+          _signToAdd = 'assets/sign/$word.json';
+          _victorQueue.add(_signToAdd);
         });
-        await Future.delayed(const Duration(milliseconds: 100));
-        setState(() {
-          _signToAnim = 'assets/sign/$word.json';
-        });
-
-        await Future.delayed(const Duration(milliseconds: 1500));
       } else {
         setState(() {
           singleLetter = word.trim().split("");
@@ -341,6 +343,7 @@ class _MainPageState extends State<MainPage>
                             color: const Color(0XFF007AFF),
                             width: 2.0,
                           )),
+                      //TODO: MEJORAR BOTON DE TRADUCCIÓN
                       child: SingleChildScrollView(
                         child: TextField(
                           controller: _textController,
@@ -376,7 +379,7 @@ class _MainPageState extends State<MainPage>
                               ? Lottie.asset('assets/sign/IDLE.json',
                                   animate: false)
                               : _mRecorder!.isRecording
-                                  ? Lottie.asset('assets/sign/IDLE.json',
+                                  ? Lottie.asset('assets/sign/ESCUCHAR.json',
                                       animate: false)
                                   : Lottie.asset(_signToAnim,
                                       controller: controller,
