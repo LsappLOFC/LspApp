@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 import 'package:cloud_firestore/cloud_firestore.dart';
+=======
+// ignore_for_file: file_names
+
+>>>>>>> 239dd9349cee4a910493c3417de6ed5b8bb99b32
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -26,7 +31,7 @@ class _SignUpPageState extends State<SignUpPage> {
             password: _passwordController.text.trim());
       } else {
         setState(() {
-          err_correo = "Correo ya existe";
+          errCorreo = "Correo ya existe";
         });
       }
     }
@@ -58,7 +63,7 @@ class _SignUpPageState extends State<SignUpPage> {
     super.dispose();
   }
 
-  String err_correo = "";
+  String errCorreo = "";
 
   @override
   Widget build(BuildContext context) {
@@ -163,7 +168,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     child: Container(
                       alignment: Alignment.bottomLeft,
                       child: Text(
-                        err_correo,
+                        errCorreo,
                         style: GoogleFonts.lato(
                           fontWeight: FontWeight.w700,
                           fontSize: 16.0,
@@ -196,7 +201,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       keyboardType: TextInputType.text,
                       obscureText: true,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.lock_outline),
+                        prefixIcon: const Icon(Icons.lock_outline),
                         enabledBorder: OutlineInputBorder(
                           borderSide: const BorderSide(color: Colors.white),
                           borderRadius: BorderRadius.circular(35.0),

@@ -1,9 +1,19 @@
+// ignore_for_file: avoid_print
+
+import 'dart:convert';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:google_speech/google_speech.dart';
+<<<<<<< HEAD
+=======
+import 'package:ffmpeg_kit_flutter_full/ffmpeg_kit.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:lottie/lottie.dart';
+>>>>>>> 239dd9349cee4a910493c3417de6ed5b8bb99b32
 
 class FilePage extends StatefulWidget {
   const FilePage({Key? key}) : super(key: key);
@@ -12,15 +22,135 @@ class FilePage extends StatefulWidget {
   State<FilePage> createState() => _FilePageState();
 }
 
-class _FilePageState extends State<FilePage> {
+class _FilePageState extends State<FilePage>
+    with SingleTickerProviderStateMixin {
   bool senasIsSelected = true;
   bool textIsSelected = false;
   bool recognizing = false;
   bool recognizeFinished = false;
   String text = '';
-  String path = '';
+  String convertedPath = '';
+  late bool _firstLoad;
+  late String _signToAnim;
+  late AnimationController controller;
+  late List<String> singleLetter;
+  final _signDictionary = [
+    'A',
+    'B',
+    'C',
+    'D',
+    'E',
+    'F',
+    'G',
+    'H',
+    'I',
+    'K',
+    'L',
+    'LL',
+    'M',
+    'N',
+    'Ñ',
+    'O',
+    'P',
+    'Q',
+    'R',
+    'S',
+    'T',
+    'U',
+    'V',
+    'W',
+    'X',
+    'Y',
+    'Z',
+    'ENFERMO',
+    'HOSPITAL',
+    'PERU',
+    'MI',
+    'COMER',
+    'ESCUCHAR',
+    'TOMAR',
+    'MI',
+    'YO'
+  ];
 
-  void recognize() async {
+  @override
+  void initState() {
+    super.initState();
+    _signToAnim = '';
+    _firstLoad = true;
+    controller = AnimationController(
+        duration: const Duration(milliseconds: 1400), vsync: this);
+
+    controller.addStatusListener((status) async {
+      if (status == AnimationStatus.completed) {
+        setState(() {});
+        controller.reset();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  String removeDiacritics(String str) {
+    var withDia =
+        'ÀÁÂÃÄÅàáâãäåÒÓÔÕÕÖØòóôõöøÈÉÊËèéêëðÇçÐÌÍÎÏìíîïÙÚÛÜùúûüŠšŸÿýŽž.,';
+    var withoutDia =
+        'AAAAAAaaaaaaOOOOOOOooooooEEEEeeeeeCcDIIIIiiiiUUUUuuuuSsYyyZz  ';
+
+    for (int i = 0; i < withDia.length; i++) {
+      str = str.replaceAll(withDia[i], withoutDia[i]);
+    }
+
+    return str;
+  }
+
+  void _onTextResultToSign(String result) async {
+    setState(() {
+      result = removeDiacritics(result);
+      result = result.toUpperCase();
+    });
+    List<String> singleWords = result.trim().split(' ');
+    for (String word in singleWords) {
+      if (_signDictionary.contains(word)) {
+        setState(() {
+          _signToAnim = 'assets/sign/IDLE.json';
+        });
+        await Future.delayed(const Duration(milliseconds: 100));
+        setState(() {
+          _signToAnim = 'assets/sign/$word.json';
+        });
+
+        await Future.delayed(const Duration(milliseconds: 1500));
+      } else {
+        setState(() {
+          singleLetter = word.trim().split("");
+        });
+
+        for (String letter in singleLetter) {
+          if (letter == ' ') {
+            setState(() {
+              letter = 'ESPACIO';
+            });
+          }
+          setState(() {
+            _signToAnim = 'assets/sign/IDLE.json';
+          });
+          await Future.delayed(const Duration(milliseconds: 100));
+          setState(() {
+            _signToAnim = 'assets/sign/$letter.json';
+          });
+
+          await Future.delayed(const Duration(milliseconds: 1500));
+        }
+      }
+    }
+  }
+
+  void recognize(String path) async {
     setState(() {
       recognizing = true;
     });
@@ -28,7 +158,8 @@ class _FilePageState extends State<FilePage> {
         .loadString('assets/sign/cedar-abacus-275721-efb57f834e66.json')));
     final speechToText = SpeechToText.viaServiceAccount(serviceAccount);
     final config = _getConfig();
-    final audio = await _getAudioContent();
+    final audio =
+        File(path).readAsBytesSync().toList(); //await _getAudioContent();
 
     await speechToText.recognize(config, audio).then((value) {
       setState(() {
@@ -36,10 +167,12 @@ class _FilePageState extends State<FilePage> {
             .map((e) => e.alternatives.first.transcript)
             .join('\n');
         print('TEXTO RECONOCIDO: $text');
+        _onTextResultToSign(text);
       });
     }).whenComplete(() => setState(() {
           recognizeFinished = true;
           recognizing = false;
+          _firstLoad = false;
         }));
   }
 
@@ -50,9 +183,9 @@ class _FilePageState extends State<FilePage> {
       sampleRateHertz: 8000,
       languageCode: 'es-PE');
 
-  Future<List<int>> _getAudioContent() async {
+  /*Future<List<int>> _getAudioContent() async {
     return File(path).readAsBytesSync().toList();
-  }
+  }*/
 
   bool showContent() {
     if (senasIsSelected) {
@@ -64,17 +197,55 @@ class _FilePageState extends State<FilePage> {
 
   void _pickFile() async {
     final res = await FilePicker.platform.pickFiles(allowMultiple: false);
+    if (res != null) {
+      final path = res.files.single.path!;
+      setState(() {
+        text = '';
+      });
+      print('NOMBRE DEL ARCHIVO: ${res.files.single.name}');
+      print('EXTENSION DEL ARCHIVO: ${res.files.single.extension}');
+      print('PATH DEL ARCHIVO ${res.files.single.path}');
+      var status = await Permission.storage.status;
+      if (!status.isGranted) {
+        await Permission.storage.request();
+      }
+      final file = File(path);
+      Stream<String> lines = file
+          .openRead()
+          .transform(utf8.decoder) // Decode bytes to UTF-8.
+          .transform(LineSplitter()); // Convert stream to individual lines.
+      try {
+        await for (var line in lines) {
+          print(line);
+          setState(() {
+            text = line;
+          });
+          _onTextResultToSign(line);
+        }
+        print('File is now closed.');
+      } catch (e) {
+        print('Error: $e');
+      }
+      //TODO: No almacenar en memoria interna, guardar en una variable o caché y traducirlo
 
-    if (res == null) {
+      var fileName = res.files.single.name;
+      var fileFormat = fileName.substring(fileName.lastIndexOf('.'));
+      fileName = fileName.replaceAll(fileFormat, '');
+
+      final convertedFilePath = '/storage/emulated/0/download/$fileName.mp3';
+      FFmpegKit.execute(
+              '-i $path -q:a 0 -map a -vn -acodec libmp3lame $convertedFilePath')
+          .then((session) async {
+        final logs = await session.getLogs();
+        for (var log in logs) {
+          print(log.getMessage());
+        }
+        //this.audio = File(convertedFilePath).readAsBytesSync().toList();
+        recognize(convertedFilePath);
+      });
+    } else {
       return;
     }
-    setState(() {
-      text = '';
-      path = res.files.single.path!;
-    });
-    print('NOMBRE DEL ARCHIVO: ${res.files.single.name}');
-    print('PATO DEL ARCHIVO ${res.files.single.path}');
-    /*if (!recognizing)*/ recognize();
   }
 
   @override
@@ -192,6 +363,7 @@ class _FilePageState extends State<FilePage> {
             const SizedBox(
               height: 20.0,
             ),
+<<<<<<< HEAD
             showContent()
                 ? Image.asset(
                     "assets/images/img_2.png",
@@ -221,6 +393,8 @@ class _FilePageState extends State<FilePage> {
                       ),
                     ),
                   ),
+=======
+>>>>>>> 239dd9349cee4a910493c3417de6ed5b8bb99b32
             Column(
               children: [
                 Padding(
@@ -262,7 +436,41 @@ class _FilePageState extends State<FilePage> {
                   ),
                 ),
               ],
-            )
+            ),
+            showContent()
+                ? Align(
+                    alignment: FractionalOffset.bottomCenter,
+                    child: _firstLoad
+                        ? Lottie.asset('assets/sign/IDLE.json', animate: false)
+                        : Lottie.asset(_signToAnim, controller: controller,
+                            onLoaded: (composition) {
+                            controller.forward();
+                          })) //)
+                : Padding(
+                    padding: const EdgeInsets.all(30.0),
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * 0.35,
+                      width: MediaQuery.of(context).size.width * 0.85,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          border: Border.all(
+                            color: const Color(0XFF007AFF),
+                            width: 2.0,
+                          )),
+                      child: SingleChildScrollView(
+                        child: text == ''
+                            ? const Text(
+                                'Esperando traducción...',
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 18),
+                              )
+                            : Text(
+                                text,
+                                style: const TextStyle(fontSize: 18),
+                              ),
+                      ),
+                    ),
+                  )
           ],
         ),
       ),
