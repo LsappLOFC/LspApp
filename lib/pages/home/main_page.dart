@@ -33,8 +33,11 @@ class _MainPageState extends State<MainPage>
   String _lastWords = 'IDLE';
   late bool _firstLoad;
   late String _signToAnim;
+  late String _signToAdd;
+  late List<String> _victorQueue;
   late AnimationController controller;
   late List<String> singleLetter;
+  late List<String> singleWords;
   final _signDictionary = [
     'A',
     'B',
@@ -78,7 +81,10 @@ class _MainPageState extends State<MainPage>
   void initState() {
     super.initState();
     _signToAnim = '';
+    _signToAdd = '';
     _firstLoad = true;
+    singleWords = [];
+    _victorQueue = [];
     controller = AnimationController(
         duration: const Duration(milliseconds: 1400), vsync: this);
 
@@ -142,8 +148,6 @@ class _MainPageState extends State<MainPage>
     ));
   }
 
-  // ----------------------  Here is the code to record to a Stream ------------
-
   late StreamSubscription<List<int>> audioStreamSubscription;
   late BehaviorSubject<List<int>> audioStream;
 
@@ -183,7 +187,9 @@ class _MainPageState extends State<MainPage>
         text =
             data.results.map((e) => e.alternatives.first.transcript).join('\n');
         print("Google translate results: $text");
-        await _onTextResultToSign(text);
+        setState(() {});
+        await _loadQueue(text);
+        await _victorPlayer();
       }
     }, onDone: () async {});
 
@@ -230,48 +236,42 @@ class _MainPageState extends State<MainPage>
     return str;
   }
 
-  Future<void> _onTextResultToSign(String result) async {
+  Future<void> _victorPlayer() async {
+    if (_victorQueue.isNotEmpty) {
+      for (String sign in _victorQueue) {
+        setState(() {
+          _signToAnim = sign;
+        });
+        await Future.delayed(const Duration(milliseconds: 1500));
+      }
+    }
+  }
+
+  Future<void> _loadQueue(String result) async {
     String resultNLP = await _sendToNlp(result);
+    _victorQueue.clear();
     setState(() {
       resultNLP = removeDiacritics(resultNLP);
       resultNLP = resultNLP.toUpperCase();
-      _lastWords = resultNLP;
+      _textController.text = resultNLP;
       _firstLoad = false;
     });
-    List<String> singleWords = resultNLP.trim().split(' ');
+    singleWords = resultNLP.trim().split(' ');
     for (String word in singleWords) {
-      while (!_pauseState) {
-        if (_signDictionary.contains(word)) {
+      if (_signDictionary.contains(word)) {
+        setState(() {
+          _signToAdd = 'assets/sign/$word.json';
+          _victorQueue.add(_signToAdd);
+        });
+      } else {
+        setState(() {
+          singleLetter = word.trim().split("");
+        });
+        for (String letter in singleLetter) {
           setState(() {
-            _signToAnim = 'assets/sign/IDLE.json';
+            _signToAdd = 'assets/sign/$letter.json';
+            _victorQueue.add(_signToAdd);
           });
-          await Future.delayed(const Duration(milliseconds: 100));
-          setState(() {
-            _signToAnim = 'assets/sign/$word.json';
-          });
-
-          await Future.delayed(const Duration(milliseconds: 1500));
-        } else {
-          setState(() {
-            singleLetter = word.trim().split("");
-          });
-
-          for (String letter in singleLetter) {
-            if (letter == ' ') {
-              setState(() {
-                letter = 'ESPACIO';
-              });
-            }
-            setState(() {
-              _signToAnim = 'assets/sign/IDLE.json';
-            });
-            await Future.delayed(const Duration(milliseconds: 100));
-            setState(() {
-              _signToAnim = 'assets/sign/$letter.json';
-            });
-
-            await Future.delayed(const Duration(milliseconds: 1500));
-          }
         }
       }
     }
@@ -279,42 +279,42 @@ class _MainPageState extends State<MainPage>
 
   void _onPressedTranslateText() async {
     setState(() {
+      _textController.text = removeDiacritics(_textController.text);
+      _textController.text = _textController.text.toUpperCase();
       _firstLoad = false;
     });
-    List<String> singleWords = _lastWords.trim().split(' ');
+    singleWords = _textController.text.trim().split(' ');
     for (String word in singleWords) {
-      while (!_pauseState) {
-        if (_signDictionary.contains(word)) {
+      if (_signDictionary.contains(word)) {
+        setState(() {
+          _signToAnim = 'assets/sign/IDLE.json';
+        });
+        await Future.delayed(const Duration(milliseconds: 100));
+        setState(() {
+          _signToAnim = 'assets/sign/$word.json';
+        });
+
+        await Future.delayed(const Duration(milliseconds: 1500));
+      } else {
+        setState(() {
+          singleLetter = word.trim().split("");
+        });
+
+        for (String letter in singleLetter) {
+          if (letter == ' ') {
+            setState(() {
+              letter = 'ESPACIO';
+            });
+          }
           setState(() {
             _signToAnim = 'assets/sign/IDLE.json';
           });
           await Future.delayed(const Duration(milliseconds: 100));
           setState(() {
-            _signToAnim = 'assets/sign/$word.json';
+            _signToAnim = 'assets/sign/$letter.json';
           });
 
           await Future.delayed(const Duration(milliseconds: 1500));
-        } else {
-          setState(() {
-            singleLetter = word.trim().split("");
-          });
-
-          for (String letter in singleLetter) {
-            if (letter == ' ') {
-              setState(() {
-                letter = 'ESPACIO';
-              });
-            }
-            setState(() {
-              _signToAnim = 'assets/sign/IDLE.json';
-            });
-            await Future.delayed(const Duration(milliseconds: 100));
-            setState(() {
-              _signToAnim = 'assets/sign/$letter.json';
-            });
-
-            await Future.delayed(const Duration(milliseconds: 1500));
-          }
         }
       }
     }
@@ -342,48 +342,33 @@ class _MainPageState extends State<MainPage>
                             width: 2.0,
                           )),
                       child: SingleChildScrollView(
-                          child: Column(children: [
-                        TextField(
+                        child: TextField(
                           controller: _textController,
                           decoration: InputDecoration(
-                            prefixIcon: const Icon(Icons.email),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(color: Colors.white),
-                              borderRadius: BorderRadius.circular(35.0),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                color: Colors.deepPurple,
-                              ),
-                              borderRadius: BorderRadius.circular(35.0),
-                            ),
                             hintText: "Esperando traducción",
-                            fillColor: Colors.grey[200],
-                            filled: true,
                           ),
                         ),
-
                         /* _lastWords == 'IDLE'
-                            ? Text(
-                                textAlign: TextAlign.center,
-                                'Esperando traducción...',
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: 22),
-                              )
-                            : Text(
-                                textAlign: TextAlign.center,
-                                _lastWords,
-                                style: const TextStyle(
-                                    color: Colors.black, fontSize: 22),
-                              ),*/
-                        ElevatedButton(
-                            onPressed: () {
-                              _onPressedTranslateText();
-                            },
-                            child: Text('Traducir'))
-                      ])),
+                                ? Text(
+                                    textAlign: TextAlign.center,
+                                    'Esperando traducción...',
+                                    style: TextStyle(
+                                        color: Colors.black, fontSize: 22),
+                                  )
+                                : Text(
+                                    textAlign: TextAlign.center,
+                                    _lastWords,
+                                    style: const TextStyle(
+                                        color: Colors.black, fontSize: 22),
+                                  ),*/
+                      ),
                     ),
                   ),
+                  ElevatedButton(
+                      onPressed: () {
+                        _onPressedTranslateText();
+                      },
+                      child: Text('Traducir')),
                   Expanded(
                       child: Align(
                           alignment: FractionalOffset.bottomCenter,
