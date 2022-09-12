@@ -403,9 +403,7 @@ class _FilePageState extends State<FilePage>
               ],
             ),
             showContent()
-                ? /*Expanded(
-                    child:*/
-                Align(
+                ? Align(
                     alignment: FractionalOffset.bottomCenter,
                     child: _firstLoad
                         ? Lottie.asset('assets/sign/IDLE.json', animate: false)
@@ -428,11 +426,12 @@ class _FilePageState extends State<FilePage>
                         child: text == ''
                             ? const Text(
                                 'Esperando traducción...',
-                                style: TextStyle(color: Colors.grey),
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 18),
                               )
                             : Text(
                                 text,
-                                style: const TextStyle(fontSize: 14),
+                                style: const TextStyle(fontSize: 18),
                               ),
                       ),
                     ),
