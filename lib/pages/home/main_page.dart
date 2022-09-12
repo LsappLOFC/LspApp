@@ -183,16 +183,21 @@ class _MainPageState extends State<MainPage>
     responseStream.listen((data) async {
       if (data.results.first.isFinal == true) {
         await stopRecorder();
-        text =
-            data.results.map((e) => e.alternatives.first.transcript).join('\n');
+        text = await _fetchGoogleResults(data);
         print("Google translate results: $text");
         setState(() {});
         await _loadQueue(text);
-        await _victorPlayer();
+        _victorPlayer();
       }
     }, onDone: () async {});
 
     setState(() {});
+  }
+
+  Future<String> _fetchGoogleResults(var data) async {
+    String res =
+        data.results.map((e) => e.alternatives.first.transcript).join('\n');
+    return res;
   }
 
   Future<String> _sendToNlp(String text) async {
@@ -248,8 +253,12 @@ class _MainPageState extends State<MainPage>
         setState(() {
           _signToAnim = sign;
         });
+        print(_signToAnim);
         await Future.delayed(const Duration(milliseconds: 1500));
       }
+      setState(() {
+        _signToAnim = 'assets/sign/IDLE.json';
+      });
     }
   }
 
@@ -283,7 +292,7 @@ class _MainPageState extends State<MainPage>
     }
   }
 
-  void _onPressedTranslateText() async {
+  void _onPressedLoadQueue() async {
     _victorQueue.clear();
     setState(() {
       _textController.text = removeDiacritics(_textController.text);
@@ -301,25 +310,15 @@ class _MainPageState extends State<MainPage>
         setState(() {
           singleLetter = word.trim().split("");
         });
-
         for (String letter in singleLetter) {
-          if (letter == ' ') {
-            setState(() {
-              letter = 'ESPACIO';
-            });
-          }
           setState(() {
-            _signToAnim = 'assets/sign/IDLE.json';
+            _signToAdd = 'assets/sign/$letter.json';
+            _victorQueue.add(_signToAdd);
           });
-          await Future.delayed(const Duration(milliseconds: 100));
-          setState(() {
-            _signToAnim = 'assets/sign/$letter.json';
-          });
-
-          await Future.delayed(const Duration(milliseconds: 1500));
         }
       }
     }
+    _victorPlayer();
   }
 
   @override
@@ -327,6 +326,7 @@ class _MainPageState extends State<MainPage>
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
+            resizeToAvoidBottomInset: false,
             backgroundColor: Colors.white,
             body: Center(
               child: Column(
@@ -335,7 +335,7 @@ class _MainPageState extends State<MainPage>
                   Padding(
                     padding: const EdgeInsets.all(30.0),
                     child: Container(
-                      height: MediaQuery.of(context).size.height * 0.10,
+                      height: MediaQuery.of(context).size.height * 0.20,
                       width: MediaQuery.of(context).size.width * 0.85,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10.0),
@@ -343,33 +343,30 @@ class _MainPageState extends State<MainPage>
                             color: const Color(0XFF007AFF),
                             width: 2.0,
                           )),
-                      //TODO: MEJORAR BOTON DE TRADUCCIÓN
                       child: SingleChildScrollView(
                         child: TextField(
                           controller: _textController,
+                          keyboardType: TextInputType.multiline,
+                          maxLines: null,
                           decoration: InputDecoration(
                             hintText: "Esperando traducción",
+                            fillColor: Colors.transparent,
+                            filled: true,
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.only(
+                              left: 15,
+                              bottom: 11,
+                              top: 11,
+                              right: 15,
+                            ),
                           ),
                         ),
-                        /* _lastWords == 'IDLE'
-                                ? Text(
-                                    textAlign: TextAlign.center,
-                                    'Esperando traducción...',
-                                    style: TextStyle(
-                                        color: Colors.black, fontSize: 22),
-                                  )
-                                : Text(
-                                    textAlign: TextAlign.center,
-                                    _lastWords,
-                                    style: const TextStyle(
-                                        color: Colors.black, fontSize: 22),
-                                  ),*/
                       ),
                     ),
                   ),
                   ElevatedButton(
                       onPressed: () {
-                        _onPressedTranslateText();
+                        _onPressedLoadQueue();
                       },
                       child: Text('Traducir')),
                   Expanded(
