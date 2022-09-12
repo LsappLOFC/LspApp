@@ -39,6 +39,17 @@ class _MainPageState extends State<MainPage>
   late List<String> singleLetter;
   late List<String> singleWords;
   final _signDictionary = [
+    '0',
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
     'A',
     'B',
     'C',
@@ -74,7 +85,11 @@ class _MainPageState extends State<MainPage>
     'ESCUCHAR',
     'TOMAR',
     'MI',
-    'YO'
+    'YO',
+    'SI',
+    'CUANTO',
+    'DONDE',
+    'TU'
   ];
 
   @override
@@ -368,7 +383,7 @@ class _MainPageState extends State<MainPage>
                       onPressed: () {
                         _onPressedLoadQueue();
                       },
-                      child: Text('Traducir')),
+                      child: Text('Señas')),
                   Expanded(
                       child: Align(
                           alignment: FractionalOffset.bottomCenter,
