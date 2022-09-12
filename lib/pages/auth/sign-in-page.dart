@@ -101,7 +101,7 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: TextField(
+                    child: TextFormField(
                       controller: _emailController,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.email),
@@ -119,6 +119,15 @@ class _SignInPageState extends State<SignInPage> {
                         fillColor: Colors.grey[200],
                         filled: true,
                       ),
+                      validator: ((value) {
+                        if (value!.isEmpty ||
+                            !RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}')
+                                .hasMatch(value)) {
+                          return "Formato de correo incorrecto";
+                        } else {
+                          return null;
+                        }
+                      }),
                     ),
                   ),
                   const SizedBox(
@@ -140,8 +149,10 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: TextField(
+                    child: TextFormField(
                       controller: _passwordController,
+                      keyboardType: TextInputType.text,
+                      obscureText: true,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.lock_outline),
                         enabledBorder: OutlineInputBorder(
@@ -158,6 +169,13 @@ class _SignInPageState extends State<SignInPage> {
                         fillColor: Colors.grey[200],
                         filled: true,
                       ),
+                      validator: ((validate) {
+                        if (validate!.isEmpty) {
+                          return "ingrese contraseña";
+                        } else {
+                          return null;
+                        }
+                      }),
                     ),
                   ),
                   const SizedBox(

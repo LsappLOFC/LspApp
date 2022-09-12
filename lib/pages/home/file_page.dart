@@ -1,19 +1,13 @@
-// ignore_for_file: avoid_print
-
 import 'dart:convert';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:google_speech/google_speech.dart';
-<<<<<<< HEAD
-=======
 import 'package:ffmpeg_kit_flutter_full/ffmpeg_kit.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:lottie/lottie.dart';
->>>>>>> 239dd9349cee4a910493c3417de6ed5b8bb99b32
 
 class FilePage extends StatefulWidget {
   const FilePage({Key? key}) : super(key: key);
@@ -363,7 +357,6 @@ class _FilePageState extends State<FilePage>
             const SizedBox(
               height: 20.0,
             ),
-<<<<<<< HEAD
             showContent()
                 ? Image.asset(
                     "assets/images/img_2.png",
@@ -393,8 +386,6 @@ class _FilePageState extends State<FilePage>
                       ),
                     ),
                   ),
-=======
->>>>>>> 239dd9349cee4a910493c3417de6ed5b8bb99b32
             Column(
               children: [
                 Padding(

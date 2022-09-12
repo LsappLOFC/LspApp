@@ -1,9 +1,4 @@
-<<<<<<< HEAD
 import 'package:cloud_firestore/cloud_firestore.dart';
-=======
-// ignore_for_file: file_names
-
->>>>>>> 239dd9349cee4a910493c3417de6ed5b8bb99b32
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -29,6 +24,7 @@ class _SignUpPageState extends State<SignUpPage> {
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
             email: _emailController.text.trim(),
             password: _passwordController.text.trim());
+        await saveData();
       } else {
         setState(() {
           errCorreo = "Correo ya existe";
@@ -41,7 +37,7 @@ class _SignUpPageState extends State<SignUpPage> {
     final now = DateTime.now();
     FirebaseFirestore db = FirebaseFirestore.instance;
     final userData = <String, dynamic>{
-      "name": "t",
+      "name": "prueba",
       "email": _emailController.text.trim(),
       "rol": "user",
       "habilitado": false,
@@ -231,7 +227,6 @@ class _SignUpPageState extends State<SignUpPage> {
                   InkWell(
                     onTap: () {
                       signUp();
-                      saveData();
                     },
                     child: Container(
                       alignment: Alignment.bottomCenter,
