@@ -22,8 +22,7 @@ class MainPage extends StatefulWidget {
   State<MainPage> createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage>
-    with SingleTickerProviderStateMixin {
+class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   FlutterSoundRecorder? _mRecorder = FlutterSoundRecorder();
   late StreamSubscription? _mRecordingDataSubscription;
   bool _mplaybackReady = false;
@@ -32,10 +31,13 @@ class _MainPageState extends State<MainPage>
   final _textController = TextEditingController();
   String _lastWords = 'IDLE';
   late bool _firstLoad;
-  late String _signToAnim;
+  late int _animIndex;
+  late int _animLenght;
+  late List<String> _signToAnim;
   late String _signToAdd;
   late List<String> _victorQueue;
   late AnimationController controller;
+  late AnimationController listenController;
   late List<String> singleLetter;
   late List<String> singleWords;
   final _signDictionary = [
@@ -95,9 +97,11 @@ class _MainPageState extends State<MainPage>
   @override
   void initState() {
     super.initState();
-    _signToAnim = '';
+    _signToAnim = [];
     _signToAdd = '';
     _firstLoad = true;
+    _animIndex = 0;
+    _animLenght = 1;
     singleWords = [];
     _victorQueue = [];
     controller = AnimationController(
@@ -105,10 +109,24 @@ class _MainPageState extends State<MainPage>
 
     controller.addStatusListener((status) async {
       if (status == AnimationStatus.completed) {
-        setState(() {});
+        if (_animIndex < _animLenght - 1) {
+          setState(() {
+            _animIndex++;
+          });
+        }
         controller.reset();
       }
     });
+
+    listenController = AnimationController(
+        duration: const Duration(milliseconds: 1400), vsync: this);
+
+    listenController.addStatusListener((status) async {
+      if (status == AnimationStatus.completed) {
+        listenController.reset();
+      }
+    });
+
     _openRecorder();
   }
 
@@ -258,22 +276,12 @@ class _MainPageState extends State<MainPage>
   Future<void> _victorPlayer() async {
     //TODO: ELIMINAR SEÑAS YA REPRODUCIDAS DE LA COLA
     //CUANDO SE EMPIECE A GRABAR UN NUEVO AUDIO, SE PAUSA LA REPRODUCCIÓN ACTUAL Y LUEGO SE REANUDA LA REPRODUCCIÓN CON FALTANTES Y NUEVAS
+    _animIndex = 0;
+    _animLenght = 1;
     if (_victorQueue.isNotEmpty) {
       var victorQueueCopy = _victorQueue;
-      for (String sign in victorQueueCopy) {
-        if (_mRecorder!.isRecording) {
-          break;
-        }
-        //TODO: MEJORAR REPRODUCCIÓN DE LOTTIE
-        setState(() {
-          _signToAnim = sign;
-        });
-        print(_signToAnim);
-        await Future.delayed(const Duration(milliseconds: 1500));
-      }
-      setState(() {
-        _signToAnim = 'assets/sign/IDLE.json';
-      });
+      _animLenght = victorQueueCopy.length;
+      _signToAnim = victorQueueCopy;
     }
   }
 
@@ -379,11 +387,28 @@ class _MainPageState extends State<MainPage>
                       ),
                     ),
                   ),
-                  ElevatedButton(
-                      onPressed: () {
-                        _onPressedLoadQueue();
-                      },
-                      child: Text('Señas')),
+                  InkWell(
+                    onTap: () {
+                      _onPressedLoadQueue();
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(context).size.width * 0.40),
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                          alignment: Alignment.center,
+                          height: 70.0,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF007AFF),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: const Icon(
+                            Icons.front_hand_outlined,
+                            size: 60.0,
+                            color: Colors.white,
+                          )),
+                    ),
+                  ),
                   Expanded(
                       child: Align(
                           alignment: FractionalOffset.bottomCenter,
@@ -392,8 +417,14 @@ class _MainPageState extends State<MainPage>
                                   animate: false)
                               : _mRecorder!.isRecording
                                   ? Lottie.asset('assets/sign/ESCUCHAR.json',
-                                      animate: false)
-                                  : Lottie.asset(_signToAnim,
+                                      controller: listenController,
+                                      onLoaded: (composition) {
+                                      listenController.forward();
+                                    })
+                                  /*: _signToAnim.isEmpty
+                                      ? Lottie.asset('assets/sign/IDLE.json',
+                                          animate: false)*/
+                                  : Lottie.asset(_signToAnim[_animIndex],
                                       controller: controller,
                                       onLoaded: (composition) {
                                       controller.forward();
