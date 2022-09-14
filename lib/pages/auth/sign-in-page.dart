@@ -37,14 +37,14 @@ class _SignInPageState extends State<SignInPage> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 40.0),
+              padding: const EdgeInsets.only(top: 50.0),
               child: Image.asset(
                 "assets/images/img_1.png",
-                scale: MediaQuery.of(context).size.height * 0.0024,
+                scale: MediaQuery.of(context).size.height * 0.0020,
               ),
             ),
             Container(
-              height: MediaQuery.of(context).size.height * 0.60,
+              height: MediaQuery.of(context).size.height * 0.70,
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
@@ -101,7 +101,7 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: TextField(
+                    child: TextFormField(
                       controller: _emailController,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.email),
@@ -119,6 +119,15 @@ class _SignInPageState extends State<SignInPage> {
                         fillColor: Colors.grey[200],
                         filled: true,
                       ),
+                      validator: ((value) {
+                        if (value!.isEmpty ||
+                            !RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}')
+                                .hasMatch(value)) {
+                          return "Formato de correo incorrecto";
+                        } else {
+                          return null;
+                        }
+                      }),
                     ),
                   ),
                   const SizedBox(
@@ -140,8 +149,10 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: TextField(
+                    child: TextFormField(
                       controller: _passwordController,
+                      keyboardType: TextInputType.text,
+                      obscureText: true,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.lock_outline),
                         enabledBorder: OutlineInputBorder(
@@ -158,6 +169,13 @@ class _SignInPageState extends State<SignInPage> {
                         fillColor: Colors.grey[200],
                         filled: true,
                       ),
+                      validator: ((validate) {
+                        if (validate!.isEmpty) {
+                          return "ingrese contraseña";
+                        } else {
+                          return null;
+                        }
+                      }),
                     ),
                   ),
                   const SizedBox(

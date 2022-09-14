@@ -1,7 +1,4 @@
-// ignore_for_file: avoid_print
-
 import 'dart:convert';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -360,6 +357,35 @@ class _FilePageState extends State<FilePage>
             const SizedBox(
               height: 20.0,
             ),
+            showContent()
+                ? Image.asset(
+                    "assets/images/img_2.png",
+                    scale: MediaQuery.of(context).size.height * 0.0030,
+                  )
+                : Padding(
+                    padding: const EdgeInsets.all(30.0),
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * 0.35,
+                      width: MediaQuery.of(context).size.width * 0.85,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          border: Border.all(
+                            color: const Color(0XFF007AFF),
+                            width: 2.0,
+                          )),
+                      child: SingleChildScrollView(
+                        child: text == ''
+                            ? const Text(
+                                'Esperando traducción...',
+                                style: TextStyle(color: Colors.grey),
+                              )
+                            : Text(
+                                text,
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                      ),
+                    ),
+                  ),
             Column(
               children: [
                 Padding(

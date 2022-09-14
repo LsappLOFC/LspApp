@@ -1,5 +1,4 @@
-// ignore_for_file: file_names
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -25,12 +24,32 @@ class _SignUpPageState extends State<SignUpPage> {
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
             email: _emailController.text.trim(),
             password: _passwordController.text.trim());
+        await saveData();
       } else {
         setState(() {
           errCorreo = "Correo ya existe";
         });
       }
     }
+  }
+
+  Future saveData() async {
+    final now = DateTime.now();
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    final userData = <String, dynamic>{
+      "name": "prueba",
+      "email": _emailController.text.trim(),
+      "rol": "user",
+      "habilitado": false,
+      "fechaHoraRegistro": now,
+      "fechaHoraActualizacion": now,
+      "eliminado": false
+    };
+    await db
+        .collection("users")
+        .doc()
+        .set(userData)
+        .onError((e, _) => print("Error writing document: $e"));
   }
 
   @override
@@ -206,7 +225,9 @@ class _SignUpPageState extends State<SignUpPage> {
                     height: 30.0,
                   ),
                   InkWell(
-                    onTap: signUp,
+                    onTap: () {
+                      signUp();
+                    },
                     child: Container(
                       alignment: Alignment.bottomCenter,
                       child: Container(
@@ -231,7 +252,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   Image.asset(
                     "assets/images/img.png",
-                    scale: MediaQuery.of(context).size.height * 0.0021,
+                    scale: MediaQuery.of(context).size.height * 0.0020,
                   ),
                 ],
               ),

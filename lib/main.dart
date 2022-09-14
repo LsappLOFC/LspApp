@@ -42,6 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
       )),
       child: InkWell(
         onTap: () {
+          print(MediaQuery.of(context).size.height);
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const MainControllerPage()),
