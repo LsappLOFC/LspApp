@@ -113,8 +113,11 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           setState(() {
             _animIndex++;
           });
+          if (_victorQueue[_animIndex - 1] == _victorQueue[_animIndex]) {
+            controller.repeat();
+          }
+          controller.reset();
         }
-        controller.reset();
       }
     });
 
@@ -276,10 +279,15 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   Future<void> _victorPlayer() async {
     //TODO: ELIMINAR SEÑAS YA REPRODUCIDAS DE LA COLA
     //CUANDO SE EMPIECE A GRABAR UN NUEVO AUDIO, SE PAUSA LA REPRODUCCIÓN ACTUAL Y LUEGO SE REANUDA LA REPRODUCCIÓN CON FALTANTES Y NUEVAS
+    //REPRODUCIR REPETIDAS
     _animIndex = 0;
     _animLenght = 1;
     if (_victorQueue.isNotEmpty) {
       var victorQueueCopy = _victorQueue;
+      //Si se pausa, podemos saber donde nos quedamos usando el index.
+      //_victorQueue[index]
+      victorQueueCopy.add(
+          'assets/sign/IDLE.json'); // Esto debe cambiar, (buscar otra solución para el problema de la ultima seña que se repite)
       _animLenght = victorQueueCopy.length;
       _signToAnim = victorQueueCopy;
     }
@@ -427,7 +435,20 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                   : Lottie.asset(_signToAnim[_animIndex],
                                       controller: controller,
                                       onLoaded: (composition) {
-                                      controller.forward();
+                                      controller.forward().whenComplete(() => {
+                                            if (_animIndex < _animLenght - 1)
+                                              {
+                                                setState(() {
+                                                  _animIndex++;
+                                                })
+                                              }
+                                            else
+                                              {
+                                                setState(() {
+                                                  _animIndex = 0;
+                                                })
+                                              }
+                                          });
                                     }))),
                 ],
               ),
