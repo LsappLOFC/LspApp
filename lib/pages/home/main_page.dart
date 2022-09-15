@@ -106,20 +106,27 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     _victorQueue = [];
     controller = AnimationController(
         duration: const Duration(milliseconds: 1400), vsync: this);
-
-    controller.addStatusListener((status) async {
-      if (status == AnimationStatus.completed) {
-        if (_animIndex < _animLenght - 1) {
-          setState(() {
-            _animIndex++;
-          });
-          if (_victorQueue[_animIndex - 1] == _victorQueue[_animIndex]) {
+    try {
+      controller.addStatusListener((status) async {
+        if (status == AnimationStatus.completed) {
+          if (_animIndex < _animLenght - 1) {
+            setState(() {
+              _animIndex++;
+            });
+            /*
+          if (_victorQueue[_animIndex] == _victorQueue[_animIndex + 1]) {
             controller.repeat();
+          } else {
+            controller.forward();
           }
-          controller.reset();
+*/
+            controller.reset();
+          } else {}
         }
-      }
-    });
+      });
+    } catch (err) {
+      print('error: $err');
+    }
 
     listenController = AnimationController(
         duration: const Duration(milliseconds: 1400), vsync: this);
@@ -286,8 +293,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       var victorQueueCopy = _victorQueue;
       //Si se pausa, podemos saber donde nos quedamos usando el index.
       //_victorQueue[index]
-      victorQueueCopy.add(
-          'assets/sign/IDLE.json'); // Esto debe cambiar, (buscar otra solución para el problema de la ultima seña que se repite)
+      /*victorQueueCopy.add(
+          'assets/sign/IDLE.json');*/ // Esto debe cambiar, (buscar otra solución para el problema de la ultima seña que se repite)
       _animLenght = victorQueueCopy.length;
       _signToAnim = victorQueueCopy;
     }
@@ -435,20 +442,11 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                   : Lottie.asset(_signToAnim[_animIndex],
                                       controller: controller,
                                       onLoaded: (composition) {
-                                      controller.forward().whenComplete(() => {
-                                            if (_animIndex < _animLenght - 1)
-                                              {
-                                                setState(() {
-                                                  _animIndex++;
-                                                })
-                                              }
-                                            else
-                                              {
-                                                setState(() {
-                                                  _animIndex = 0;
-                                                })
-                                              }
-                                          });
+                                      try {
+                                        controller.forward();
+                                      } catch (e) {
+                                        print(e);
+                                      }
                                     }))),
                 ],
               ),
