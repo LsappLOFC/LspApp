@@ -1,11 +1,9 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, avoid_print
 
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:lottie/lottie.dart';
-import 'package:get/get.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:google_speech/google_speech.dart';
 import 'package:audio_session/audio_session.dart';
@@ -25,11 +23,8 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   FlutterSoundRecorder? _mRecorder = FlutterSoundRecorder();
   late StreamSubscription? _mRecordingDataSubscription;
-  bool _mplaybackReady = false;
   bool _mRecorderIsInited = false;
-  bool _pauseState = false;
   final _textController = TextEditingController();
-  String _lastWords = 'IDLE';
   late bool _firstLoad;
   late int _animIndex;
   late int _animLenght;
@@ -105,28 +100,18 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     singleWords = [];
     _victorQueue = [];
     controller = AnimationController(
-        duration: const Duration(milliseconds: 1400), vsync: this);
-    try {
-      controller.addStatusListener((status) async {
-        if (status == AnimationStatus.completed) {
-          if (_animIndex < _animLenght - 1) {
-            setState(() {
-              _animIndex++;
-            });
-            /*
-          if (_victorQueue[_animIndex] == _victorQueue[_animIndex + 1]) {
-            controller.repeat();
-          } else {
-            controller.forward();
-          }
-*/
-            controller.reset();
-          } else {}
-        }
-      });
-    } catch (err) {
-      print('error: $err');
-    }
+        duration: const Duration(milliseconds: 1300), vsync: this);
+
+    controller.addStatusListener((status) async {
+      if (status == AnimationStatus.completed) {
+        if (_animIndex < _animLenght - 1) {
+          setState(() {
+            _animIndex++;
+          });
+        } else {}
+        controller.reset();
+      }
+    });
 
     listenController = AnimationController(
         duration: const Duration(milliseconds: 1400), vsync: this);
@@ -156,7 +141,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       await _mRecordingDataSubscription!.cancel();
       _mRecordingDataSubscription = null;
     }
-    _mplaybackReady = true;
   }
 
   Future<void> _openRecorder() async {
@@ -288,56 +272,42 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     //CUANDO SE EMPIECE A GRABAR UN NUEVO AUDIO, SE PAUSA LA REPRODUCCIÓN ACTUAL Y LUEGO SE REANUDA LA REPRODUCCIÓN CON FALTANTES Y NUEVAS
     //REPRODUCIR REPETIDAS
     _animIndex = 0;
-    _animLenght = 1;
     if (_victorQueue.isNotEmpty) {
       var victorQueueCopy = _victorQueue;
       //Si se pausa, podemos saber donde nos quedamos usando el index.
       //_victorQueue[index]
-      /*victorQueueCopy.add(
-          'assets/sign/IDLE.json');*/ // Esto debe cambiar, (buscar otra solución para el problema de la ultima seña que se repite)
-      _animLenght = victorQueueCopy.length;
-      _signToAnim = victorQueueCopy;
+      setState(() {
+        _firstLoad = false;
+        victorQueueCopy.add(
+            'assets/sign/IDLE.json'); // Esto debe cambiar, (buscar otra solución para el problema de la ultima seña que se repite)
+        _animLenght = victorQueueCopy.length;
+        _signToAnim = victorQueueCopy;
+      });
     }
   }
 
   Future<void> _loadQueue(String result) async {
     String resultNLP = await _sendToNlp(result);
-    _victorQueue.clear();
     setState(() {
       resultNLP = removeDiacritics(resultNLP);
       resultNLP = resultNLP.toUpperCase();
       _textController.text = resultNLP;
-      _firstLoad = false;
     });
-    singleWords = resultNLP.trim().split(' ');
-    for (String word in singleWords) {
-      if (_signDictionary.contains(word)) {
-        setState(() {
-          _signToAdd = 'assets/sign/$word.json';
-          _victorQueue.add(_signToAdd);
-        });
-      } else {
-        setState(() {
-          singleLetter = word.trim().split("");
-        });
-        for (String letter in singleLetter) {
-          setState(() {
-            _signToAdd = 'assets/sign/$letter.json';
-            _victorQueue.add(_signToAdd);
-          });
-        }
-      }
-    }
+    _addSignsToQueue(resultNLP);
   }
 
   void _onPressedLoadQueue() async {
-    _victorQueue.clear();
     setState(() {
       _textController.text = removeDiacritics(_textController.text);
       _textController.text = _textController.text.toUpperCase();
-      _firstLoad = false;
     });
-    singleWords = _textController.text.trim().split(' ');
+    _addSignsToQueue(_textController.text);
+    _victorPlayer();
+  }
+
+  void _addSignsToQueue(String text) {
+    _victorQueue.clear();
+    singleWords = text.trim().split(' ');
     for (String word in singleWords) {
       if (_signDictionary.contains(word)) {
         setState(() {
@@ -356,7 +326,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         }
       }
     }
-    _victorPlayer();
   }
 
   @override
@@ -436,17 +405,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                       onLoaded: (composition) {
                                       listenController.forward();
                                     })
-                                  /*: _signToAnim.isEmpty
-                                      ? Lottie.asset('assets/sign/IDLE.json',
-                                          animate: false)*/
                                   : Lottie.asset(_signToAnim[_animIndex],
                                       controller: controller,
                                       onLoaded: (composition) {
-                                      try {
-                                        controller.forward();
-                                      } catch (e) {
-                                        print(e);
-                                      }
+                                      controller.forward();
                                     }))),
                 ],
               ),

@@ -210,7 +210,8 @@ class _FilePageState extends State<FilePage>
       Stream<String> lines = file
           .openRead()
           .transform(utf8.decoder) // Decode bytes to UTF-8.
-          .transform(LineSplitter()); // Convert stream to individual lines.
+          .transform(
+              const LineSplitter()); // Convert stream to individual lines.
       try {
         await for (var line in lines) {
           print(line);
