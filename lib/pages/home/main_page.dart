@@ -24,6 +24,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   FlutterSoundRecorder? _mRecorder = FlutterSoundRecorder();
   late StreamSubscription? _mRecordingDataSubscription;
   bool _mRecorderIsInited = false;
+  late BehaviorSubject<List<int>> audioStream;
   final _textController = TextEditingController();
   late bool _firstLoad;
   late int _animIndex;
@@ -104,17 +105,25 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
     controller.addStatusListener((status) async {
       if (status == AnimationStatus.completed) {
+        print('Animation completed');
         if (_animIndex < _animLenght - 1) {
           setState(() {
             _animIndex++;
           });
-        } else {}
+          print(
+              'Animation index: $_animIndex, animation lenght: $_animLenght, sign to reproduce: ${_signToAnim[_animIndex]}');
+          if (_signToAnim[_animIndex] == _signToAnim[_animIndex - 1]) {
+            print('Same sign');
+            controller.reset();
+            await controller.forward();
+          }
+        }
         controller.reset();
       }
     });
 
     listenController = AnimationController(
-        duration: const Duration(milliseconds: 1400), vsync: this);
+        duration: const Duration(milliseconds: 2000), vsync: this);
 
     listenController.addStatusListener((status) async {
       if (status == AnimationStatus.completed) {
@@ -174,9 +183,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     ));
   }
 
-  late StreamSubscription<List<int>> audioStreamSubscription;
-  late BehaviorSubject<List<int>> audioStream;
-
   Future<void> record() async {
     assert(_mRecorderIsInited);
     var recordingDataController = StreamController<Food>();
@@ -208,13 +214,17 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         audioStream);
     String text = '';
     responseStream.listen((data) async {
-      if (data.results.first.isFinal == true) {
-        await stopRecorder();
-        text = await _fetchGoogleResults(data);
-        print("Google translate results: $text");
-        setState(() {});
-        await _loadQueue(text);
-        _victorPlayer();
+      try {
+        if (data.results.first.isFinal == true) {
+          await stopRecorder();
+          text = await _fetchGoogleResults(data);
+          print("Google translate results: $text");
+          setState(() {});
+          await _loadQueue(text);
+          _victorPlayer();
+        }
+      } catch (e) {
+        print('isFinal Error: $e');
       }
     }, onDone: () async {});
 
@@ -283,6 +293,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         _animLenght = victorQueueCopy.length;
         _signToAnim = victorQueueCopy;
       });
+      print("Reproduciendo: $_signToAnim");
     }
   }
 
