@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:lsapp/pages/admin/admin_controller_page.dart';
 import 'package:lsapp/pages/home/home_controller_page.dart';
 import 'package:lsapp/pages/home/test_page.dart';
 
@@ -25,7 +26,7 @@ class _UserControllerPageState extends State<UserControllerPage> {
             Map<String, dynamic> data =
                 snapshot.data?.docs.first.data() as Map<String, dynamic>;
             if (data["rol"] == "admin") {
-              return const TestPage();
+              return const AdminControllerPage();
             } else {
               return const HomeControllerPage();
             }
