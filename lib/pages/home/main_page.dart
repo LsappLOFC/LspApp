@@ -27,6 +27,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   late BehaviorSubject<List<int>> audioStream;
   final _textController = TextEditingController();
   late bool _firstLoad;
+  late bool _isConsumingAPI;
   late int _animIndex;
   late int _animLenght;
   late List<String> _signToAnim;
@@ -96,6 +97,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     _signToAnim = [];
     _signToAdd = '';
     _firstLoad = true;
+    _isConsumingAPI = false;
     _animIndex = 0;
     _animLenght = 1;
     singleWords = [];
@@ -217,6 +219,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       try {
         if (data.results.first.isFinal == true) {
           await stopRecorder();
+          _isConsumingAPI = true;
           text = await _fetchGoogleResults(data);
           print("Google translate results: $text");
           setState(() {});
@@ -283,15 +286,16 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     //REPRODUCIR REPETIDAS
     _animIndex = 0;
     if (_victorQueue.isNotEmpty) {
-      var victorQueueCopy = _victorQueue;
+      List<String> victorQueueTemp = _victorQueue;
       //Si se pausa, podemos saber donde nos quedamos usando el index.
       //_victorQueue[index]
       setState(() {
         _firstLoad = false;
-        victorQueueCopy.add(
+        victorQueueTemp.add(
             'assets/sign/IDLE.json'); // Esto debe cambiar, (buscar otra solución para el problema de la ultima seña que se repite)
-        _animLenght = victorQueueCopy.length;
-        _signToAnim = victorQueueCopy;
+        _animLenght = victorQueueTemp.length;
+        _isConsumingAPI = false;
+        _signToAnim = victorQueueTemp;
       });
       print("Reproduciendo: $_signToAnim");
     }
@@ -416,11 +420,14 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                                       onLoaded: (composition) {
                                       listenController.forward();
                                     })
-                                  : Lottie.asset(_signToAnim[_animIndex],
-                                      controller: controller,
-                                      onLoaded: (composition) {
-                                      controller.forward();
-                                    }))),
+                                  : _isConsumingAPI
+                                      ? Lottie.asset('assets/sign/IDLE.json',
+                                          animate: false)
+                                      : Lottie.asset(_signToAnim[_animIndex],
+                                          controller: controller,
+                                          onLoaded: (composition) {
+                                          controller.forward();
+                                        }))),
                 ],
               ),
             ),
