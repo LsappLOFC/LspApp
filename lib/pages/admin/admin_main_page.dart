@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:lsapp/pages/admin/admin_details_user_page.dart';
 
 class AdminMainPage extends StatefulWidget {
   const AdminMainPage({Key? key}) : super(key: key);
@@ -10,11 +11,10 @@ class AdminMainPage extends StatefulWidget {
 
 class _AdminMainPageState extends State<AdminMainPage> {
   FirebaseFirestore db = FirebaseFirestore.instance;
-  static const int numItems = 5;
-  List<bool> selected = List<bool>.generate(numItems, (int index) => false);
 
   @override
   Widget build(BuildContext context) {
+    final now = DateTime.now();
     return SingleChildScrollView(
       child: SafeArea(
         child: Container(
@@ -58,6 +58,7 @@ class _AdminMainPageState extends State<AdminMainPage> {
               StreamBuilder(
                   stream: FirebaseFirestore.instance
                       .collection("users")
+                      .where("rol", isEqualTo: "user")
                       .snapshots(),
                   builder: ((context, AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (snapshot.hasError) {
@@ -67,7 +68,6 @@ class _AdminMainPageState extends State<AdminMainPage> {
                       List<dynamic> data = [];
                       snapshot.data!.docs.forEach((doc) {
                         data.add(doc.data());
-                        print(doc.data());
                       });
                       return DataTable(
                         columns: const <DataColumn>[
@@ -78,17 +78,67 @@ class _AdminMainPageState extends State<AdminMainPage> {
                             label: Text('Correo'),
                           ),
                           DataColumn(
-                            label: Text('estado'),
+                            label: Text('Habilitar'),
                           ),
                         ],
                         rows: List<DataRow>.generate(
-                          data.length,
+                          snapshot.data!.docs.length,
                           (int index) => DataRow(
                             cells: <DataCell>[
                               DataCell(Text(data[index]["name"])),
-                              DataCell(Text(data[index]["email"])),
                               DataCell(
-                                  Text(data[index]["habilitado"].toString()))
+                                InkWell(
+                                  onTap: () {
+                                    var id;
+                                    snapshot.data!.docs.forEach((doc) {
+                                      if (data[index]["email"] ==
+                                          doc["email"]) {
+                                        id = doc.id;
+                                      }
+                                      print(id);
+                                    });
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              AdminDetailsUserPage(
+                                                name: data[index]["name"],
+                                                email: data[index]["email"],
+                                                habilitado: data[index]
+                                                    ["habilitado"],
+                                                id: id,
+                                              )),
+                                    );
+                                  },
+                                  child: Text(data[index]["email"]),
+                                ),
+                              ),
+                              DataCell(
+                                Row(
+                                  children: [
+                                    Switch(
+                                        value: data[index]["habilitado"],
+                                        onChanged: (onChanged) {
+                                          var id;
+                                          snapshot.data!.docs.forEach((doc) {
+                                            if (data[index]["email"] ==
+                                                doc["email"]) {
+                                              id = doc.id;
+                                            }
+                                          });
+                                          final userData = <String, dynamic>{
+                                            "habilitado": !data[index]
+                                                ["habilitado"],
+                                            "fechaHoraActualizacion": now,
+                                          };
+                                          FirebaseFirestore.instance
+                                              .collection("users")
+                                              .doc(id)
+                                              .update(userData);
+                                        })
+                                  ],
+                                ),
+                              )
                             ],
                           ),
                         ),

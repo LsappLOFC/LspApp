@@ -19,14 +19,17 @@ class _RecomendacionesAPgeState extends State<RecomendacionesAPge> {
     User? user = auth.currentUser;
     FirebaseFirestore db = FirebaseFirestore.instance;
     final city = <String, dynamic>{
-      "recomendacion": _textRecomendation.text,
+      "comment": _textRecomendation.text,
       "fechaHoraRegistro": now,
       "fechaHoraActualizacion": now,
-      "eliminado": false,
-      "user_Id": user!.uid
+      "type_comment": "recomendaciones",
+      "estado_leido": false,
+      "estado_eliminado": false,
+      "user_Id": user!.uid,
+      "visto": false,
     };
     await db
-        .collection("recomendations")
+        .collection("comments")
         .doc()
         .set(city)
         .onError((e, _) => print("Error writing document: $e"));

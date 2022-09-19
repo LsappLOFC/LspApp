@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lsapp/pages/admin/admin_controller_page.dart';
 import 'package:lsapp/pages/home/home_controller_page.dart';
-import 'package:lsapp/pages/home/test_page.dart';
+import 'package:lsapp/pages/home/user_disabled_page.dart';
 
 class UserControllerPage extends StatefulWidget {
   const UserControllerPage({Key? key}) : super(key: key);
@@ -28,6 +28,9 @@ class _UserControllerPageState extends State<UserControllerPage> {
             if (data["rol"] == "admin") {
               return const AdminControllerPage();
             } else {
+              if (data["habilitado"] == false) {
+                return const UserDisabledPage();
+              }
               return const HomeControllerPage();
             }
           }
