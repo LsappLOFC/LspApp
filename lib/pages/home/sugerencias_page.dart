@@ -19,14 +19,17 @@ class _SugerenciasPageState extends State<SugerenciasPage> {
     User? user = auth.currentUser;
     FirebaseFirestore db = FirebaseFirestore.instance;
     final city = <String, dynamic>{
-      "Sugerencia": _textSugerencias.text,
+      "comment": _textSugerencias.text,
       "fechaHoraRegistro": now,
       "fechaHoraActualizacion": now,
-      "eliminado": false,
-      "user_Id": user!.uid
+      "type_comment": "sugerencias",
+      "estado_leido": false,
+      "estado_eliminado": false,
+      "user_Id": user!.uid,
+      "visto": false,
     };
     await db
-        .collection("suggestions")
+        .collection("comments")
         .doc()
         .set(city)
         .onError((e, _) => print("Error writing document: $e"));
