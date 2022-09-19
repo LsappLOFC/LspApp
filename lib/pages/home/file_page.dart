@@ -93,7 +93,10 @@ class _FilePageState extends State<FilePage>
     'QUE',
     'PORQUE',
     'COMO',
-    'QUIEN'
+    'QUIEN',
+    'AYUDA',
+    'BANO',
+    'CUAL'
   ];
 
   @override

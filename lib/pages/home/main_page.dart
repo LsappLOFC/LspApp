@@ -93,7 +93,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     'QUE',
     'PORQUE',
     'COMO',
-    'QUIEN'
+    'QUIEN',
+    'AYUDA',
+    'BANO',
+    'CUAL'
   ];
 
   @override
@@ -296,8 +299,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       //_victorQueue[index]
       setState(() {
         _firstLoad = false;
-        victorQueueTemp.add(
-            'assets/sign/IDLE.json'); // Esto debe cambiar, (buscar otra solución para el problema de la ultima seña que se repite)
+        victorQueueTemp.add('assets/sign/IDLE.json');
         _animLenght = victorQueueTemp.length;
         _isConsumingAPI = false;
         _signToAnim = victorQueueTemp;

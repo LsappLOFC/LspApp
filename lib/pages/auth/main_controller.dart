@@ -13,17 +13,19 @@ class MainControllerPage extends StatefulWidget {
 class _MainControllerPageState extends State<MainControllerPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: StreamBuilder<User?>(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: ((context, snapshot) {
-          if (snapshot.hasData) {
-            return const UserControllerPage();
-          } else {
-            return const AuthPage();
-          }
-        }),
-      ),
-    );
+    return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+          body: StreamBuilder<User?>(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: ((context, snapshot) {
+              if (snapshot.hasData) {
+                return const UserControllerPage();
+              } else {
+                return const AuthPage();
+              }
+            }),
+          ),
+        ));
   }
 }

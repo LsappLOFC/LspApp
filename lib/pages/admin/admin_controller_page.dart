@@ -23,7 +23,7 @@ class _AdminControllerPageState extends State<AdminControllerPage> {
     return Scaffold(
       body: pages[_index],
       bottomNavigationBar: BottomNavigationBar(
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(
               Icons.question_mark,

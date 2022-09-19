@@ -72,7 +72,7 @@ class _SignUpPageState extends State<SignUpPage> {
           key: formKey,
           child: Padding(
             padding:
-                EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.20),
+                EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.15),
             child: Container(
               height: MediaQuery.of(context).size.height * 0.90,
               decoration: const BoxDecoration(
@@ -252,9 +252,11 @@ class _SignUpPageState extends State<SignUpPage> {
                   const SizedBox(
                     height: 15.0,
                   ),
-                  Image.asset(
-                    "assets/images/img.png",
-                    scale: MediaQuery.of(context).size.height * 0.0020,
+                  Expanded(
+                    child: Image.asset(
+                      "assets/images/img.png",
+                      scale: MediaQuery.of(context).size.height * 0.0020,
+                    ),
                   ),
                 ],
               ),
