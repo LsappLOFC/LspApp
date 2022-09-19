@@ -95,7 +95,7 @@ class _FilePageState extends State<FilePage>
     'COMO',
     'QUIEN',
     'AYUDA',
-    'BANO',
+    'BAÑO',
     'CUAL'
   ];
 

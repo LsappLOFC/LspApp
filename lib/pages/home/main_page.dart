@@ -95,7 +95,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     'COMO',
     'QUIEN',
     'AYUDA',
-    'BANO',
+    'BAÑO',
     'CUAL'
   ];
 
