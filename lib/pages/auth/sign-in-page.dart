@@ -17,9 +17,12 @@ class _SignInPageState extends State<SignInPage> {
   final _passwordController = TextEditingController();
 
   Future signIn() async {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
+    var u = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim());
+    if (u.user == null) {
+      errCorreo = "Correo o contraseña incorrectos";
+    }
   }
 
   @override
@@ -29,22 +32,25 @@ class _SignInPageState extends State<SignInPage> {
     super.dispose();
   }
 
+  String errCorreo = "";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blue,
       body: SingleChildScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         child: Column(
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 50.0),
               child: Image.asset(
                 "assets/images/img_1.png",
-                scale: MediaQuery.of(context).size.height * 0.0020,
+                scale: MediaQuery.of(context).size.height * 0.0040,
               ),
             ),
             Container(
-              height: MediaQuery.of(context).size.height * 0.70,
+              height: MediaQuery.of(context).size.height * 0.65,
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
@@ -130,8 +136,22 @@ class _SignInPageState extends State<SignInPage> {
                       }),
                     ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 30.0, bottom: 2.0),
+                    child: Container(
+                      alignment: Alignment.bottomLeft,
+                      child: Text(
+                        errCorreo,
+                        style: GoogleFonts.lato(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16.0,
+                          color: Colors.red,
+                        ),
+                      ),
+                    ),
+                  ),
                   const SizedBox(
-                    height: 20.0,
+                    height: 10.0,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 30.0, bottom: 2.0),

@@ -354,96 +354,102 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: Scaffold(
-            resizeToAvoidBottomInset: false,
-            backgroundColor: Colors.white,
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(30.0),
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * 0.20,
-                      width: MediaQuery.of(context).size.width * 0.85,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          border: Border.all(
-                            color: const Color(0XFF007AFF),
-                            width: 2.0,
-                          )),
-                      child: SingleChildScrollView(
-                        child: TextField(
-                          controller: _textController,
-                          keyboardType: TextInputType.multiline,
-                          maxLines: null,
-                          decoration: InputDecoration(
-                            hintText: "Esperando traducción",
-                            fillColor: Colors.transparent,
-                            filled: true,
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.only(
-                              left: 15,
-                              bottom: 11,
-                              top: 11,
-                              right: 15,
+        home: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          child: Scaffold(
+              resizeToAvoidBottomInset: false,
+              backgroundColor: Colors.white,
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(30.0),
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * 0.20,
+                        width: MediaQuery.of(context).size.width * 0.85,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            border: Border.all(
+                              color: const Color(0XFF007AFF),
+                              width: 2.0,
+                            )),
+                        child: SingleChildScrollView(
+                          child: TextField(
+                            controller: _textController,
+                            keyboardType: TextInputType.multiline,
+                            maxLines: null,
+                            decoration: InputDecoration(
+                              hintText: "Esperando traducción",
+                              fillColor: Colors.transparent,
+                              filled: true,
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.only(
+                                left: 15,
+                                bottom: 11,
+                                top: 11,
+                                right: 15,
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      _onPressedLoadQueue();
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: MediaQuery.of(context).size.width * 0.40),
-                      alignment: Alignment.bottomCenter,
-                      child: Container(
-                          alignment: Alignment.center,
-                          height: 70.0,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF007AFF),
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: const Icon(
-                            Icons.front_hand_outlined,
-                            size: 60.0,
-                            color: Colors.white,
-                          )),
+                    InkWell(
+                      onTap: () {
+                        FocusScope.of(context).unfocus();
+                        _onPressedLoadQueue();
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal:
+                                MediaQuery.of(context).size.width * 0.40),
+                        child: Container(
+                            alignment: Alignment.center,
+                            height: 70.0,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF007AFF),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: const Icon(
+                              Icons.front_hand_outlined,
+                              size: 60.0,
+                              color: Colors.white,
+                            )),
+                      ),
                     ),
-                  ),
-                  Expanded(
-                      child: Align(
-                          alignment: FractionalOffset.bottomCenter,
-                          child: _firstLoad
-                              ? Lottie.asset('assets/sign/IDLE.json',
-                                  animate: false)
-                              : _mRecorder!.isRecording
-                                  ? Lottie.asset('assets/sign/ESCUCHAR.json',
-                                      controller: listenController,
-                                      onLoaded: (composition) {
-                                      listenController.forward();
-                                    })
-                                  : _isConsumingAPI
-                                      ? Lottie.asset('assets/sign/IDLE.json',
-                                          animate: false)
-                                      : Lottie.asset(_signToAnim[_animIndex],
-                                          controller: controller,
-                                          onLoaded: (composition) {
-                                          controller.forward();
-                                        }))),
-                ],
+                    Expanded(
+                        child: Align(
+                            alignment: FractionalOffset.bottomCenter,
+                            child: _firstLoad
+                                ? Lottie.asset('assets/sign/IDLE.json',
+                                    animate: false)
+                                : _mRecorder!.isRecording
+                                    ? Lottie.asset('assets/sign/ESCUCHAR.json',
+                                        controller: listenController,
+                                        onLoaded: (composition) {
+                                        listenController.forward();
+                                      })
+                                    : _isConsumingAPI
+                                        ? Lottie.asset('assets/sign/IDLE.json',
+                                            animate: false)
+                                        : Lottie.asset(_signToAnim[_animIndex],
+                                            controller: controller,
+                                            onLoaded: (composition) {
+                                            controller.forward();
+                                          }))),
+                  ],
+                ),
               ),
-            ),
-            floatingActionButton: FloatingActionButton(
-              onPressed: getRecorderFn(),
-              tooltip: 'Listen',
-              child: Icon(
-                _mRecorder!.isRecording ? Icons.mic : Icons.mic_off,
-              ),
-            )));
+              floatingActionButton: FloatingActionButton(
+                onPressed: getRecorderFn(),
+                tooltip: 'Listen',
+                child: Icon(
+                  _mRecorder!.isRecording ? Icons.mic : Icons.mic_off,
+                ),
+              )),
+        ));
   }
 }

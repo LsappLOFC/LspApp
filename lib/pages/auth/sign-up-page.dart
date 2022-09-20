@@ -68,11 +68,12 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       backgroundColor: Colors.blue,
       body: SingleChildScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         child: Form(
           key: formKey,
           child: Padding(
             padding:
-                EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.15),
+                EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.10),
             child: Container(
               height: MediaQuery.of(context).size.height * 0.90,
               decoration: const BoxDecoration(
