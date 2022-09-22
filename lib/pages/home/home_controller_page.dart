@@ -27,9 +27,9 @@ class _HomeControllerPageState extends State<HomeControllerPage> {
       bottomNavigationBar: CurvedNavigationBar(
         height: 50.0,
         animationCurve: Curves.linear,
-        color: Colors.black12,
+        color: Colors.blueGrey,
         buttonBackgroundColor: Colors.blue,
-        backgroundColor: Colors.white,
+        backgroundColor: const Color.fromARGB(43, 139, 198, 207),
         items: const [
           Icon(
             Icons.file_copy_outlined,

@@ -360,11 +360,14 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           },
           child: Scaffold(
               resizeToAvoidBottomInset: false,
-              backgroundColor: Colors.white,
+              backgroundColor: const Color.fromARGB(43, 139, 198, 207),
               body: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
+                    SizedBox(
+                      height: 15,
+                    ),
                     Padding(
                       padding: const EdgeInsets.all(30.0),
                       child: Container(

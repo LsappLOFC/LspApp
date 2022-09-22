@@ -17,11 +17,16 @@ class _SignInPageState extends State<SignInPage> {
   final _passwordController = TextEditingController();
 
   Future signIn() async {
-    var u = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim());
-    if (u.user == null) {
-      errCorreo = "Correo o contraseña incorrectos";
+    List a = await FirebaseAuth.instance
+        .fetchSignInMethodsForEmail(_emailController.text.trim());
+    if (a.isNotEmpty) {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim());
+    } else {
+      setState(() {
+        errCorreo = "Correo o contraseña incorrectos";
+      });
     }
   }
 
@@ -121,7 +126,7 @@ class _SignInPageState extends State<SignInPage> {
                           ),
                           borderRadius: BorderRadius.circular(35.0),
                         ),
-                        hintText: "Email",
+                        hintText: "Correo electrónico",
                         fillColor: Colors.grey[200],
                         filled: true,
                       ),
@@ -185,7 +190,7 @@ class _SignInPageState extends State<SignInPage> {
                           ),
                           borderRadius: BorderRadius.circular(35.0),
                         ),
-                        hintText: "Password",
+                        hintText: "Contraseña",
                         fillColor: Colors.grey[200],
                         filled: true,
                       ),

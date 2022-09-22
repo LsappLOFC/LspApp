@@ -42,6 +42,7 @@ class _RecomendacionesAPgeState extends State<RecomendacionesAPge> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           shadowColor: Colors.white,
           backgroundColor: Colors.white,
@@ -55,7 +56,7 @@ class _RecomendacionesAPgeState extends State<RecomendacionesAPge> {
             child: const Icon(
               Icons.arrow_back,
               size: 35.0,
-              color: Colors.black,
+              color: Color(0XFF007AFF),
             ),
           ),
         ),
@@ -72,7 +73,7 @@ class _RecomendacionesAPgeState extends State<RecomendacionesAPge> {
                     decoration: const BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
-                          color: Colors.black26,
+                          color: Color(0XFF007AFF),
                           width: 2.0,
                         ),
                       ),

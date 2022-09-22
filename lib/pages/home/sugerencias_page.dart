@@ -55,7 +55,7 @@ class _SugerenciasPageState extends State<SugerenciasPage> {
             child: const Icon(
               Icons.arrow_back,
               size: 35.0,
-              color: Colors.black,
+              color: Color(0XFF007AFF),
             ),
           ),
         ),
@@ -72,7 +72,7 @@ class _SugerenciasPageState extends State<SugerenciasPage> {
                     decoration: const BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
-                          color: Colors.black26,
+                          color: Color(0XFF007AFF),
                           width: 2.0,
                         ),
                       ),

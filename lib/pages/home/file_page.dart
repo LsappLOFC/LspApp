@@ -308,17 +308,21 @@ class _FilePageState extends State<FilePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(43, 139, 198, 207),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Container(
+              color: const Color(0XFF007AFF),
               padding: const EdgeInsets.only(top: 40.0, left: 20.0),
-              alignment: Alignment.bottomLeft,
-              child: Text(
-                "Subir Archivos",
-                style: GoogleFonts.poppins(
+              alignment: Alignment.centerLeft,
+              child: const Text(
+                "Traducir Archivos",
+                style: TextStyle(
+                  fontFamily: 'Roboto',
                   fontSize: 32.0,
                   fontWeight: FontWeight.w700,
+                  color: Colors.white,
                 ),
               ),
             ),
@@ -336,7 +340,7 @@ class _FilePageState extends State<FilePage>
                   gradient: const LinearGradient(
                     colors: [
                       Color(0XFF007AFF),
-                      Colors.white,
+                      Color.fromARGB(43, 139, 198, 207),
                     ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,

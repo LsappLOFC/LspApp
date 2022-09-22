@@ -29,7 +29,7 @@ class _IndicacionesPageState extends State<IndicacionesPage> {
           child: const Icon(
             Icons.arrow_back,
             size: 35.0,
-            color: Colors.black,
+            color: Color(0XFF007AFF),
           ),
         ),
       ),
@@ -46,7 +46,7 @@ class _IndicacionesPageState extends State<IndicacionesPage> {
                   decoration: const BoxDecoration(
                     border: Border(
                       bottom: BorderSide(
-                        color: Colors.black26,
+                        color: Color(0XFF007AFF),
                         width: 2.0,
                       ),
                     ),
