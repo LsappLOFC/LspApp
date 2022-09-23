@@ -96,7 +96,15 @@ class _FilePageState extends State<FilePage>
     'QUIEN',
     'AYUDA',
     'BAÑO',
-    'CUAL'
+    'CUAL',
+    'AÑO',
+    'DIA',
+    'ESTUDIAR',
+    'MAMA',
+    'PAPA',
+    'NOCHE',
+    'NOMBRE',
+    'TRABAJAR'
   ];
 
   @override

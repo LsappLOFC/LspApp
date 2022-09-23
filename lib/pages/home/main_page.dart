@@ -97,7 +97,15 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     'QUIEN',
     'AYUDA',
     'BAÑO',
-    'CUAL'
+    'CUAL',
+    'AÑO',
+    'DIA',
+    'ESTUDIAR',
+    'MAMA',
+    'PAPA',
+    'NOCHE',
+    'NOMBRE',
+    'TRABAJAR'
   ];
 
   @override
