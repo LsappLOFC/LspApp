@@ -9,6 +9,7 @@ import 'package:google_speech/google_speech.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_sound/flutter_sound.dart';
+import 'package:lsapp/pages/home/variables.dart' as variables;
 
 const int tSampleRate = 16000;
 typedef _Fn = void Function();
@@ -110,8 +111,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     _animLenght = 1;
     singleWords = [];
     _victorQueue = [];
+
     controller = AnimationController(
-        duration: const Duration(milliseconds: 1300), vsync: this);
+        duration: Duration(milliseconds: 1300), vsync: this);
 
     controller.addStatusListener((status) async {
       if (status == AnimationStatus.completed) {
@@ -152,6 +154,20 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     _mRecorder!.closeRecorder();
     _mRecorder = null;
     super.dispose();
+  }
+
+  void changeAnimSpeed() {
+    switch (variables.selectedRadioValue) {
+      case 0:
+        controller.duration = Duration(milliseconds: 1800);
+        break;
+      case 1:
+        controller.duration = Duration(milliseconds: 1300);
+        break;
+      case 2:
+        controller.duration = Duration(milliseconds: 800);
+        break;
+    }
   }
 
   Future<void> stopRecorder() async {
@@ -291,7 +307,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   Future<void> _victorPlayer() async {
     //TODO: ELIMINAR SEÑAS YA REPRODUCIDAS DE LA COLA
     //CUANDO SE EMPIECE A GRABAR UN NUEVO AUDIO, SE PAUSA LA REPRODUCCIÓN ACTUAL Y LUEGO SE REANUDA LA REPRODUCCIÓN CON FALTANTES Y NUEVAS
-    //REPRODUCIR REPETIDAS
+    changeAnimSpeed();
     _animIndex = 0;
     if (_victorQueue.isNotEmpty) {
       List<String> victorQueueTemp = _victorQueue;

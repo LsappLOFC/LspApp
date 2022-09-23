@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lsapp/pages/home/indicaciones_page.dart';
 import 'package:lsapp/pages/home/recomendaciones_page.dart';
 import 'package:lsapp/pages/home/sugerencias_page.dart';
+import 'package:lsapp/pages/home/variables.dart' as variables;
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -21,7 +22,19 @@ enum RadioValues {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  RadioValues? values = RadioValues.Baja;
+  RadioValues? values;
+  @override
+  void initState() {
+    if (variables.selectedRadioValue == 0) {
+      values = RadioValues.Baja;
+    } else if (variables.selectedRadioValue == 1) {
+      values = RadioValues.Media;
+    } else {
+      values = RadioValues.Alta;
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,6 +88,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               activeColor: const Color(0XFF007AFF),
                               onChanged: (value) {
                                 setState(() {
+                                  variables.selectedRadioValue = 0;
                                   values = value as RadioValues?;
                                 });
                               }),
@@ -90,6 +104,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               activeColor: const Color(0XFF007AFF),
                               onChanged: (value) {
                                 setState(() {
+                                  variables.selectedRadioValue = 1;
                                   values = value as RadioValues?;
                                 });
                               }),
@@ -105,6 +120,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               activeColor: const Color(0XFF007AFF),
                               onChanged: (value) {
                                 setState(() {
+                                  variables.selectedRadioValue = 2;
                                   values = value as RadioValues?;
                                 });
                               }),
