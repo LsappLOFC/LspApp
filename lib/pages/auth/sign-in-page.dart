@@ -17,17 +17,9 @@ class _SignInPageState extends State<SignInPage> {
   final _passwordController = TextEditingController();
 
   Future signIn() async {
-    List a = await FirebaseAuth.instance
-        .fetchSignInMethodsForEmail(_emailController.text.trim());
-    if (a.isNotEmpty) {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim());
-    } else {
-      setState(() {
-        errCorreo = "Correo o contraseña incorrectos";
-      });
-    }
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim());
   }
 
   @override
