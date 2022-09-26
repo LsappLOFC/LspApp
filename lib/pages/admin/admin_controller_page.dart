@@ -13,9 +13,9 @@ class AdminControllerPage extends StatefulWidget {
 class _AdminControllerPageState extends State<AdminControllerPage> {
   int _index = 0;
   final pages = [
-    AdminFeedbackPage(),
-    AdminMainPage(),
-    AdminSettingsPage(),
+    const AdminFeedbackPage(),
+    const AdminMainPage(),
+    const AdminSettingsPage(),
   ];
 
   @override
@@ -23,6 +23,7 @@ class _AdminControllerPageState extends State<AdminControllerPage> {
     return Scaffold(
       body: pages[_index],
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _index,
         items: [
           BottomNavigationBarItem(
             icon: Icon(

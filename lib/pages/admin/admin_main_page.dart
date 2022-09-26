@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:lsapp/pages/admin/admin_details_user_page.dart';
 
 class AdminMainPage extends StatefulWidget {
@@ -70,6 +71,7 @@ class _AdminMainPageState extends State<AdminMainPage> {
                         data.add(doc.data());
                       });
                       return DataTable(
+                        horizontalMargin: 10.0,
                         columns: const <DataColumn>[
                           DataColumn(
                             label: Text('nombre'),
@@ -85,7 +87,9 @@ class _AdminMainPageState extends State<AdminMainPage> {
                           snapshot.data!.docs.length,
                           (int index) => DataRow(
                             cells: <DataCell>[
-                              DataCell(Text(data[index]["name"])),
+                              DataCell(
+                                Text(data[index]["name"]),
+                              ),
                               DataCell(
                                 InkWell(
                                   onTap: () {
@@ -95,7 +99,6 @@ class _AdminMainPageState extends State<AdminMainPage> {
                                           doc["email"]) {
                                         id = doc.id;
                                       }
-                                      print(id);
                                     });
                                     Navigator.push(
                                       context,
@@ -119,22 +122,68 @@ class _AdminMainPageState extends State<AdminMainPage> {
                                     Switch(
                                         value: data[index]["habilitado"],
                                         onChanged: (onChanged) {
-                                          var id;
-                                          snapshot.data!.docs.forEach((doc) {
-                                            if (data[index]["email"] ==
-                                                doc["email"]) {
-                                              id = doc.id;
-                                            }
-                                          });
-                                          final userData = <String, dynamic>{
-                                            "habilitado": !data[index]
-                                                ["habilitado"],
-                                            "fechaHoraActualizacion": now,
-                                          };
-                                          FirebaseFirestore.instance
-                                              .collection("users")
-                                              .doc(id)
-                                              .update(userData);
+                                          showDialog(
+                                              context: context,
+                                              builder: ((context) =>
+                                                  AlertDialog(
+                                                    title: const Text(
+                                                      "Habilitar/Deshabilitar Usuario",
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontSize: 16.0,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                    content: const Text(
+                                                      "¿Esta seguro que desea Habilitar/Deshabilitar este usuario?",
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                          fontSize: 16.0),
+                                                    ),
+                                                    actions: [
+                                                      TextButton(
+                                                        style: ButtonStyle(),
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: Text("NO"),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          var id;
+                                                          snapshot.data!.docs
+                                                              .forEach((doc) {
+                                                            if (data[index]
+                                                                    ["email"] ==
+                                                                doc["email"]) {
+                                                              id = doc.id;
+                                                            }
+                                                          });
+                                                          final userData =
+                                                              <String, dynamic>{
+                                                            "habilitado": !data[
+                                                                    index]
+                                                                ["habilitado"],
+                                                            "fechaHoraActualizacion":
+                                                                now,
+                                                          };
+                                                          FirebaseFirestore
+                                                              .instance
+                                                              .collection(
+                                                                  "users")
+                                                              .doc(id)
+                                                              .update(userData);
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: Text("SI"),
+                                                      ),
+                                                    ],
+                                                  )));
                                         })
                                   ],
                                 ),

@@ -21,7 +21,7 @@ class _AdminDetailsUserPageState extends State<AdminDetailsUserPage> {
     String convertedDateTime =
         "${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
 
-    return now.toString();
+    return convertedDateTime;
   }
 
   @override
@@ -119,6 +119,9 @@ class _AdminDetailsUserPageState extends State<AdminDetailsUserPage> {
                           return ListView.builder(
                               itemCount: snapshot.data!.docs.length,
                               itemBuilder: (context, index) {
+                                var dte =
+                                    getDate(data[index]["fechaHoraRegistro"]);
+                                print(dte);
                                 return Padding(
                                     padding: const EdgeInsets.all(12.0),
                                     child: InkWell(
@@ -139,7 +142,7 @@ class _AdminDetailsUserPageState extends State<AdminDetailsUserPage> {
                                               CrossAxisAlignment.start,
                                           mainAxisSize: MainAxisSize.max,
                                           children: [
-                                            Text("Sugerencia #1"),
+                                            Text("Sugerencia #${index + 1}"),
                                             Padding(
                                               padding: const EdgeInsets.only(
                                                 top: 10.0,
@@ -151,7 +154,6 @@ class _AdminDetailsUserPageState extends State<AdminDetailsUserPage> {
                                                   color: Colors.black,
                                                   fontSize: 16.0,
                                                 ),
-                                                maxLines: 2,
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
@@ -160,7 +162,7 @@ class _AdminDetailsUserPageState extends State<AdminDetailsUserPage> {
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
-                                                Text("21/09/2022"),
+                                                Text("fecha"),
                                                 Container(
                                                   child: data[index]["visto"]
                                                       ? Text("✓✓")
@@ -200,7 +202,7 @@ class _AdminDetailsUserPageState extends State<AdminDetailsUserPage> {
                                     child: InkWell(
                                       onDoubleTap: () {},
                                       child: Container(
-                                        padding: EdgeInsets.only(
+                                        padding: const EdgeInsets.only(
                                           left: 20.0,
                                           right: 20.0,
                                           top: 10.0,
@@ -215,7 +217,7 @@ class _AdminDetailsUserPageState extends State<AdminDetailsUserPage> {
                                               CrossAxisAlignment.start,
                                           mainAxisSize: MainAxisSize.max,
                                           children: [
-                                            Text("Recomendacion #1"),
+                                            const Text("Recomendacion #1"),
                                             Padding(
                                               padding: const EdgeInsets.only(
                                                 top: 10.0,
@@ -223,11 +225,11 @@ class _AdminDetailsUserPageState extends State<AdminDetailsUserPage> {
                                               ),
                                               child: Text(
                                                 data[index]["comment"],
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                   color: Colors.black,
                                                   fontSize: 16.0,
                                                 ),
-                                                maxLines: 2,
+                                                maxLines: 5,
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             ),

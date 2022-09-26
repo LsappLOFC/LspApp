@@ -112,6 +112,7 @@ class _SugerenciasPageState extends State<SugerenciasPage> {
                     ),
                   ),
                   child: TextField(
+                    maxLength: 160,
                     controller: _textSugerencias,
                     decoration: const InputDecoration(
                         border: InputBorder.none,
@@ -122,7 +123,6 @@ class _SugerenciasPageState extends State<SugerenciasPage> {
                       fontSize: 14.0,
                     ),
                     textAlign: TextAlign.start,
-                    maxLines: 10,
                   ),
                 ),
               ),

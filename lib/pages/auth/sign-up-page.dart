@@ -40,7 +40,7 @@ class _SignUpPageState extends State<SignUpPage> {
       "name": "prueba",
       "email": _emailController.text.trim(),
       "rol": "user",
-      "habilitado": false,
+      "habilitado": true,
       "fechaHoraRegistro": now,
       "fechaHoraActualizacion": now,
       "eliminado": false
