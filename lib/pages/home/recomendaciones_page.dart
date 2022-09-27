@@ -116,18 +116,17 @@ class _RecomendacionesAPgeState extends State<RecomendacionesAPge> {
                         color: Colors.blue,
                       ),
                     ),
-                    child: TextField(
-                      controller: _textRecomendation,
-                      decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: "Ingrese sus recomendaciones aquí...",
-                          filled: true,
-                          fillColor: Colors.white),
-                      style: GoogleFonts.poppins(
-                        fontSize: 14.0,
-                      ),
-                      textAlign: TextAlign.start,
-                      maxLines: 10,
+                  ),
+                  child: TextField(
+                    maxLength: 160,
+                    controller: _textRecomendation,
+                    decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Ingrese sus recomendaciones aquí...",
+                        filled: true,
+                        fillColor: Colors.white),
+                    style: GoogleFonts.poppins(
+                      fontSize: 14.0,
                     ),
                   ),
                 ),

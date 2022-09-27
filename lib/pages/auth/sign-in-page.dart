@@ -1,8 +1,10 @@
 // ignore_for_file: file_names
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lsapp/pages/auth/auth_with_google.dart';
 
 class SignInPage extends StatefulWidget {
   final VoidCallback showLoginPage;
@@ -15,11 +17,21 @@ class SignInPage extends StatefulWidget {
 class _SignInPageState extends State<SignInPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final GoogleAuthService _authService = GoogleAuthService();
+  FirebaseFirestore db = FirebaseFirestore.instance;
 
   Future signIn() async {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim());
+    List a = await FirebaseAuth.instance
+        .fetchSignInMethodsForEmail(_emailController.text.trim());
+    if (a.isEmpty) {
+      setState(() {
+        error = "Correo no existe";
+      });
+    } else {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim());
+    }
   }
 
   @override
@@ -29,7 +41,7 @@ class _SignInPageState extends State<SignInPage> {
     super.dispose();
   }
 
-  String errCorreo = "";
+  String error = "";
 
   @override
   Widget build(BuildContext context) {
@@ -138,7 +150,7 @@ class _SignInPageState extends State<SignInPage> {
                     child: Container(
                       alignment: Alignment.bottomLeft,
                       child: Text(
-                        errCorreo,
+                        error,
                         style: GoogleFonts.lato(
                           fontWeight: FontWeight.w700,
                           fontSize: 16.0,
@@ -196,7 +208,47 @@ class _SignInPageState extends State<SignInPage> {
                     ),
                   ),
                   const SizedBox(
-                    height: 30.0,
+                    height: 10.0,
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.black26,
+                    ),
+                    onPressed: () async {
+                      await _authService.signInWithGoogle();
+                      final now = DateTime.now();
+                      final userData = <String, dynamic>{
+                        "name": _authService.user?.displayName,
+                        "email": _authService.user?.email,
+                        "rol": "user",
+                        "habilitado": true,
+                        "fechaHoraRegistro": now,
+                        "fechaHoraActualizacion": now,
+                        "eliminado": false,
+                        "imageUrl": _authService.user?.photoURL,
+                      };
+                      List a = await FirebaseAuth.instance
+                          .fetchSignInMethodsForEmail(
+                              _authService.user!.email!);
+
+                      DocumentSnapshot querySnapshot = await db
+                          .collection("users")
+                          .doc(_authService.user?.uid)
+                          .get();
+
+                      if (_authService.user?.uid != null &&
+                          !querySnapshot.exists) {
+                        await db
+                            .collection("users")
+                            .doc(_authService.user?.uid)
+                            .set(userData)
+                            .onError(
+                                (e, _) => print("Error writing document: $e"));
+                      } else {
+                        print("correo ya registrado");
+                      }
+                    },
+                    child: const Text("Continue con Google"),
                   ),
                   InkWell(
                     onTap: signIn,

@@ -22,10 +22,14 @@ class _UserControllerPageState extends State<UserControllerPage> {
             .where("email", isEqualTo: FirebaseAuth.instance.currentUser!.email)
             .snapshots(),
         builder: ((context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return Text('Something went wrong');
+          }
           if (snapshot.hasData) {
             Map<String, dynamic> data =
                 snapshot.data?.docs.first.data() as Map<String, dynamic>;
             if (data["rol"] == "admin") {
+              print(data);
               return const AdminControllerPage();
             } else {
               if (data["habilitado"] == false) {

@@ -16,16 +16,16 @@ class AdminDetailsUserPage extends StatefulWidget {
 
 class _AdminDetailsUserPageState extends State<AdminDetailsUserPage> {
   String getDate(date) {
-    //final now = DateTime.now();
     DateTime now = date.toDate();
     String convertedDateTime =
         "${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
 
-    return now.toString();
+    return convertedDateTime;
   }
 
   @override
   Widget build(BuildContext context) {
+    final now = DateTime.now();
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -113,16 +113,38 @@ class _AdminDetailsUserPageState extends State<AdminDetailsUserPage> {
                         if (snapshot.hasData) {
                           List<dynamic> data = [];
                           snapshot.data!.docs.forEach((doc) {
-                            data.add(doc.data());
+                            final data3 = <String, dynamic>{
+                              "comment": doc["comment"],
+                              "estado_eliminado": doc["estado_eliminado"],
+                              "estado_leido": doc["estado_leido"],
+                              "fechaHoraActualizacion":
+                                  doc["fechaHoraActualizacion"],
+                              "fechaHoraRegistro": doc["fechaHoraRegistro"],
+                              "type_comment": doc["type_comment"],
+                              "id": doc.id,
+                              "user_Id": doc["user_Id"],
+                              "visto": doc["visto"],
+                            };
+                            data.add(data3);
                           });
-                          print(data);
                           return ListView.builder(
                               itemCount: snapshot.data!.docs.length,
                               itemBuilder: (context, index) {
                                 return Padding(
                                     padding: const EdgeInsets.all(12.0),
                                     child: InkWell(
-                                      onDoubleTap: () {},
+                                      onLongPress: () async {
+                                        final commentData = <String, dynamic>{
+                                          "visto": !data[index]["visto"],
+                                          "fechaHoraActualizacion": now,
+                                        };
+                                        if (data[index]["visto"] != true) {
+                                          await FirebaseFirestore.instance
+                                              .collection("comments")
+                                              .doc(data[index]["id"])
+                                              .update(commentData);
+                                        }
+                                      },
                                       child: Container(
                                         padding: EdgeInsets.only(
                                           left: 20.0,
@@ -131,7 +153,9 @@ class _AdminDetailsUserPageState extends State<AdminDetailsUserPage> {
                                           bottom: 10.0,
                                         ),
                                         decoration: BoxDecoration(
-                                            color: Colors.black12,
+                                            color: data[index]["visto"]
+                                                ? Colors.green
+                                                : Colors.red,
                                             borderRadius:
                                                 BorderRadius.circular(15.0)),
                                         child: Column(
@@ -139,7 +163,7 @@ class _AdminDetailsUserPageState extends State<AdminDetailsUserPage> {
                                               CrossAxisAlignment.start,
                                           mainAxisSize: MainAxisSize.max,
                                           children: [
-                                            Text("Sugerencia #1"),
+                                            Text("Sugerencia #${index + 1}"),
                                             Padding(
                                               padding: const EdgeInsets.only(
                                                 top: 10.0,
@@ -151,8 +175,6 @@ class _AdminDetailsUserPageState extends State<AdminDetailsUserPage> {
                                                   color: Colors.black,
                                                   fontSize: 16.0,
                                                 ),
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
                                             Row(
@@ -160,7 +182,8 @@ class _AdminDetailsUserPageState extends State<AdminDetailsUserPage> {
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
-                                                Text("21/09/2022"),
+                                                Text(getDate(data[index]
+                                                    ["fechaHoraRegistro"])),
                                                 Container(
                                                   child: data[index]["visto"]
                                                       ? Text("✓✓")
@@ -190,7 +213,19 @@ class _AdminDetailsUserPageState extends State<AdminDetailsUserPage> {
                         if (snapshot.hasData) {
                           List<dynamic> data = [];
                           snapshot.data!.docs.forEach((doc) {
-                            data.add(doc.data());
+                            final data3 = <String, dynamic>{
+                              "comment": doc["comment"],
+                              "estado_eliminado": doc["estado_eliminado"],
+                              "estado_leido": doc["estado_leido"],
+                              "fechaHoraActualizacion":
+                                  doc["fechaHoraActualizacion"],
+                              "fechaHoraRegistro": doc["fechaHoraRegistro"],
+                              "type_comment": doc["type_comment"],
+                              "id": doc.id,
+                              "user_Id": doc["user_Id"],
+                              "visto": doc["visto"],
+                            };
+                            data.add(data3);
                           });
                           return ListView.builder(
                               itemCount: snapshot.data!.docs.length,
@@ -198,16 +233,29 @@ class _AdminDetailsUserPageState extends State<AdminDetailsUserPage> {
                                 return Padding(
                                     padding: const EdgeInsets.all(12.0),
                                     child: InkWell(
-                                      onDoubleTap: () {},
+                                      onLongPress: () async {
+                                        final commentData = <String, dynamic>{
+                                          "visto": !data[index]["visto"],
+                                          "fechaHoraActualizacion": now,
+                                        };
+                                        if (data[index]["visto"] != true) {
+                                          await FirebaseFirestore.instance
+                                              .collection("comments")
+                                              .doc(data[index]["id"])
+                                              .update(commentData);
+                                        }
+                                      },
                                       child: Container(
-                                        padding: EdgeInsets.only(
+                                        padding: const EdgeInsets.only(
                                           left: 20.0,
                                           right: 20.0,
                                           top: 10.0,
                                           bottom: 10.0,
                                         ),
                                         decoration: BoxDecoration(
-                                            color: Colors.black12,
+                                            color: data[index]["visto"]
+                                                ? Colors.green
+                                                : Colors.red,
                                             borderRadius:
                                                 BorderRadius.circular(15.0)),
                                         child: Column(
@@ -215,7 +263,7 @@ class _AdminDetailsUserPageState extends State<AdminDetailsUserPage> {
                                               CrossAxisAlignment.start,
                                           mainAxisSize: MainAxisSize.max,
                                           children: [
-                                            Text("Recomendacion #1"),
+                                            Text("Recomendacion #${index + 1}"),
                                             Padding(
                                               padding: const EdgeInsets.only(
                                                 top: 10.0,
@@ -223,11 +271,11 @@ class _AdminDetailsUserPageState extends State<AdminDetailsUserPage> {
                                               ),
                                               child: Text(
                                                 data[index]["comment"],
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                   color: Colors.black,
                                                   fontSize: 16.0,
                                                 ),
-                                                maxLines: 2,
+                                                maxLines: 5,
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
@@ -236,7 +284,8 @@ class _AdminDetailsUserPageState extends State<AdminDetailsUserPage> {
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
-                                                Text("21/09/2022"),
+                                                Text(getDate(data[index]
+                                                    ["fechaHoraRegistro"])),
                                                 Container(
                                                   child: data[index]["visto"]
                                                       ? Text("✓✓")
