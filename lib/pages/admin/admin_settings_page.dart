@@ -1,8 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lsapp/pages/auth/auth_with_google.dart';
 
 class AdminSettingsPage extends StatefulWidget {
   const AdminSettingsPage({Key? key}) : super(key: key);
@@ -12,6 +11,8 @@ class AdminSettingsPage extends StatefulWidget {
 }
 
 class _AdminSettingsPageState extends State<AdminSettingsPage> {
+  final GoogleAuthService _authService = GoogleAuthService();
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -20,23 +21,31 @@ class _AdminSettingsPageState extends State<AdminSettingsPage> {
           padding: const EdgeInsets.symmetric(horizontal: 30.0),
           child: Column(
             children: [
-              ListTile(
-                title: Text(
-                  "Cerrar sesión",
-                  style: GoogleFonts.poppins(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.w400,
-                  ),
-                  textAlign: TextAlign.start,
-                ),
-                trailing: const Icon(
-                  Icons.output_sharp,
-                  size: 30.0,
-                  color: Colors.blue,
-                ),
-                onTap: () {
-                  FirebaseAuth.instance.signOut();
+              InkWell(
+                onTap: () async {
+                  await _authService.signOutGoogle();
                 },
+                child: Container(
+                  padding: const EdgeInsets.only(bottom: 50.0, top: 150.0),
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    alignment: Alignment.center,
+                    width: 250.0,
+                    height: 60.0,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF82D00),
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: const Text(
+                      "SALIR",
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ],
           ),

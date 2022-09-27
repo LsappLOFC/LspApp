@@ -1,8 +1,8 @@
 // ignore_for_file: constant_identifier_names
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lsapp/pages/auth/auth_with_google.dart';
 import 'package:lsapp/pages/home/indicaciones_page.dart';
 import 'package:lsapp/pages/home/recomendaciones_page.dart';
 import 'package:lsapp/pages/home/sugerencias_page.dart';
@@ -22,6 +22,8 @@ enum RadioValues {
 
 class _SettingsPageState extends State<SettingsPage> {
   RadioValues? values = RadioValues.Baja;
+  final GoogleAuthService _authService = GoogleAuthService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -258,8 +260,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       size: 30.0,
                       color: Colors.blue,
                     ),
-                    onTap: () {
-                      FirebaseAuth.instance.signOut();
+                    onTap: () async {
+                      await _authService.signOutGoogle();
                     },
                   ),
                 ],

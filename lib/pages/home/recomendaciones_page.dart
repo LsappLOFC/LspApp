@@ -112,6 +112,7 @@ class _RecomendacionesAPgeState extends State<RecomendacionesAPge> {
                     ),
                   ),
                   child: TextField(
+                    maxLength: 160,
                     controller: _textRecomendation,
                     decoration: const InputDecoration(
                         border: InputBorder.none,

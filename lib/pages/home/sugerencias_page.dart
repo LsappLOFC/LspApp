@@ -123,6 +123,7 @@ class _SugerenciasPageState extends State<SugerenciasPage> {
                       fontSize: 14.0,
                     ),
                     textAlign: TextAlign.start,
+                    maxLines: 10,
                   ),
                 ),
               ),

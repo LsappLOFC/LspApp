@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:lsapp/pages/admin/admin_details_user_page.dart';
 
 class AdminMainPage extends StatefulWidget {
@@ -71,7 +70,7 @@ class _AdminMainPageState extends State<AdminMainPage> {
                         data.add(doc.data());
                       });
                       return DataTable(
-                        horizontalMargin: 10.0,
+                        columnSpacing: 35.0,
                         columns: const <DataColumn>[
                           DataColumn(
                             label: Text('nombre'),

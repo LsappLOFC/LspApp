@@ -9,8 +9,17 @@ class AdminFeedbackPage extends StatefulWidget {
 }
 
 class _AdminFeedbackPageState extends State<AdminFeedbackPage> {
+  String getDate(date) {
+    DateTime now = date.toDate();
+    String convertedDateTime =
+        "${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
+
+    return convertedDateTime;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final now = DateTime.now();
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -53,16 +62,38 @@ class _AdminFeedbackPageState extends State<AdminFeedbackPage> {
                         if (snapshot.hasData) {
                           List<dynamic> data = [];
                           snapshot.data!.docs.forEach((doc) {
-                            data.add(doc.data());
+                            final data3 = <String, dynamic>{
+                              "comment": doc["comment"],
+                              "estado_eliminado": doc["estado_eliminado"],
+                              "estado_leido": doc["estado_leido"],
+                              "fechaHoraActualizacion":
+                                  doc["fechaHoraActualizacion"],
+                              "fechaHoraRegistro": doc["fechaHoraRegistro"],
+                              "type_comment": doc["type_comment"],
+                              "id": doc.id,
+                              "user_Id": doc["user_Id"],
+                              "visto": doc["visto"],
+                            };
+                            data.add(data3);
                           });
-                          print(data);
                           return ListView.builder(
                               itemCount: snapshot.data!.docs.length,
                               itemBuilder: (context, index) {
                                 return Padding(
                                     padding: const EdgeInsets.all(12.0),
                                     child: InkWell(
-                                      onDoubleTap: () {},
+                                      onLongPress: () async {
+                                        final commentData = <String, dynamic>{
+                                          "visto": !data[index]["visto"],
+                                          "fechaHoraActualizacion": now,
+                                        };
+                                        if (data[index]["visto"] != true) {
+                                          await FirebaseFirestore.instance
+                                              .collection("comments")
+                                              .doc(data[index]["id"])
+                                              .update(commentData);
+                                        }
+                                      },
                                       child: Container(
                                         padding: const EdgeInsets.only(
                                           left: 20.0,
@@ -71,7 +102,9 @@ class _AdminFeedbackPageState extends State<AdminFeedbackPage> {
                                           bottom: 10.0,
                                         ),
                                         decoration: BoxDecoration(
-                                            color: Colors.black12,
+                                            color: data[index]["visto"]
+                                                ? Colors.green
+                                                : Colors.red,
                                             borderRadius:
                                                 BorderRadius.circular(15.0)),
                                         child: Column(
@@ -79,7 +112,7 @@ class _AdminFeedbackPageState extends State<AdminFeedbackPage> {
                                               CrossAxisAlignment.start,
                                           mainAxisSize: MainAxisSize.max,
                                           children: [
-                                            const Text("Sugerencia #1"),
+                                            Text("Sugerencia #${index + 1}"),
                                             Padding(
                                               padding: const EdgeInsets.only(
                                                 top: 10.0,
@@ -104,7 +137,8 @@ class _AdminFeedbackPageState extends State<AdminFeedbackPage> {
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
-                                                Text("21/09/2022"),
+                                                Text(getDate(data[index]
+                                                    ["fechaHoraRegistro"])),
                                                 Container(
                                                   child: data[index]["visto"]
                                                       ? Text("✓✓")
@@ -133,7 +167,19 @@ class _AdminFeedbackPageState extends State<AdminFeedbackPage> {
                         if (snapshot.hasData) {
                           List<dynamic> data = [];
                           snapshot.data!.docs.forEach((doc) {
-                            data.add(doc.data());
+                            final data3 = <String, dynamic>{
+                              "comment": doc["comment"],
+                              "estado_eliminado": doc["estado_eliminado"],
+                              "estado_leido": doc["estado_leido"],
+                              "fechaHoraActualizacion":
+                                  doc["fechaHoraActualizacion"],
+                              "fechaHoraRegistro": doc["fechaHoraRegistro"],
+                              "type_comment": doc["type_comment"],
+                              "id": doc.id,
+                              "user_Id": doc["user_Id"],
+                              "visto": doc["visto"],
+                            };
+                            data.add(data3);
                           });
                           return ListView.builder(
                               itemCount: snapshot.data!.docs.length,
@@ -141,7 +187,18 @@ class _AdminFeedbackPageState extends State<AdminFeedbackPage> {
                                 return Padding(
                                     padding: const EdgeInsets.all(12.0),
                                     child: InkWell(
-                                      onDoubleTap: () {},
+                                      onLongPress: () async {
+                                        final commentData = <String, dynamic>{
+                                          "visto": !data[index]["visto"],
+                                          "fechaHoraActualizacion": now,
+                                        };
+                                        if (data[index]["visto"] != true) {
+                                          await FirebaseFirestore.instance
+                                              .collection("comments")
+                                              .doc(data[index]["id"])
+                                              .update(commentData);
+                                        }
+                                      },
                                       child: Container(
                                         padding: const EdgeInsets.only(
                                           left: 20.0,
@@ -150,7 +207,9 @@ class _AdminFeedbackPageState extends State<AdminFeedbackPage> {
                                           bottom: 10.0,
                                         ),
                                         decoration: BoxDecoration(
-                                            color: Colors.black12,
+                                            color: data[index]["visto"]
+                                                ? Colors.green
+                                                : Colors.red,
                                             borderRadius:
                                                 BorderRadius.circular(15.0)),
                                         child: Column(
@@ -158,7 +217,7 @@ class _AdminFeedbackPageState extends State<AdminFeedbackPage> {
                                               CrossAxisAlignment.start,
                                           mainAxisSize: MainAxisSize.max,
                                           children: [
-                                            Text("Recomendacion #1"),
+                                            Text("Recomendacion #${index + 1}"),
                                             Padding(
                                               padding: const EdgeInsets.only(
                                                 top: 10.0,
@@ -179,7 +238,8 @@ class _AdminFeedbackPageState extends State<AdminFeedbackPage> {
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
-                                                Text("21/09/2022"),
+                                                Text(getDate(data[index]
+                                                    ["fechaHoraRegistro"])),
                                                 Container(
                                                   child: data[index]["visto"]
                                                       ? Text("✓✓")

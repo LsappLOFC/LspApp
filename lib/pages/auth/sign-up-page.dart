@@ -37,17 +37,18 @@ class _SignUpPageState extends State<SignUpPage> {
     final now = DateTime.now();
     FirebaseFirestore db = FirebaseFirestore.instance;
     final userData = <String, dynamic>{
-      "name": "prueba",
+      "name": "anonimo",
       "email": _emailController.text.trim(),
       "rol": "user",
       "habilitado": true,
       "fechaHoraRegistro": now,
       "fechaHoraActualizacion": now,
-      "eliminado": false
+      "eliminado": false,
+      "imageUrl": "",
     };
     await db
         .collection("users")
-        .doc()
+        .doc(FirebaseAuth.instance.currentUser?.uid)
         .set(userData)
         .onError((e, _) => print("Error writing document: $e"));
   }
