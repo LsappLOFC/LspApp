@@ -21,9 +21,17 @@ class _SignInPageState extends State<SignInPage> {
   FirebaseFirestore db = FirebaseFirestore.instance;
 
   Future signIn() async {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim());
+    List a = await FirebaseAuth.instance
+        .fetchSignInMethodsForEmail(_emailController.text.trim());
+    if (a.isEmpty) {
+      setState(() {
+        error = "Correo no existe";
+      });
+    } else {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim());
+    }
   }
 
   @override
@@ -32,6 +40,8 @@ class _SignInPageState extends State<SignInPage> {
     _passwordController.dispose();
     super.dispose();
   }
+
+  String error = "";
 
   @override
   Widget build(BuildContext context) {
@@ -132,6 +142,20 @@ class _SignInPageState extends State<SignInPage> {
                           return null;
                         }
                       }),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 30.0, bottom: 2.0),
+                    child: Container(
+                      alignment: Alignment.bottomLeft,
+                      child: Text(
+                        error,
+                        style: GoogleFonts.lato(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16.0,
+                          color: Colors.red,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(
