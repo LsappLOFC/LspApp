@@ -138,7 +138,9 @@ class _SignInPageState extends State<SignInPage> {
                         if (value!.isEmpty ||
                             !RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}')
                                 .hasMatch(value)) {
-                          return "Formato de correo incorrecto";
+                          setState(() {
+                            error = "Formato de correo incorrecto";
+                          });
                         } else {
                           return null;
                         }
@@ -200,7 +202,9 @@ class _SignInPageState extends State<SignInPage> {
                       ),
                       validator: ((validate) {
                         if (validate!.isEmpty) {
-                          return "ingrese contraseña";
+                          setState(() {
+                            error = "Ingrese una contraseña";
+                          });
                         } else {
                           return null;
                         }

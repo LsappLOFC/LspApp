@@ -115,17 +115,17 @@ class _SugerenciasPageState extends State<SugerenciasPage> {
                         color: Colors.blue,
                       ),
                     ),
-                  ),
-                  child: TextField(
-                    maxLength: 160,
-                    controller: _textSugerencias,
-                    decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Ingrese sus sugerencias aquí...",
-                        filled: true,
-                        fillColor: Colors.white),
-                    style: GoogleFonts.poppins(
-                      fontSize: 14.0,
+                    child: TextField(
+                      maxLength: 160,
+                      controller: _textSugerencias,
+                      decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: "Ingrese sus sugerencias aquí...",
+                          filled: true,
+                          fillColor: Colors.white),
+                      style: GoogleFonts.poppins(
+                        fontSize: 14.0,
+                      ),
                     ),
                   ),
                 ),
