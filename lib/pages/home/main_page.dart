@@ -1,16 +1,15 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, avoid_print
 
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:lottie/lottie.dart';
-import 'package:get/get.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:google_speech/google_speech.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_sound/flutter_sound.dart';
+import 'package:lsapp/pages/home/variables.dart' as variables;
 
 const int tSampleRate = 16000;
 typedef _Fn = void Function();
@@ -22,20 +21,21 @@ class MainPage extends StatefulWidget {
   State<MainPage> createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage>
-    with SingleTickerProviderStateMixin {
+class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   FlutterSoundRecorder? _mRecorder = FlutterSoundRecorder();
   late StreamSubscription? _mRecordingDataSubscription;
-  bool _mplaybackReady = false;
   bool _mRecorderIsInited = false;
-  bool _pauseState = false;
+  late BehaviorSubject<List<int>> audioStream;
   final _textController = TextEditingController();
-  String _lastWords = 'IDLE';
   late bool _firstLoad;
-  late String _signToAnim;
+  late bool _isConsumingAPI;
+  late int _animIndex;
+  late int _animLenght;
+  late List<String> _signToAnim;
   late String _signToAdd;
   late List<String> _victorQueue;
   late AnimationController controller;
+  late AnimationController listenController;
   late List<String> singleLetter;
   late List<String> singleWords;
   final _signDictionary = [
@@ -89,26 +89,68 @@ class _MainPageState extends State<MainPage>
     'SI',
     'CUANTO',
     'DONDE',
-    'TU'
+    'TU',
+    'CUANDO',
+    'QUE',
+    'PORQUE',
+    'COMO',
+    'QUIEN',
+    'AYUDA',
+    'BAÑO',
+    'CUAL',
+    'AÑO',
+    'DIA',
+    'ESTUDIAR',
+    'MAMA',
+    'PAPA',
+    'NOCHE',
+    'NOMBRE',
+    'TRABAJAR'
   ];
 
   @override
   void initState() {
     super.initState();
-    _signToAnim = '';
+    _signToAnim = [];
     _signToAdd = '';
     _firstLoad = true;
+    _isConsumingAPI = false;
+    _animIndex = 0;
+    _animLenght = 1;
     singleWords = [];
     _victorQueue = [];
+
     controller = AnimationController(
-        duration: const Duration(milliseconds: 1400), vsync: this);
+        duration: Duration(milliseconds: 1300), vsync: this);
 
     controller.addStatusListener((status) async {
       if (status == AnimationStatus.completed) {
-        setState(() {});
+        print('Animation completed');
+        if (_animIndex < _animLenght - 1) {
+          setState(() {
+            _animIndex++;
+          });
+          print(
+              'Animation index: $_animIndex, animation lenght: $_animLenght, sign to reproduce: ${_signToAnim[_animIndex]}');
+          if (_signToAnim[_animIndex] == _signToAnim[_animIndex - 1]) {
+            print('Same sign');
+            controller.reset();
+            await controller.forward();
+          }
+        }
         controller.reset();
       }
     });
+
+    listenController = AnimationController(
+        duration: const Duration(milliseconds: 2000), vsync: this);
+
+    listenController.addStatusListener((status) async {
+      if (status == AnimationStatus.completed) {
+        listenController.reset();
+      }
+    });
+
     _openRecorder();
   }
 
@@ -122,13 +164,26 @@ class _MainPageState extends State<MainPage>
     super.dispose();
   }
 
+  void changeAnimSpeed() {
+    switch (variables.selectedRadioValue) {
+      case 0:
+        controller.duration = Duration(milliseconds: 1800);
+        break;
+      case 1:
+        controller.duration = Duration(milliseconds: 1300);
+        break;
+      case 2:
+        controller.duration = Duration(milliseconds: 800);
+        break;
+    }
+  }
+
   Future<void> stopRecorder() async {
     await _mRecorder!.stopRecorder();
     if (_mRecordingDataSubscription != null) {
       await _mRecordingDataSubscription!.cancel();
       _mRecordingDataSubscription = null;
     }
-    _mplaybackReady = true;
   }
 
   Future<void> _openRecorder() async {
@@ -162,9 +217,6 @@ class _MainPageState extends State<MainPage>
     ));
   }
 
-  late StreamSubscription<List<int>> audioStreamSubscription;
-  late BehaviorSubject<List<int>> audioStream;
-
   Future<void> record() async {
     assert(_mRecorderIsInited);
     var recordingDataController = StreamController<Food>();
@@ -196,13 +248,18 @@ class _MainPageState extends State<MainPage>
         audioStream);
     String text = '';
     responseStream.listen((data) async {
-      if (data.results.first.isFinal == true) {
-        await stopRecorder();
-        text = await _fetchGoogleResults(data);
-        print("Google translate results: $text");
-        setState(() {});
-        await _loadQueue(text);
-        _victorPlayer();
+      try {
+        if (data.results.first.isFinal == true) {
+          await stopRecorder();
+          _isConsumingAPI = true;
+          text = await _fetchGoogleResults(data);
+          print("Google translate results: $text");
+          setState(() {});
+          await _loadQueue(text);
+          _victorPlayer();
+        }
+      } catch (e) {
+        print('isFinal Error: $e');
       }
     }, onDone: () async {});
 
@@ -258,63 +315,45 @@ class _MainPageState extends State<MainPage>
   Future<void> _victorPlayer() async {
     //TODO: ELIMINAR SEÑAS YA REPRODUCIDAS DE LA COLA
     //CUANDO SE EMPIECE A GRABAR UN NUEVO AUDIO, SE PAUSA LA REPRODUCCIÓN ACTUAL Y LUEGO SE REANUDA LA REPRODUCCIÓN CON FALTANTES Y NUEVAS
+    changeAnimSpeed();
+    _animIndex = 0;
     if (_victorQueue.isNotEmpty) {
-      var victorQueueCopy = _victorQueue;
-      for (String sign in victorQueueCopy) {
-        if (_mRecorder!.isRecording) {
-          break;
-        }
-        //TODO: MEJORAR REPRODUCCIÓN DE LOTTIE
-        setState(() {
-          _signToAnim = sign;
-        });
-        print(_signToAnim);
-        await Future.delayed(const Duration(milliseconds: 1500));
-      }
+      List<String> victorQueueTemp = _victorQueue;
+      //Si se pausa, podemos saber donde nos quedamos usando el index.
+      //_victorQueue[index]
       setState(() {
-        _signToAnim = 'assets/sign/IDLE.json';
+        _firstLoad = false;
+        victorQueueTemp.add('assets/sign/IDLE.json');
+        _animLenght = victorQueueTemp.length;
+        _isConsumingAPI = false;
+        _signToAnim = victorQueueTemp;
       });
+      print("Reproduciendo: $_signToAnim");
     }
   }
 
   Future<void> _loadQueue(String result) async {
     String resultNLP = await _sendToNlp(result);
-    _victorQueue.clear();
     setState(() {
       resultNLP = removeDiacritics(resultNLP);
       resultNLP = resultNLP.toUpperCase();
       _textController.text = resultNLP;
-      _firstLoad = false;
     });
-    singleWords = resultNLP.trim().split(' ');
-    for (String word in singleWords) {
-      if (_signDictionary.contains(word)) {
-        setState(() {
-          _signToAdd = 'assets/sign/$word.json';
-          _victorQueue.add(_signToAdd);
-        });
-      } else {
-        setState(() {
-          singleLetter = word.trim().split("");
-        });
-        for (String letter in singleLetter) {
-          setState(() {
-            _signToAdd = 'assets/sign/$letter.json';
-            _victorQueue.add(_signToAdd);
-          });
-        }
-      }
-    }
+    _addSignsToQueue(resultNLP);
   }
 
   void _onPressedLoadQueue() async {
-    _victorQueue.clear();
     setState(() {
       _textController.text = removeDiacritics(_textController.text);
       _textController.text = _textController.text.toUpperCase();
-      _firstLoad = false;
     });
-    singleWords = _textController.text.trim().split(' ');
+    _addSignsToQueue(_textController.text);
+    _victorPlayer();
+  }
+
+  void _addSignsToQueue(String text) {
+    _victorQueue.clear();
+    singleWords = text.trim().split(' ');
     for (String word in singleWords) {
       if (_signDictionary.contains(word)) {
         setState(() {
@@ -333,80 +372,111 @@ class _MainPageState extends State<MainPage>
         }
       }
     }
-    _victorPlayer();
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: Scaffold(
-            resizeToAvoidBottomInset: false,
-            backgroundColor: Colors.white,
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(30.0),
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * 0.20,
-                      width: MediaQuery.of(context).size.width * 0.85,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          border: Border.all(
-                            color: const Color(0XFF007AFF),
-                            width: 2.0,
-                          )),
-                      child: SingleChildScrollView(
-                        child: TextField(
-                          controller: _textController,
-                          keyboardType: TextInputType.multiline,
-                          maxLines: null,
-                          decoration: InputDecoration(
-                            hintText: "Esperando traducción",
-                            fillColor: Colors.transparent,
-                            filled: true,
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.only(
-                              left: 15,
-                              bottom: 11,
-                              top: 11,
-                              right: 15,
+        home: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          child: Scaffold(
+              resizeToAvoidBottomInset: false,
+              backgroundColor: const Color.fromARGB(43, 139, 198, 207),
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(30.0),
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * 0.20,
+                        width: MediaQuery.of(context).size.width * 0.85,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            border: Border.all(
+                              color: const Color(0XFF007AFF),
+                              width: 2.0,
+                            )),
+                        child: SingleChildScrollView(
+                          child: TextField(
+                            controller: _textController,
+                            keyboardType: TextInputType.multiline,
+                            maxLines: null,
+                            decoration: InputDecoration(
+                              hintText: "Esperando traducción",
+                              fillColor: Colors.transparent,
+                              filled: true,
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.only(
+                                left: 15,
+                                bottom: 11,
+                                top: 11,
+                                right: 15,
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  ElevatedButton(
-                      onPressed: () {
+                    InkWell(
+                      onTap: () {
+                        FocusScope.of(context).unfocus();
                         _onPressedLoadQueue();
                       },
-                      child: Text('Señas')),
-                  Expanded(
-                      child: Align(
-                          alignment: FractionalOffset.bottomCenter,
-                          child: _firstLoad
-                              ? Lottie.asset('assets/sign/IDLE.json',
-                                  animate: false)
-                              : _mRecorder!.isRecording
-                                  ? Lottie.asset('assets/sign/ESCUCHAR.json',
-                                      animate: false)
-                                  : Lottie.asset(_signToAnim,
-                                      controller: controller,
-                                      onLoaded: (composition) {
-                                      controller.forward();
-                                    }))),
-                ],
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal:
+                                MediaQuery.of(context).size.width * 0.40),
+                        child: Container(
+                            alignment: Alignment.center,
+                            height: 70.0,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF007AFF),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: const Icon(
+                              Icons.front_hand_outlined,
+                              size: 60.0,
+                              color: Colors.white,
+                            )),
+                      ),
+                    ),
+                    Expanded(
+                        child: Align(
+                            alignment: FractionalOffset.bottomCenter,
+                            child: _firstLoad
+                                ? Lottie.asset('assets/sign/IDLE.json',
+                                    animate: false)
+                                : _mRecorder!.isRecording
+                                    ? Lottie.asset('assets/sign/ESCUCHAR.json',
+                                        controller: listenController,
+                                        onLoaded: (composition) {
+                                        listenController.forward();
+                                      })
+                                    : _isConsumingAPI
+                                        ? Lottie.asset('assets/sign/IDLE.json',
+                                            animate: false)
+                                        : Lottie.asset(_signToAnim[_animIndex],
+                                            controller: controller,
+                                            onLoaded: (composition) {
+                                            controller.forward();
+                                          }))),
+                  ],
+                ),
               ),
-            ),
-            floatingActionButton: FloatingActionButton(
-              onPressed: getRecorderFn(),
-              tooltip: 'Listen',
-              child: Icon(
-                _mRecorder!.isRecording ? Icons.mic : Icons.mic_off,
-              ),
-            )));
+              floatingActionButton: FloatingActionButton(
+                onPressed: getRecorderFn(),
+                tooltip: 'Listen',
+                child: Icon(
+                  _mRecorder!.isRecording ? Icons.mic : Icons.mic_off,
+                ),
+              )),
+        ));
   }
 }

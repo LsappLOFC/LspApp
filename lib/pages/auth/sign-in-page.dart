@@ -48,17 +48,18 @@ class _SignInPageState extends State<SignInPage> {
     return Scaffold(
       backgroundColor: Colors.blue,
       body: SingleChildScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         child: Column(
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 50.0),
               child: Image.asset(
                 "assets/images/img_1.png",
-                scale: MediaQuery.of(context).size.height * 0.0020,
+                scale: MediaQuery.of(context).size.height * 0.0040,
               ),
             ),
             Container(
-              height: MediaQuery.of(context).size.height * 0.70,
+              height: MediaQuery.of(context).size.height * 0.65,
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
@@ -129,7 +130,7 @@ class _SignInPageState extends State<SignInPage> {
                           ),
                           borderRadius: BorderRadius.circular(35.0),
                         ),
-                        hintText: "Email",
+                        hintText: "Correo electrónico",
                         fillColor: Colors.grey[200],
                         filled: true,
                       ),
@@ -159,7 +160,7 @@ class _SignInPageState extends State<SignInPage> {
                     ),
                   ),
                   const SizedBox(
-                    height: 20.0,
+                    height: 10.0,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 30.0, bottom: 2.0),
@@ -193,7 +194,7 @@ class _SignInPageState extends State<SignInPage> {
                           ),
                           borderRadius: BorderRadius.circular(35.0),
                         ),
-                        hintText: "Password",
+                        hintText: "Contraseña",
                         fillColor: Colors.grey[200],
                         filled: true,
                       ),

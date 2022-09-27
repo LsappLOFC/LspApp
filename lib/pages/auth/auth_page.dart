@@ -20,10 +20,15 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (showLoginPage) {
-      return SignInPage(showLoginPage: toogScrens);
-    } else {
-      return SignUpPage(showLoginPage: toogScrens);
-    }
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        body: showLoginPage
+            ? SignInPage(showLoginPage: toogScrens)
+            : SignUpPage(showLoginPage: toogScrens),
+      ),
+    );
   }
 }

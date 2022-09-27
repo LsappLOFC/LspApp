@@ -6,6 +6,7 @@ import 'package:lsapp/pages/auth/auth_with_google.dart';
 import 'package:lsapp/pages/home/indicaciones_page.dart';
 import 'package:lsapp/pages/home/recomendaciones_page.dart';
 import 'package:lsapp/pages/home/sugerencias_page.dart';
+import 'package:lsapp/pages/home/variables.dart' as variables;
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -21,22 +22,39 @@ enum RadioValues {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  RadioValues? values = RadioValues.Baja;
+
+  RadioValues? values;
   final GoogleAuthService _authService = GoogleAuthService();
+  @override
+  void initState() {
+    if (variables.selectedRadioValue == 0) {
+      values = RadioValues.Baja;
+    } else if (variables.selectedRadioValue == 1) {
+      values = RadioValues.Media;
+    } else {
+      values = RadioValues.Alta;
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(43, 139, 198, 207),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 35.0),
-              child: Text(
-                "Configuracion",
-                style: GoogleFonts.poppins(
+            Container(
+              color: const Color(0XFF007AFF),
+              padding: const EdgeInsets.only(top: 40.0, left: 20.0),
+              alignment: Alignment.centerLeft,
+              child: const Text(
+                "Configuración",
+                style: TextStyle(
+                  fontFamily: 'Roboto',
                   fontSize: 32.0,
-                  fontWeight: FontWeight.w400,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
                 ),
               ),
             ),
@@ -69,9 +87,10 @@ class _SettingsPageState extends State<SettingsPage> {
                           Radio(
                               value: RadioValues.Baja,
                               groupValue: values,
-                              activeColor: const Color(0XFF616161),
+                              activeColor: const Color(0XFF007AFF),
                               onChanged: (value) {
                                 setState(() {
+                                  variables.selectedRadioValue = 0;
                                   values = value as RadioValues?;
                                 });
                               }),
@@ -84,9 +103,10 @@ class _SettingsPageState extends State<SettingsPage> {
                           Radio(
                               value: RadioValues.Media,
                               groupValue: values,
-                              activeColor: const Color(0XFF616161),
+                              activeColor: const Color(0XFF007AFF),
                               onChanged: (value) {
                                 setState(() {
+                                  variables.selectedRadioValue = 1;
                                   values = value as RadioValues?;
                                 });
                               }),
@@ -99,9 +119,10 @@ class _SettingsPageState extends State<SettingsPage> {
                           Radio(
                               value: RadioValues.Alta,
                               groupValue: values,
-                              activeColor: const Color(0XFF616161),
+                              activeColor: const Color(0XFF007AFF),
                               onChanged: (value) {
                                 setState(() {
+                                  variables.selectedRadioValue = 2;
                                   values = value as RadioValues?;
                                 });
                               }),
@@ -146,7 +167,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     decoration: const BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
-                          color: Colors.black,
+                          color: Color(0XFF007AFF),
                           width: 1.0,
                         ),
                       ),
@@ -188,7 +209,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     decoration: const BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
-                          color: Colors.black,
+                          color: Color(0XFF007AFF),
                           width: 1.0,
                         ),
                       ),
@@ -230,7 +251,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     decoration: const BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
-                          color: Colors.black,
+                          color: Color(0XFF007AFF),
                           width: 1.0,
                         ),
                       ),

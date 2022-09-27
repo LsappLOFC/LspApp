@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -67,11 +69,12 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       backgroundColor: Colors.blue,
       body: SingleChildScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         child: Form(
           key: formKey,
           child: Padding(
             padding:
-                EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.20),
+                EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.10),
             child: Container(
               height: MediaQuery.of(context).size.height * 0.90,
               decoration: const BoxDecoration(
@@ -145,7 +148,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                           borderRadius: BorderRadius.circular(35.0),
                         ),
-                        hintText: "Email",
+                        hintText: "Correo electrónico",
                         fillColor: Colors.grey[200],
                         filled: true,
                       ),
@@ -209,7 +212,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                           borderRadius: BorderRadius.circular(35.0),
                         ),
-                        hintText: "Password",
+                        hintText: "Contraseña",
                         fillColor: Colors.grey[200],
                         filled: true,
                       ),
@@ -251,9 +254,11 @@ class _SignUpPageState extends State<SignUpPage> {
                   const SizedBox(
                     height: 15.0,
                   ),
-                  Image.asset(
-                    "assets/images/img.png",
-                    scale: MediaQuery.of(context).size.height * 0.0020,
+                  Expanded(
+                    child: Image.asset(
+                      "assets/images/img.png",
+                      scale: MediaQuery.of(context).size.height * 0.0020,
+                    ),
                   ),
                 ],
               ),

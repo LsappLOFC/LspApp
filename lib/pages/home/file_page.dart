@@ -28,10 +28,27 @@ class _FilePageState extends State<FilePage>
   String text = '';
   String convertedPath = '';
   late bool _firstLoad;
-  late String _signToAnim;
+  late bool _isConsumingAPI;
+  late int _animIndex;
+  late int _animLenght;
+  late List<String> _signToAnim;
+  late String _signToAdd;
+  late List<String> _victorQueue;
   late AnimationController controller;
   late List<String> singleLetter;
+  late List<String> singleWords;
   final _signDictionary = [
+    '0',
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
     'A',
     'B',
     'C',
@@ -67,20 +84,58 @@ class _FilePageState extends State<FilePage>
     'ESCUCHAR',
     'TOMAR',
     'MI',
-    'YO'
+    'YO',
+    'SI',
+    'CUANTO',
+    'DONDE',
+    'TU',
+    'CUANDO',
+    'QUE',
+    'PORQUE',
+    'COMO',
+    'QUIEN',
+    'AYUDA',
+    'BAÑO',
+    'CUAL',
+    'AÑO',
+    'DIA',
+    'ESTUDIAR',
+    'MAMA',
+    'PAPA',
+    'NOCHE',
+    'NOMBRE',
+    'TRABAJAR'
   ];
 
   @override
   void initState() {
     super.initState();
-    _signToAnim = '';
+    _isConsumingAPI = false;
+    _animIndex = 0;
+    _animLenght = 1;
     _firstLoad = true;
+    _victorQueue = [];
+    singleWords = [];
+    _signToAnim = [];
+    _signToAdd = '';
     controller = AnimationController(
         duration: const Duration(milliseconds: 1400), vsync: this);
 
     controller.addStatusListener((status) async {
       if (status == AnimationStatus.completed) {
-        setState(() {});
+        print('Animation completed');
+        if (_animIndex < _animLenght - 1) {
+          setState(() {
+            _animIndex++;
+          });
+          print(
+              'Animation index: $_animIndex, animation lenght: $_animLenght, sign to reproduce: ${_signToAnim[_animIndex]}');
+          if (_signToAnim[_animIndex] == _signToAnim[_animIndex - 1]) {
+            print('Same sign');
+            controller.reset();
+            await controller.forward();
+          }
+        }
         controller.reset();
       }
     });
@@ -90,6 +145,27 @@ class _FilePageState extends State<FilePage>
   void dispose() {
     controller.dispose();
     super.dispose();
+  }
+
+  Future<void> _victorPlayer() async {
+    //TODO: ELIMINAR SEÑAS YA REPRODUCIDAS DE LA COLA
+    //CUANDO SE EMPIECE A GRABAR UN NUEVO AUDIO, SE PAUSA LA REPRODUCCIÓN ACTUAL Y LUEGO SE REANUDA LA REPRODUCCIÓN CON FALTANTES Y NUEVAS
+    //REPRODUCIR REPETIDAS
+    _animIndex = 0;
+    if (_victorQueue.isNotEmpty) {
+      List<String> victorQueueTemp = _victorQueue;
+      //Si se pausa, podemos saber donde nos quedamos usando el index.
+      //_victorQueue[index]
+      setState(() {
+        _firstLoad = false;
+        victorQueueTemp.add(
+            'assets/sign/IDLE.json'); // Esto debe cambiar, (buscar otra solución para el problema de la ultima seña que se repite)
+        _animLenght = victorQueueTemp.length;
+        _isConsumingAPI = false;
+        _signToAnim = victorQueueTemp;
+      });
+      print("Reproduciendo: $_signToAnim");
+    }
   }
 
   String removeDiacritics(String str) {
@@ -110,38 +186,28 @@ class _FilePageState extends State<FilePage>
       result = removeDiacritics(result);
       result = result.toUpperCase();
     });
-    List<String> singleWords = result.trim().split(' ');
+    _addSignsToQueue(result);
+    _victorPlayer();
+  }
+
+  void _addSignsToQueue(String text) {
+    _victorQueue.clear();
+    singleWords = text.trim().split(' ');
     for (String word in singleWords) {
       if (_signDictionary.contains(word)) {
         setState(() {
-          _signToAnim = 'assets/sign/IDLE.json';
+          _signToAdd = 'assets/sign/$word.json';
+          _victorQueue.add(_signToAdd);
         });
-        await Future.delayed(const Duration(milliseconds: 100));
-        setState(() {
-          _signToAnim = 'assets/sign/$word.json';
-        });
-
-        await Future.delayed(const Duration(milliseconds: 1500));
       } else {
         setState(() {
           singleLetter = word.trim().split("");
         });
-
         for (String letter in singleLetter) {
-          if (letter == ' ') {
-            setState(() {
-              letter = 'ESPACIO';
-            });
-          }
           setState(() {
-            _signToAnim = 'assets/sign/IDLE.json';
+            _signToAdd = 'assets/sign/$letter.json';
+            _victorQueue.add(_signToAdd);
           });
-          await Future.delayed(const Duration(milliseconds: 100));
-          setState(() {
-            _signToAnim = 'assets/sign/$letter.json';
-          });
-
-          await Future.delayed(const Duration(milliseconds: 1500));
         }
       }
     }
@@ -193,6 +259,7 @@ class _FilePageState extends State<FilePage>
   }
 
   void _pickFile() async {
+    _isConsumingAPI = true;
     final res = await FilePicker.platform.pickFiles(allowMultiple: false);
     if (res != null) {
       final path = res.files.single.path!;
@@ -210,7 +277,8 @@ class _FilePageState extends State<FilePage>
       Stream<String> lines = file
           .openRead()
           .transform(utf8.decoder) // Decode bytes to UTF-8.
-          .transform(LineSplitter()); // Convert stream to individual lines.
+          .transform(
+              const LineSplitter()); // Convert stream to individual lines.
       try {
         await for (var line in lines) {
           print(line);
@@ -248,17 +316,21 @@ class _FilePageState extends State<FilePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(43, 139, 198, 207),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Container(
+              color: const Color(0XFF007AFF),
               padding: const EdgeInsets.only(top: 40.0, left: 20.0),
-              alignment: Alignment.bottomLeft,
-              child: Text(
-                "Subir Archivos",
-                style: GoogleFonts.poppins(
+              alignment: Alignment.centerLeft,
+              child: const Text(
+                "Traducir Archivos",
+                style: TextStyle(
+                  fontFamily: 'Roboto',
                   fontSize: 32.0,
                   fontWeight: FontWeight.w700,
+                  color: Colors.white,
                 ),
               ),
             ),
@@ -276,7 +348,7 @@ class _FilePageState extends State<FilePage>
                   gradient: const LinearGradient(
                     colors: [
                       Color(0XFF007AFF),
-                      Colors.white,
+                      Color.fromARGB(43, 139, 198, 207),
                     ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
@@ -407,10 +479,14 @@ class _FilePageState extends State<FilePage>
                     alignment: FractionalOffset.bottomCenter,
                     child: _firstLoad
                         ? Lottie.asset('assets/sign/IDLE.json', animate: false)
-                        : Lottie.asset(_signToAnim, controller: controller,
-                            onLoaded: (composition) {
-                            controller.forward();
-                          })) //)
+                        : _isConsumingAPI
+                            ? Lottie.asset('assets/sign/IDLE.json',
+                                animate: false)
+                            : Lottie.asset(_signToAnim[_animIndex],
+                                controller: controller,
+                                onLoaded: (composition) {
+                                controller.forward();
+                              })) //)
                 : Padding(
                     padding: const EdgeInsets.all(30.0),
                     child: Container(
