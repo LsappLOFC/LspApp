@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors, avoid_print
 
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
@@ -9,7 +11,9 @@ import 'package:google_speech/google_speech.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_sound/flutter_sound.dart';
+import 'package:http/http.dart' as http;
 import 'package:lsapp/pages/home/variables.dart' as variables;
+import '../../constants/api_path.dart';
 
 const int tSampleRate = 16000;
 typedef _Fn = void Function();
@@ -107,6 +111,31 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     'NOMBRE',
     'TRABAJAR'
   ];
+
+  Future<List> _getNLP(String sentence) async {
+    print('STARTING NLP');
+    Uri uri = Uri.parse(webServiceUrl);
+
+    //final uri = Uri.http(webServiceUrl, '/LSP', query);
+
+    final headers = {HttpHeaders.contentTypeHeader: 'application/json'};
+    print('PRE API CALL');
+    final response = await http.post(uri,
+        body: json.encode({
+          "Oracion": sentence,
+        }),
+        headers: headers);
+    if (response.statusCode == HttpStatus.ok) {
+      print('RESPONSE OK: ${response.body}');
+      final jsonResponse = json.decode(response.body);
+      List nlpWords =
+          jsonResponse['mensaje'].toString().replaceAll('[', '').split(']');
+      print('PALRABAS NLP: $nlpWords');
+      return nlpWords;
+    } else {
+      throw Exception('Falló el consumo de la API');
+    }
+  }
 
   @override
   void initState() {
@@ -274,10 +303,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   Future<String> _sendToNlp(String text) async {
     print("enviando al backend");
-    String finalResult = text;
-    await Future.delayed(Duration(seconds: 3));
+    List nlpResult = await _getNLP(text);
     print("recibe del backend");
-    return finalResult;
+    text = nlpResult.join(' ');
+    return text;
   }
 
   RecognitionConfig _getConfig() => RecognitionConfig(
