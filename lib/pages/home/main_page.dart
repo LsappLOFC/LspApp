@@ -213,6 +213,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       await _mRecordingDataSubscription!.cancel();
       _mRecordingDataSubscription = null;
     }
+    await audioStream.close();
   }
 
   Future<void> _openRecorder() async {
