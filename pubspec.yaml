@@ -52,6 +52,7 @@ dependencies:
   audio_session: ^0.1.10
   get: ^4.6.5
   http: ^0.13.3
+  youtube_player_flutter: ^8.0.0 
 
 dev_dependencies:
   flutter_test:
