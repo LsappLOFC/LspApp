@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lsapp/pages/auth/auth_page.dart';
-import 'package:lsapp/pages/home/user_controller_page.dart';
+import 'package:lspapp/pages/auth/auth_page.dart';
+import 'package:lspapp/pages/home/user_controller_page.dart';
 
 class MainControllerPage extends StatefulWidget {
   const MainControllerPage({Key? key}) : super(key: key);

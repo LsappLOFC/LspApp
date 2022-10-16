@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lsapp/pages/auth/auth_with_google.dart';
+import 'package:lspapp/pages/auth/auth_with_google.dart';
 
 class AdminSettingsPage extends StatefulWidget {
   const AdminSettingsPage({Key? key}) : super(key: key);

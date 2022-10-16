@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lsapp/pages/admin/admin_controller_page.dart';
-import 'package:lsapp/pages/home/home_controller_page.dart';
-import 'package:lsapp/pages/home/user_disabled_page.dart';
+import 'package:lspapp/pages/admin/admin_controller_page.dart';
+import 'package:lspapp/pages/home/home_controller_page.dart';
+import 'package:lspapp/pages/home/user_disabled_page.dart';
 
 class UserControllerPage extends StatefulWidget {
   const UserControllerPage({Key? key}) : super(key: key);

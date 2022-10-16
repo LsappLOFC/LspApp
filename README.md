@@ -1,4 +1,4 @@
-# lsapp
+# lspapp
 
 A new Flutter project.
 

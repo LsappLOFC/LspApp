@@ -2,11 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lsapp/pages/auth/auth_with_google.dart';
-import 'package:lsapp/pages/home/indicaciones_page.dart';
-import 'package:lsapp/pages/home/recomendaciones_page.dart';
-import 'package:lsapp/pages/home/sugerencias_page.dart';
-import 'package:lsapp/pages/home/variables.dart' as variables;
+import 'package:lspapp/pages/auth/auth_with_google.dart';
+import 'package:lspapp/pages/home/indicaciones_page.dart';
+import 'package:lspapp/pages/home/recomendaciones_page.dart';
+import 'package:lspapp/pages/home/sugerencias_page.dart';
+import 'package:lspapp/pages/home/variables.dart' as variables;
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -22,7 +22,6 @@ enum RadioValues {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-
   RadioValues? values;
   final GoogleAuthService _authService = GoogleAuthService();
   @override

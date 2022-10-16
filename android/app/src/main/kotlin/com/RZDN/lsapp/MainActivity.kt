@@ -1,4 +1,4 @@
-package com.RZDN.lsapp
+package com.LSPAPP.lspapp
 
 import io.flutter.embedding.android.FlutterActivity
 

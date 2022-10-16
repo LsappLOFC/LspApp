@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lsapp/pages/auth/auth_with_google.dart';
+import 'package:lspapp/pages/auth/auth_with_google.dart';
 
 class SignInPage extends StatefulWidget {
   final VoidCallback showLoginPage;

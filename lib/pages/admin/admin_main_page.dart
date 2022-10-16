@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:lsapp/pages/admin/admin_details_user_page.dart';
+import 'package:lspapp/pages/admin/admin_details_user_page.dart';
 
 class AdminMainPage extends StatefulWidget {
   const AdminMainPage({Key? key}) : super(key: key);

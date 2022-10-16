@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lsapp/pages/admin/admin_feedback_page.dart';
-import 'package:lsapp/pages/admin/admin_main_page.dart';
-import 'package:lsapp/pages/admin/admin_settings_page.dart';
+import 'package:lspapp/pages/admin/admin_feedback_page.dart';
+import 'package:lspapp/pages/admin/admin_main_page.dart';
+import 'package:lspapp/pages/admin/admin_settings_page.dart';
 
 class AdminControllerPage extends StatefulWidget {
   const AdminControllerPage({Key? key}) : super(key: key);
