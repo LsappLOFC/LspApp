@@ -8,12 +8,49 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:764642014221:android:539e0674e226ca01165144",
+        "mobilesdk_app_id": "1:764642014221:android:bd2f6b02b03ac9a5165144",
         "android_client_info": {
           "package_name": "com.LSPAPP.lspapp"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "764642014221-i8h9gdbr3q485cc9ltv38hvri3h5fsf2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4UX7tO_I4Dp7jDsId5hoRlK-vROkh2jI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "764642014221-i8h9gdbr3q485cc9ltv38hvri3h5fsf2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:764642014221:android:539e0674e226ca01165144",
+        "android_client_info": {
+          "package_name": "com.RZDN.lsapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "764642014221-22hjmb2oa26sq9pr9oiisqkp49nhftqh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.RZDN.lsapp",
+            "certificate_hash": "00759dc48f4806aead7e0117c53336f353f17326"
+          }
+        },
         {
           "client_id": "764642014221-i8h9gdbr3q485cc9ltv38hvri3h5fsf2.apps.googleusercontent.com",
           "client_type": 3
