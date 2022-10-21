@@ -118,9 +118,10 @@ class _SugerenciasPageState extends State<SugerenciasPage> {
                     ),
                     child: TextField(
                       maxLength: 160,
+                      maxLines: 5,
                       controller: _textSugerencias,
                       decoration: InputDecoration(
-                          border: InputBorder.none,
+                          //border: InputBorder.none,
                           hintText: "Ingrese sus sugerencias aquí...",
                           filled: true,
                           fillColor: Colors.white,

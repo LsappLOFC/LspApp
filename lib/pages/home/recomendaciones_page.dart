@@ -119,9 +119,10 @@ class _RecomendacionesAPgeState extends State<RecomendacionesAPge> {
                     ),
                     child: TextField(
                       maxLength: 160,
+                      maxLines: 5,
                       controller: _textRecomendation,
                       decoration: InputDecoration(
-                          border: InputBorder.none,
+                          //border: InputBorder.none,
                           hintText: "Ingrese sus recomendaciones aquí...",
                           filled: true,
                           fillColor: Colors.white,
