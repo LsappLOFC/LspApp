@@ -12,6 +12,7 @@ class SugerenciasPage extends StatefulWidget {
 
 class _SugerenciasPageState extends State<SugerenciasPage> {
   final _textSugerencias = TextEditingController();
+  bool _validateSugerencia = false;
 
   Future saveData() async {
     final now = DateTime.now();
@@ -118,11 +119,14 @@ class _SugerenciasPageState extends State<SugerenciasPage> {
                     child: TextField(
                       maxLength: 160,
                       controller: _textSugerencias,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: "Ingrese sus sugerencias aquí...",
                           filled: true,
-                          fillColor: Colors.white),
+                          fillColor: Colors.white,
+                          labelText: "Sugerencia",
+                          errorText: _validateSugerencia ? 'Ingresar Sugerencia' : null,
+                      ),
                       style: GoogleFonts.poppins(
                         fontSize: 14.0,
                       ),
@@ -134,10 +138,16 @@ class _SugerenciasPageState extends State<SugerenciasPage> {
                 ),
                 InkWell(
                   onTap: () {
-                    saveData();
-                    Navigator.pop(
-                      context,
-                    );
+                    if(_textSugerencias.text.isEmpty){
+                      _validateSugerencia = true;
+                    }else{
+                      _validateSugerencia = false;
+                      saveData();
+                      Navigator.pop(
+                        context,
+                      );
+                    }
+                    /**/
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(
