@@ -44,8 +44,8 @@ class _SugerenciasPageState extends State<SugerenciasPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          shadowColor: Colors.white,
-          backgroundColor: Colors.white,
+          shadowColor: const Color.fromARGB(43, 139, 198, 207),
+          backgroundColor: const Color(0XFF007AFF),
           elevation: 0,
           leading: GestureDetector(
             onTap: () {
@@ -56,7 +56,7 @@ class _SugerenciasPageState extends State<SugerenciasPage> {
             child: const Icon(
               Icons.arrow_back,
               size: 35.0,
-              color: Color(0XFF007AFF),
+              color: Colors.white,
             ),
           ),
         ),
@@ -143,12 +143,43 @@ class _SugerenciasPageState extends State<SugerenciasPage> {
                       _validateSugerencia = true;
                     }else{
                       _validateSugerencia = false;
-                      saveData();
-                      Navigator.pop(
-                        context,
-                      );
+                       showDialog(
+                        context: context,
+                        builder: ((context) => AlertDialog(
+                              title: const Text(
+                                "Enviar Sugerencia",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              content: const Text(
+                                "¿Enviar esta sugerencia?",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 16.0),
+                              ),
+                              actions: [
+                                TextButton(
+                                  style: ButtonStyle(),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text("NO"),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    saveData();
+                                    Navigator.pop(
+                                      context,
+                                    );
+                                  },
+                                  child: Text("SI"),
+                                ),
+                              ],
+                            )));
                     }
-                    /**/
+                  
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(

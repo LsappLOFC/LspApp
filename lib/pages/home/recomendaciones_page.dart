@@ -43,10 +43,9 @@ class _RecomendacionesAPgeState extends State<RecomendacionesAPge> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
         appBar: AppBar(
-          shadowColor: Colors.white,
-          backgroundColor: Colors.white,
+          shadowColor: const Color.fromARGB(43, 139, 198, 207),
+          backgroundColor: const Color(0XFF007AFF),
           elevation: 0,
           leading: GestureDetector(
             onTap: () {
@@ -57,7 +56,7 @@ class _RecomendacionesAPgeState extends State<RecomendacionesAPge> {
             child: const Icon(
               Icons.arrow_back,
               size: 35.0,
-              color: Color(0XFF007AFF),
+              color: Colors.white,
             ),
           ),
         ),
@@ -144,10 +143,41 @@ class _RecomendacionesAPgeState extends State<RecomendacionesAPge> {
                       _validateRecomendation = true;
                     }else{
                       _validateRecomendation = false;
-                      saveData();
-                      Navigator.pop(
-                        context,
-                      );
+                      showDialog(
+                        context: context,
+                        builder: ((context) => AlertDialog(
+                              title: const Text(
+                                "Enviar Recomendación",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              content: const Text(
+                                "¿Enviar esta recomendación?",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 16.0),
+                              ),
+                              actions: [
+                                TextButton(
+                                  style: ButtonStyle(),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text("NO"),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    saveData();
+                                    Navigator.pop(
+                                      context,
+                                    );
+                                  },
+                                  child: Text("SI"),
+                                ),
+                              ],
+                            )));
                     }
                   },
                   child: Container(
