@@ -149,6 +149,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     _animLenght = 1;
     singleWords = [];
     _victorQueue = [];
+    setState(() {
+      _textController.text = variables.textMem;
+    });
 
     controller = AnimationController(
         duration: Duration(milliseconds: 1300), vsync: this);
@@ -197,13 +200,13 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   void changeAnimSpeed() {
     switch (variables.selectedRadioValue) {
       case 0:
-        controller.duration = Duration(milliseconds: 1800);
+        controller.duration = Duration(milliseconds: 2000);
         break;
       case 1:
-        controller.duration = Duration(milliseconds: 1300);
+        controller.duration = Duration(milliseconds: 1500);
         break;
       case 2:
-        controller.duration = Duration(milliseconds: 800);
+        controller.duration = Duration(milliseconds: 1000);
         break;
     }
   }
@@ -369,6 +372,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       resultNLP = removeDiacritics(resultNLP);
       resultNLP = resultNLP.toUpperCase();
       _textController.text = resultNLP;
+      variables.textMem = _textController.text;
     });
     _addSignsToQueue(resultNLP);
   }
@@ -377,6 +381,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     setState(() {
       _textController.text = removeDiacritics(_textController.text);
       _textController.text = _textController.text.toUpperCase();
+      variables.textMem = _textController.text;
     });
     _addSignsToQueue(_textController.text);
     _victorPlayer();
@@ -467,9 +472,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                           FocusScope.of(context).unfocus();
                           _onPressedLoadQueue();
                         }
-
-                        /*FocusScope.of(context).unfocus();
-                        _onPressedLoadQueue();*/
                       },
                       child: Padding(
                         padding: EdgeInsets.symmetric(

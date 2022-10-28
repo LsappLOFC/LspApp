@@ -16,9 +16,9 @@ class SettingsPage extends StatefulWidget {
 }
 
 enum RadioValues {
-  Baja,
-  Media,
-  Alta,
+  Lento,
+  Normal,
+  Rapido,
 }
 
 class _SettingsPageState extends State<SettingsPage> {
@@ -27,11 +27,11 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   void initState() {
     if (variables.selectedRadioValue == 0) {
-      values = RadioValues.Baja;
+      values = RadioValues.Lento;
     } else if (variables.selectedRadioValue == 1) {
-      values = RadioValues.Media;
+      values = RadioValues.Normal;
     } else {
-      values = RadioValues.Alta;
+      values = RadioValues.Rapido;
     }
     super.initState();
   }
@@ -84,7 +84,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Radio(
-                              value: RadioValues.Baja,
+                              value: RadioValues.Lento,
                               groupValue: values,
                               activeColor: const Color(0XFF007AFF),
                               onChanged: (value) {
@@ -93,14 +93,14 @@ class _SettingsPageState extends State<SettingsPage> {
                                   values = value as RadioValues?;
                                 });
                               }),
-                          const Text("Baja"),
+                          const Text("Lento"),
                         ],
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Radio(
-                              value: RadioValues.Media,
+                              value: RadioValues.Normal,
                               groupValue: values,
                               activeColor: const Color(0XFF007AFF),
                               onChanged: (value) {
@@ -109,14 +109,14 @@ class _SettingsPageState extends State<SettingsPage> {
                                   values = value as RadioValues?;
                                 });
                               }),
-                          const Text("Media"),
+                          const Text("Normal"),
                         ],
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Radio(
-                              value: RadioValues.Alta,
+                              value: RadioValues.Rapido,
                               groupValue: values,
                               activeColor: const Color(0XFF007AFF),
                               onChanged: (value) {
@@ -125,7 +125,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   values = value as RadioValues?;
                                 });
                               }),
-                          const Text("Alta"),
+                          const Text("Rapido"),
                         ],
                       )
                     ],
