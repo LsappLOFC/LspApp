@@ -444,8 +444,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                               fillColor: Colors.transparent,
                               filled: true,
                               //border: InputBorder.none,
-                              labelText: "Texto",
-                              errorText: _validateText ? 'Ingresar Texto' : null,
+                              labelText: "",
+                              errorText:
+                                  _validateText ? 'Ingresar Texto' : null,
                               contentPadding: EdgeInsets.only(
                                 left: 15,
                                 bottom: 11,
@@ -459,9 +460,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     ),
                     InkWell(
                       onTap: () {
-                        if(_textController.text.isEmpty){
+                        if (_textController.text.isEmpty) {
                           _validateText = true;
-                        }else{
+                        } else {
                           _validateText = false;
                           FocusScope.of(context).unfocus();
                           _onPressedLoadQueue();

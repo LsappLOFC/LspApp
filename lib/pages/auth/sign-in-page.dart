@@ -214,7 +214,7 @@ class _SignInPageState extends State<SignInPage> {
                   const SizedBox(
                     height: 10.0,
                   ),
-                  ElevatedButton(
+                  /*ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       primary: Colors.black26,
                     ),
@@ -253,7 +253,7 @@ class _SignInPageState extends State<SignInPage> {
                       }
                     },
                     child: const Text("Continue con Google"),
-                  ),
+                  ),*/
                   InkWell(
                     onTap: signIn,
                     child: Container(

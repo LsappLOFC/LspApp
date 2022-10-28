@@ -121,12 +121,13 @@ class _SugerenciasPageState extends State<SugerenciasPage> {
                       maxLines: 5,
                       controller: _textSugerencias,
                       decoration: InputDecoration(
-                          //border: InputBorder.none,
-                          hintText: "Ingrese sus sugerencias aquí...",
-                          filled: true,
-                          fillColor: Colors.white,
-                          labelText: "Sugerencia",
-                          errorText: _validateSugerencia ? 'Ingresar Sugerencia' : null,
+                        //border: InputBorder.none,
+                        hintText: "Ingrese sus sugerencias aquí...",
+                        filled: true,
+                        fillColor: Colors.white,
+                        labelText: "Sugerencia",
+                        errorText:
+                            _validateSugerencia ? 'Ingresar Sugerencia' : null,
                       ),
                       style: GoogleFonts.poppins(
                         fontSize: 14.0,
@@ -139,47 +140,46 @@ class _SugerenciasPageState extends State<SugerenciasPage> {
                 ),
                 InkWell(
                   onTap: () {
-                    if(_textSugerencias.text.isEmpty){
+                    if (_textSugerencias.text.isEmpty) {
                       _validateSugerencia = true;
-                    }else{
+                    } else {
                       _validateSugerencia = false;
-                       showDialog(
-                        context: context,
-                        builder: ((context) => AlertDialog(
-                              title: const Text(
-                                "Enviar Sugerencia",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.w500,
+                      showDialog(
+                          context: context,
+                          builder: ((context) => AlertDialog(
+                                title: const Text(
+                                  "Enviar Sugerencia",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
-                              ),
-                              content: const Text(
-                                "¿Enviar esta sugerencia?",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 16.0),
-                              ),
-                              actions: [
-                                TextButton(
-                                  style: ButtonStyle(),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text("NO"),
+                                content: const Text(
+                                  "¿Enviar esta sugerencia?",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 16.0),
                                 ),
-                                TextButton(
-                                  onPressed: () {
-                                    saveData();
-                                    Navigator.pop(
-                                      context,
-                                    );
-                                  },
-                                  child: Text("SI"),
-                                ),
-                              ],
-                            )));
+                                actions: [
+                                  TextButton(
+                                    style: ButtonStyle(),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("NO"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      saveData();
+                                      Navigator.pop(
+                                        context,
+                                      );
+                                    },
+                                    child: Text("SI"),
+                                  ),
+                                ],
+                              )));
                     }
-                  
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(
