@@ -12,6 +12,7 @@ class SugerenciasPage extends StatefulWidget {
 
 class _SugerenciasPageState extends State<SugerenciasPage> {
   final _textSugerencias = TextEditingController();
+  bool _validateSugerencia = false;
 
   Future saveData() async {
     final now = DateTime.now();
@@ -117,12 +118,16 @@ class _SugerenciasPageState extends State<SugerenciasPage> {
                     ),
                     child: TextField(
                       maxLength: 160,
+                      maxLines: 5,
                       controller: _textSugerencias,
-                      decoration: const InputDecoration(
-                          border: InputBorder.none,
+                      decoration: InputDecoration(
+                          //border: InputBorder.none,
                           hintText: "Ingrese sus sugerencias aquí...",
                           filled: true,
-                          fillColor: Colors.white),
+                          fillColor: Colors.white,
+                          labelText: "Sugerencia",
+                          errorText: _validateSugerencia ? 'Ingresar Sugerencia' : null,
+                      ),
                       style: GoogleFonts.poppins(
                         fontSize: 14.0,
                       ),
@@ -134,7 +139,11 @@ class _SugerenciasPageState extends State<SugerenciasPage> {
                 ),
                 InkWell(
                   onTap: () {
-                    showDialog(
+                    if(_textSugerencias.text.isEmpty){
+                      _validateSugerencia = true;
+                    }else{
+                      _validateSugerencia = false;
+                       showDialog(
                         context: context,
                         builder: ((context) => AlertDialog(
                               title: const Text(
@@ -169,6 +178,8 @@ class _SugerenciasPageState extends State<SugerenciasPage> {
                                 ),
                               ],
                             )));
+                    }
+                  
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(

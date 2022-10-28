@@ -12,6 +12,7 @@ class RecomendacionesAPge extends StatefulWidget {
 
 class _RecomendacionesAPgeState extends State<RecomendacionesAPge> {
   final _textRecomendation = TextEditingController();
+  bool _validateRecomendation = false;
 
   Future saveData() async {
     final now = DateTime.now();
@@ -117,12 +118,16 @@ class _RecomendacionesAPgeState extends State<RecomendacionesAPge> {
                     ),
                     child: TextField(
                       maxLength: 160,
+                      maxLines: 5,
                       controller: _textRecomendation,
-                      decoration: const InputDecoration(
-                          border: InputBorder.none,
+                      decoration: InputDecoration(
+                          //border: InputBorder.none,
                           hintText: "Ingrese sus recomendaciones aquí...",
                           filled: true,
-                          fillColor: Colors.white),
+                          fillColor: Colors.white,
+                        labelText: "Recomendation",
+                        errorText: _validateRecomendation ? 'Ingresar Recomendation' : null,
+                      ),
                       style: GoogleFonts.poppins(
                         fontSize: 14.0,
                       ),
@@ -134,7 +139,11 @@ class _RecomendacionesAPgeState extends State<RecomendacionesAPge> {
                 ),
                 InkWell(
                   onTap: () {
-                    showDialog(
+                    if(_textRecomendation.text.isEmpty){
+                      _validateRecomendation = true;
+                    }else{
+                      _validateRecomendation = false;
+                      showDialog(
                         context: context,
                         builder: ((context) => AlertDialog(
                               title: const Text(
@@ -169,6 +178,7 @@ class _RecomendacionesAPgeState extends State<RecomendacionesAPge> {
                                 ),
                               ],
                             )));
+                    }
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(

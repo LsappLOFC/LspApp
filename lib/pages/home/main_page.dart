@@ -31,6 +31,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   bool _mRecorderIsInited = false;
   late BehaviorSubject<List<int>> audioStream;
   final _textController = TextEditingController();
+  bool _validateText = false;
   late bool _firstLoad;
   late bool _isConsumingAPI;
   late int _animIndex;
@@ -442,7 +443,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                               hintText: "Esperando traducción",
                               fillColor: Colors.transparent,
                               filled: true,
-                              border: InputBorder.none,
+                              //border: InputBorder.none,
+                              labelText: "Texto",
+                              errorText: _validateText ? 'Ingresar Texto' : null,
                               contentPadding: EdgeInsets.only(
                                 left: 15,
                                 bottom: 11,
@@ -456,8 +459,16 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     ),
                     InkWell(
                       onTap: () {
-                        FocusScope.of(context).unfocus();
-                        _onPressedLoadQueue();
+                        if(_textController.text.isEmpty){
+                          _validateText = true;
+                        }else{
+                          _validateText = false;
+                          FocusScope.of(context).unfocus();
+                          _onPressedLoadQueue();
+                        }
+
+                        /*FocusScope.of(context).unfocus();
+                        _onPressedLoadQueue();*/
                       },
                       child: Padding(
                         padding: EdgeInsets.symmetric(
