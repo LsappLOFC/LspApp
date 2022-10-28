@@ -246,10 +246,6 @@ class _FilePageState extends State<FilePage>
       sampleRateHertz: 8000,
       languageCode: 'es-PE');
 
-  /*Future<List<int>> _getAudioContent() async {
-    return File(path).readAsBytesSync().toList();
-  }*/
-
   bool showContent() {
     if (senasIsSelected) {
       return true;
@@ -316,7 +312,7 @@ class _FilePageState extends State<FilePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(43, 139, 198, 207),
+      backgroundColor: Color.fromARGB(43, 139, 198, 207),
       body: SingleChildScrollView(
         child: Column(
           children: [
