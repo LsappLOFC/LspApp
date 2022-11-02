@@ -121,7 +121,7 @@ class _SugerenciasPageState extends State<SugerenciasPage> {
                       maxLines: 5,
                       controller: _textSugerencias,
                       decoration: InputDecoration(
-                        //border: InputBorder.none,
+                        border: InputBorder.none,
                         hintText: "Ingrese sus sugerencias aquí...",
                         filled: true,
                         fillColor: Colors.white,
@@ -140,7 +140,9 @@ class _SugerenciasPageState extends State<SugerenciasPage> {
                 ),
                 InkWell(
                   onTap: () {
-                    if (_textSugerencias.text.isEmpty) {
+                    if (_textSugerencias.text.isEmpty || _textSugerencias.text==" " || _textSugerencias.text=="  " || _textSugerencias.text=="\n"
+                    || _textSugerencias.text=="\n\n"|| _textSugerencias.text=="\n\n\n"|| _textSugerencias.text=="\n\n\n\n"
+                    || _textSugerencias.text=="\n\n\n\n\n") {
                       _validateSugerencia = true;
                     } else {
                       _validateSugerencia = false;

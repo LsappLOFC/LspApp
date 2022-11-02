@@ -448,7 +448,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                               hintText: "Esperando traducción",
                               fillColor: Colors.transparent,
                               filled: true,
-                              //border: InputBorder.none,
+                              border: InputBorder.none,
                               labelText: "",
                               errorText:
                                   _validateText ? 'Ingresar Texto' : null,
@@ -465,7 +465,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     ),
                     InkWell(
                       onTap: () {
-                        if (_textController.text.isEmpty) {
+                        if (_textController.text.isEmpty ||  _textController.text==" " || _textController.text=="  " || _textController.text=="\n"
+                        || _textController.text=="\n\n"|| _textController.text=="\n\n\n"|| _textController.text=="\n\n\n\n"
+                        || _textController.text=="\n\n\n\n\n") {
                           _validateText = true;
                         } else {
                           _validateText = false;

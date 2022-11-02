@@ -121,7 +121,7 @@ class _RecomendacionesAPgeState extends State<RecomendacionesAPge> {
                       maxLines: 5,
                       controller: _textRecomendation,
                       decoration: InputDecoration(
-                          //border: InputBorder.none,
+                          border: InputBorder.none,
                           hintText: "Ingrese sus recomendaciones aquí...",
                           filled: true,
                           fillColor: Colors.white,
@@ -139,7 +139,9 @@ class _RecomendacionesAPgeState extends State<RecomendacionesAPge> {
                 ),
                 InkWell(
                   onTap: () {
-                    if(_textRecomendation.text.isEmpty){
+                    if(_textRecomendation.text.isEmpty|| _textRecomendation.text==" " || _textRecomendation.text=="  " || _textRecomendation.text=="\n"
+                        || _textRecomendation.text=="\n\n"|| _textRecomendation.text=="\n\n\n"|| _textRecomendation.text=="\n\n\n\n"
+                        || _textRecomendation.text=="\n\n\n\n\n"){
                       _validateRecomendation = true;
                     }else{
                       _validateRecomendation = false;
