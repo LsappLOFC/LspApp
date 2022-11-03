@@ -11,8 +11,8 @@ class RecomendacionesAPge extends StatefulWidget {
 }
 
 class _RecomendacionesAPgeState extends State<RecomendacionesAPge> {
-  final _textRecomendation = TextEditingController();
-  bool _validateRecomendation = false;
+  final _textRecommendation = TextEditingController();
+  bool _validateRecommendation = false;
 
   Future saveData() async {
     final now = DateTime.now();
@@ -20,7 +20,7 @@ class _RecomendacionesAPgeState extends State<RecomendacionesAPge> {
     User? user = auth.currentUser;
     FirebaseFirestore db = FirebaseFirestore.instance;
     final city = <String, dynamic>{
-      "comment": _textRecomendation.text,
+      "comment": _textRecommendation.text,
       "fechaHoraRegistro": now,
       "fechaHoraActualizacion": now,
       "type_comment": "recomendaciones",
@@ -119,14 +119,14 @@ class _RecomendacionesAPgeState extends State<RecomendacionesAPge> {
                     child: TextField(
                       maxLength: 160,
                       maxLines: 5,
-                      controller: _textRecomendation,
+                      controller: _textRecommendation,
                       decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: "Ingrese sus recomendaciones aquí...",
                           filled: true,
                           fillColor: Colors.white,
                         labelText: "Recomendation",
-                        errorText: _validateRecomendation ? 'Ingresar Recomendation' : null,
+                        errorText: _validateRecommendation ? 'Ingresar Recomendation' : null,
                       ),
                       style: GoogleFonts.poppins(
                         fontSize: 14.0,
@@ -139,12 +139,12 @@ class _RecomendacionesAPgeState extends State<RecomendacionesAPge> {
                 ),
                 InkWell(
                   onTap: () {
-                    if(_textRecomendation.text.isEmpty|| _textRecomendation.text==" " || _textRecomendation.text=="  " || _textRecomendation.text=="\n"
-                        || _textRecomendation.text=="\n\n"|| _textRecomendation.text=="\n\n\n"|| _textRecomendation.text=="\n\n\n\n"
-                        || _textRecomendation.text=="\n\n\n\n\n"){
-                      _validateRecomendation = true;
+                    if(_textRecommendation.text.isEmpty|| _textRecommendation.text==" " || _textRecommendation.text=="  " || _textRecommendation.text=="\n"
+                        || _textRecommendation.text=="\n\n"|| _textRecommendation.text=="\n\n\n"|| _textRecommendation.text=="\n\n\n\n"
+                        || _textRecommendation.text=="\n\n\n\n\n"){
+                      _validateRecommendation = true;
                     }else{
-                      _validateRecomendation = false;
+                      _validateRecommendation = false;
                       showDialog(
                         context: context,
                         builder: ((context) => AlertDialog(
