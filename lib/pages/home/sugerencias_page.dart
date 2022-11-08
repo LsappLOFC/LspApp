@@ -11,8 +11,8 @@ class SugerenciasPage extends StatefulWidget {
 }
 
 class _SugerenciasPageState extends State<SugerenciasPage> {
-  final _textSugerencias = TextEditingController();
-  bool _validateSugerencia = false;
+  final _textSuggestion = TextEditingController();
+  bool _validateSuggestion = false;
 
   Future saveData() async {
     final now = DateTime.now();
@@ -20,7 +20,7 @@ class _SugerenciasPageState extends State<SugerenciasPage> {
     User? user = auth.currentUser;
     FirebaseFirestore db = FirebaseFirestore.instance;
     final city = <String, dynamic>{
-      "comment": _textSugerencias.text,
+      "comment": _textSuggestion.text,
       "fechaHoraRegistro": now,
       "fechaHoraActualizacion": now,
       "type_comment": "sugerencias",
@@ -119,15 +119,15 @@ class _SugerenciasPageState extends State<SugerenciasPage> {
                     child: TextField(
                       maxLength: 160,
                       maxLines: 5,
-                      controller: _textSugerencias,
+                      controller: _textSuggestion,
                       decoration: InputDecoration(
-                        //border: InputBorder.none,
+                        border: InputBorder.none,
                         hintText: "Ingrese sus sugerencias aquí...",
                         filled: true,
                         fillColor: Colors.white,
                         labelText: "Sugerencia",
                         errorText:
-                            _validateSugerencia ? 'Ingresar Sugerencia' : null,
+                        _validateSuggestion ? 'Ingresar Sugerencia' : null,
                       ),
                       style: GoogleFonts.poppins(
                         fontSize: 14.0,
@@ -140,10 +140,12 @@ class _SugerenciasPageState extends State<SugerenciasPage> {
                 ),
                 InkWell(
                   onTap: () {
-                    if (_textSugerencias.text.isEmpty) {
-                      _validateSugerencia = true;
+                    if (_textSuggestion.text.isEmpty || _textSuggestion.text==" " || _textSuggestion.text=="  " || _textSuggestion.text=="\n"
+                    || _textSuggestion.text=="\n\n"|| _textSuggestion.text=="\n\n\n"|| _textSuggestion.text=="\n\n\n\n"
+                    || _textSuggestion.text=="\n\n\n\n\n") {
+                      _validateSuggestion = true;
                     } else {
-                      _validateSugerencia = false;
+                      _validateSuggestion = false;
                       showDialog(
                           context: context,
                           builder: ((context) => AlertDialog(

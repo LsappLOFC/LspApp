@@ -21,7 +21,7 @@ class FilePage extends StatefulWidget {
 
 class _FilePageState extends State<FilePage>
     with SingleTickerProviderStateMixin {
-  bool senasIsSelected = true;
+  bool signsIsSelected = true;
   bool textIsSelected = false;
   bool recognizing = false;
   bool recognizeFinished = false;
@@ -137,6 +137,7 @@ class _FilePageState extends State<FilePage>
           }
         }
         controller.reset();
+
       }
     });
   }
@@ -247,7 +248,7 @@ class _FilePageState extends State<FilePage>
       languageCode: 'es-PE');
 
   bool showContent() {
-    if (senasIsSelected) {
+    if (signsIsSelected) {
       return true;
     } else {
       return false;
@@ -353,7 +354,7 @@ class _FilePageState extends State<FilePage>
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    senasIsSelected
+                    signsIsSelected
                         ? Container(
                             width: 66.0,
                             height: 40.0,
@@ -375,7 +376,7 @@ class _FilePageState extends State<FilePage>
                             onTap: () {
                               setState(() {
                                 textIsSelected = !textIsSelected;
-                                senasIsSelected = !senasIsSelected;
+                                signsIsSelected = !signsIsSelected;
                               });
                             },
                             child: const Text(
@@ -409,7 +410,7 @@ class _FilePageState extends State<FilePage>
                             onTap: () {
                               setState(() {
                                 textIsSelected = !textIsSelected;
-                                senasIsSelected = !senasIsSelected;
+                                signsIsSelected = !signsIsSelected;
                               });
                             },
                             child: const Text(

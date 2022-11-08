@@ -29,7 +29,7 @@ class _SignUpPageState extends State<SignUpPage> {
         await saveData();
       } else {
         setState(() {
-          errCorreo = "Correo ya existe";
+          errEmail = "Correo ya existe";
         });
       }
     }
@@ -62,7 +62,7 @@ class _SignUpPageState extends State<SignUpPage> {
     super.dispose();
   }
 
-  String errCorreo = "";
+  String errEmail = "";
 
   @override
   Widget build(BuildContext context) {
@@ -168,7 +168,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     child: Container(
                       alignment: Alignment.bottomLeft,
                       child: Text(
-                        errCorreo,
+                        errEmail,
                         style: GoogleFonts.lato(
                           fontWeight: FontWeight.w700,
                           fontSize: 16.0,
