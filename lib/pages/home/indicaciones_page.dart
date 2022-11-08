@@ -16,7 +16,7 @@ class _IndicacionesPageState extends State<IndicacionesPage> {
 
   @override
   void initState() {
-    const url = 'https://youtu.be/2GgiZZhO-PA';
+    const url = 'https://youtu.be/Dcujnp5jK2M';
     controller = YoutubePlayerController(
       initialVideoId: YoutubePlayer.convertUrlToId(url)!,
       flags: const YoutubePlayerFlags(
