@@ -2,11 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lspapp/pages/auth/auth_with_google.dart';
 import 'package:lspapp/pages/home/indicaciones_page.dart';
 import 'package:lspapp/pages/home/recomendaciones_page.dart';
 import 'package:lspapp/pages/home/sugerencias_page.dart';
 import 'package:lspapp/pages/home/variables.dart' as variables;
+import 'package:lspapp/services/user_service.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -23,7 +23,6 @@ enum RadioValues {
 
 class _SettingsPageState extends State<SettingsPage> {
   RadioValues? values;
-  final GoogleAuthService _authService = GoogleAuthService();
   @override
   void initState() {
     if (variables.selectedRadioValue == 0) {
@@ -281,7 +280,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       color: Colors.blue,
                     ),
                     onTap: () async {
-                      await _authService.signOutGoogle();
+                      UserService userService = UserService();
+                      userService.signOut(context);
                     },
                   ),
                 ],

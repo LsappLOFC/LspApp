@@ -1,8 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
+import 'package:lspapp/services/user_service.dart';
 
 class UserDisabledPage extends StatefulWidget {
   const UserDisabledPage({Key? key}) : super(key: key);
+
+  static String id = '/disabledUser';
 
   @override
   State<UserDisabledPage> createState() => _UserDisabledPageState();
@@ -14,37 +18,20 @@ class _UserDisabledPageState extends State<UserDisabledPage> {
     return Scaffold(
       body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const SizedBox(
-              height: 100,
-            ),
-            const Center(child: Text("SU CUENTA ESTA INHABILITADA")),
-            const SizedBox(
-              height: 100,
-            ),
-            InkWell(
-              onTap: () {
-                FirebaseAuth.instance.signOut();
+            Text("SU CUENTA ESTA INHABILITADA"),
+            ElevatedButton(
+              onPressed: () {
+                UserService userService = UserService();
+                userService.signOut(context);
               },
-              child: Container(
-                padding: const EdgeInsets.only(bottom: 50.0),
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  alignment: Alignment.center,
-                  width: 250.0,
-                  height: 60.0,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF82D00),
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                  child: const Text(
-                    "SALIR",
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white,
-                    ),
-                  ),
+              child: Text(
+                "SALIR",
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
                 ),
               ),
             ),

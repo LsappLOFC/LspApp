@@ -7,6 +7,8 @@ import 'package:lspapp/pages/home/settings_page.dart';
 class HomeControllerPage extends StatefulWidget {
   const HomeControllerPage({Key? key}) : super(key: key);
 
+  static String id = '/homeController';
+
   @override
   State<HomeControllerPage> createState() => _HomeControllerPageState();
 }

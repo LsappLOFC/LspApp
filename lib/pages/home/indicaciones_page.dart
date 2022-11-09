@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-import '../auth/main_controller.dart';
-
 class IndicacionesPage extends StatefulWidget {
   const IndicacionesPage({Key? key}) : super(key: key);
 
@@ -40,13 +38,6 @@ class _IndicacionesPageState extends State<IndicacionesPage> {
           backgroundColor: Colors.white,
           elevation: 0,
           leading: GestureDetector(
-            onTap: () {
-              Navigator.pop(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const MainControllerPage()),
-              );
-            },
             child: const Icon(
               Icons.arrow_back,
               size: 35.0,
@@ -110,13 +101,7 @@ class _IndicacionesPageState extends State<IndicacionesPage> {
                     padding: EdgeInsets.only(left: 40.0, right: 40.0),
                     child: player),
                 InkWell(
-                  onTap: () {
-                    Navigator.pop(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const MainControllerPage()),
-                    );
-                  },
+                  onTap: () {},
                   child: Container(
                     padding: const EdgeInsets.only(
                         top: 25.0, left: 25.0, right: 25.0),
