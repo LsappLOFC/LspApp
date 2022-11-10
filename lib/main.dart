@@ -6,7 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:lspapp/model/user_model.dart';
 import 'package:lspapp/pages/auth/login_page.dart';
 import 'package:lspapp/pages/home/home_controller_page.dart';
-import 'package:lspapp/pages/home/user_disabled_page.dart';
+import 'package:lspapp/pages/auth/user_disabled_page.dart';
+import 'package:lspapp/pages/settings/recommendations_page.dart';
+import 'package:lspapp/pages/settings/settings_page.dart';
+import 'package:lspapp/pages/settings/suggestions_page.dart';
 
 import 'services/user_service.dart';
 
@@ -29,6 +32,11 @@ class MyApp extends StatelessWidget {
         LoginPage.id: ((context) => LoginPage()),
         UserDisabledPage.id: ((context) => UserDisabledPage()),
         HomeControllerPage.id: ((context) => HomeControllerPage()),
+
+        //!Settings
+        SettingsPage.id: ((context) => SettingsPage()),
+        RecommendationsPage.id: ((context) => RecommendationsPage()),
+        SuggestionsPage.id: ((context) => SettingsPage()),
       },
     );
   }

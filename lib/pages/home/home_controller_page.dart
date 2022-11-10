@@ -2,7 +2,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:lspapp/pages/home/file_page.dart';
 import 'package:lspapp/pages/home/main_page.dart';
-import 'package:lspapp/pages/home/settings_page.dart';
+import 'package:lspapp/pages/settings/settings_page.dart';
 
 class HomeControllerPage extends StatefulWidget {
   const HomeControllerPage({Key? key}) : super(key: key);

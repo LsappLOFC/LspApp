@@ -7,7 +7,7 @@ class UserModel {
   DateTime? createdAt;
   DateTime? updatedAt;
   bool? isEnabled;
-  String? rol;
+  String? type;
 
   UserModel({
     this.name,
@@ -16,7 +16,7 @@ class UserModel {
     this.createdAt,
     this.updatedAt,
     this.isEnabled,
-    this.rol,
+    this.type,
   });
 
   factory UserModel.fromFirestore(
@@ -31,7 +31,7 @@ class UserModel {
       createdAt: data?['fechaHoraRegistro'],
       updatedAt: data?['fechaHoraActualizacion'],
       isEnabled: data?['habilitado'],
-      rol: data?['rol'],
+      type: data?['tipo'],
     );
   }
 
@@ -43,7 +43,7 @@ class UserModel {
       if (createdAt != null) "fechaHoraRegistro": createdAt,
       if (updatedAt != null) "fechaHoraActualizacion": updatedAt,
       if (isEnabled != null) "habilitado": isEnabled,
-      if (rol != null) "rol": rol
+      if (type != null) "tipo": type
     };
   }
 }

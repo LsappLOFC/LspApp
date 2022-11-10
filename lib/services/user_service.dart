@@ -7,7 +7,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lspapp/model/user_model.dart';
 import 'package:lspapp/pages/auth/login_page.dart';
 import 'package:lspapp/pages/home/home_controller_page.dart';
-import 'package:lspapp/pages/home/user_disabled_page.dart';
+import 'package:lspapp/pages/auth/user_disabled_page.dart';
 
 final userDb = FirebaseFirestore.instance.collection("usuarios");
 final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -23,7 +23,7 @@ class UserService {
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
         isEnabled: true,
-        rol: 'user');
+        type: 'user');
 
     final docRef = userDb
         .withConverter(
@@ -41,8 +41,8 @@ class UserService {
     String imageUrl = '';
     DateTime createdAt = DateTime.now();
     DateTime updatedAt = DateTime.now();
-    bool isEnabled = false;
-    String rol = '';
+    bool isEnabled = true;
+    String type = '';
 
     try {
       await userDb.where('correo', isEqualTo: email).get().then((event) {
@@ -53,7 +53,7 @@ class UserService {
           createdAt = doc.data()["fechaHoraRegistro"];
           updatedAt = doc.data()["fechaHoraActualizacion"];
           isEnabled = doc.data()["habilitado"];
-          rol = doc.data()["rol"];
+          type = doc.data()["type"];
         }
       });
     } catch (e) {}
@@ -64,14 +64,14 @@ class UserService {
         createdAt: createdAt,
         updatedAt: updatedAt,
         isEnabled: isEnabled,
-        rol: rol);
+        type: type);
     return user;
   }
 
-  Future<bool> userIsEnabled(BuildContext context) async {
-    bool status = false;
+  bool userIsEnabled(BuildContext context) {
+    bool? status = true;
     try {
-      await userDb
+      userDb
           .where('correo', isEqualTo: _auth.currentUser!.email!)
           .get()
           .then((event) {
@@ -80,7 +80,7 @@ class UserService {
         }
       });
     } catch (e) {}
-    return status;
+    return status!;
   }
 
   Future<void> signInWithGoogle(BuildContext context) async {
@@ -98,11 +98,11 @@ class UserService {
           await docRef.get().then(
             (DocumentSnapshot doc) async {
               if (doc.exists) {
-                var status = await userIsEnabled(context);
+                var status = userIsEnabled(context);
                 if (status) {
                   Navigator.pushNamedAndRemoveUntil(
                       context, HomeControllerPage.id, (_) => false);
-                } else {
+                } else if (!status) {
                   Navigator.pushNamedAndRemoveUntil(
                       context, UserDisabledPage.id, (_) => false);
                 }
