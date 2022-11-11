@@ -20,14 +20,14 @@ class _RecommendationsPageState extends State<RecommendationsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-      },
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: mySecundaryAppBar(context, ''),
-        body: Container(
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: mySecundaryAppBar(context, ''),
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: Container(
           color: mySecundaryColor,
           child: Form(
             key: _keyForm,
@@ -41,7 +41,7 @@ class _RecommendationsPageState extends State<RecommendationsPage> {
                     //!Title
                     Text(
                       "Recomendaciones",
-                      style: myCommentTitleStyle(),
+                      style: myTitleStyle(),
                       textAlign: TextAlign.start,
                     ),
                     myDivider(),
@@ -52,21 +52,23 @@ class _RecommendationsPageState extends State<RecommendationsPage> {
                       child: Text(
                         "Envíanos tus recomendaciones sobre el uso de la Lengua de Señas Peruanas (LSP)",
                         textAlign: TextAlign.justify,
-                        style: myCommentSubTitleStyle(),
+                        style: mySubTitleStyle(),
                       ),
                     ),
                     //!Comment Body
                     Container(
                       margin: EdgeInsets.zero,
                       child: TextFormField(
-                        maxLength: 160,
-                        maxLines: 5,
+                        maxLength: 200,
+                        minLines: 7,
+                        maxLines: 7,
                         controller: _textRecommendation,
                         validator: (value) {
                           return validateComment(value!.trim());
                         },
-                        decoration: myCommentDecoration('recomendaciones'),
-                        style: myCommentBodyStyle(),
+                        decoration: myInputDecoration(
+                            'Ingrese sus recomendaciones aquí'),
+                        style: myContentTextStyle(),
                       ),
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.02),

@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-import 'package:lspapp/utilities/api_path.dart';
 import 'package:lspapp/utilities/constraints.dart';
 import 'package:lspapp/utilities/widgets.dart';
 import 'package:video_player/video_player.dart';
@@ -67,7 +66,7 @@ class VideoPlayerFullScreenWidget extends StatelessWidget {
                 children: [
                   Text(
                     "Cargando video ...",
-                    style: mySettingTitleStyle(),
+                    style: myTitleStyle(),
                   ),
                   SizedBox(
                     height: 25,

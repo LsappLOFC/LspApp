@@ -41,7 +41,7 @@ class _SuggestionsPageState extends State<SuggestionsPage> {
                     //!Title
                     Text(
                       "Sugerencias",
-                      style: myCommentTitleStyle(),
+                      style: myTitleStyle(),
                       textAlign: TextAlign.start,
                     ),
                     myDivider(),
@@ -52,21 +52,23 @@ class _SuggestionsPageState extends State<SuggestionsPage> {
                       child: Text(
                         "Envíanos tus sugerencias sobre el uso de la Lengua de Señas Peruanas (LSP)",
                         textAlign: TextAlign.justify,
-                        style: myCommentSubTitleStyle(),
+                        style: mySubTitleStyle(),
                       ),
                     ),
                     //!Comment Body
                     Container(
                       margin: EdgeInsets.zero,
                       child: TextFormField(
-                        maxLength: 160,
-                        maxLines: 5,
+                        maxLength: 200,
+                        minLines: 7,
+                        maxLines: 7,
                         controller: _textRecommendation,
                         validator: (value) {
                           return validateComment(value!.trim());
                         },
-                        decoration: myCommentDecoration('sugerencias'),
-                        style: myCommentBodyStyle(),
+                        decoration:
+                            myInputDecoration('Ingrese sus sugerencias aquí'),
+                        style: myContentTextStyle(),
                       ),
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.02),

@@ -5,24 +5,24 @@ import 'package:flutter/material.dart';
 import 'package:lspapp/utilities/constraints.dart';
 import 'package:lspapp/utilities/widgets.dart';
 import 'package:lspapp/pages/home/file_page.dart';
-import 'package:lspapp/pages/home/main_page.dart';
-import 'package:lspapp/pages/settings/settings_page.dart';
+import 'package:lspapp/pages/home/victor_page.dart';
+import 'package:lspapp/pages/home/settings_page.dart';
 
-class HomeControllerPage extends StatefulWidget {
-  const HomeControllerPage({Key? key}) : super(key: key);
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
 
   static String id = '/home';
 
   @override
-  State<HomeControllerPage> createState() => _HomeControllerPageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _HomeControllerPageState extends State<HomeControllerPage> {
+class _HomePageState extends State<HomePage> {
   int _index = 0;
   bool isSelected = false;
   final pages = [
     FilePage(),
-    MainPage(),
+    VictorPage(),
     SettingsPage(),
   ];
 

@@ -34,75 +34,6 @@ class _FilePageState extends State<FilePage> with TickerProviderStateMixin {
   late AnimationController controller;
   late List<String> singleLetter;
   late List<String> singleWords;
-  final _signDictionary = [
-    '0',
-    '1',
-    '2',
-    '3',
-    '4',
-    '5',
-    '6',
-    '7',
-    '8',
-    '9',
-    '10',
-    'A',
-    'B',
-    'C',
-    'D',
-    'E',
-    'F',
-    'G',
-    'H',
-    'I',
-    'K',
-    'L',
-    'LL',
-    'M',
-    'N',
-    'Ñ',
-    'O',
-    'P',
-    'Q',
-    'R',
-    'S',
-    'T',
-    'U',
-    'V',
-    'W',
-    'X',
-    'Y',
-    'Z',
-    'ENFERMO',
-    'HOSPITAL',
-    'PERU',
-    'MI',
-    'COMER',
-    'ESCUCHAR',
-    'TOMAR',
-    'MI',
-    'YO',
-    'SI',
-    'CUANTO',
-    'DONDE',
-    'TU',
-    'CUANDO',
-    'QUE',
-    'PORQUE',
-    'COMO',
-    'QUIEN',
-    'AYUDA',
-    'BAÑO',
-    'CUAL',
-    'AÑO',
-    'DIA',
-    'ESTUDIAR',
-    'MAMA',
-    'PAPA',
-    'NOCHE',
-    'NOMBRE',
-    'TRABAJAR'
-  ];
 
   int selectedPage = 0;
   TabController? tabController;
@@ -253,7 +184,7 @@ class _FilePageState extends State<FilePage> with TickerProviderStateMixin {
     _victorQueue.clear();
     singleWords = text.trim().split(' ');
     for (String word in singleWords) {
-      if (_signDictionary.contains(word)) {
+      if (signDictionary.contains(word)) {
         setState(() {
           _signToAdd = 'assets/sign/$word.json';
           _victorQueue.add(_signToAdd);
@@ -395,29 +326,12 @@ class _FilePageState extends State<FilePage> with TickerProviderStateMixin {
                   top: MediaQuery.of(context).size.height * 0.02,
                   bottom: MediaQuery.of(context).size.height * 0.04),
               width: MediaQuery.of(context).size.width * 0.9,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  border: Border.all(
-                    color: myMainColor,
-                    width: 2.0,
-                  )),
-              child: text == ''
-                  ? Center(
-                      child: Text(
-                        'Esperando traducción...',
-                        style: TextStyle(color: Colors.black, fontSize: 18),
-                      ),
-                    )
-                  : Container(
-                      padding: EdgeInsets.all(20),
-                      child: Text(
-                        text,
-                        textAlign: TextAlign.justify,
-                        style: GoogleFonts.poppins(
-                          fontSize: 24,
-                        ),
-                      ),
-                    ),
+              decoration: myBoxDecoration(),
+              child: Container(
+                padding: EdgeInsets.all(20),
+                child: Text(text == '' ? "Esperando traducción..." : text,
+                    textAlign: TextAlign.justify, style: myTitleStyle()),
+              ),
             ),
           )
         ],
@@ -429,9 +343,7 @@ class _FilePageState extends State<FilePage> with TickerProviderStateMixin {
     return Container(
       width: MediaQuery.of(context).size.width * 0.9,
       margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.02),
-      decoration: BoxDecoration(
-          border: Border.all(width: 2, color: myMainColor),
-          borderRadius: BorderRadius.circular(15)),
+      decoration: myBoxDecoration(),
       child: InkWell(
         onTap: () {
           _pickFile();
@@ -439,12 +351,8 @@ class _FilePageState extends State<FilePage> with TickerProviderStateMixin {
         child: Column(
           children: [
             Text(
-              "Subir archivo",
-              style: GoogleFonts.poppins(
-                fontSize: 32,
-                fontWeight: FontWeight.w500,
-                color: myMainColor,
-              ),
+              "Elegir archivo",
+              style: uploadFileTitleStyle(),
             ),
             Icon(
               Icons.upload_sharp,
@@ -452,13 +360,9 @@ class _FilePageState extends State<FilePage> with TickerProviderStateMixin {
               color: myMainColor,
             ),
             Text(
-              "Formatos admitidos: \nwav, mp3, mp4, txt",
+              "Tipos de archivos admitidos:\nwav, mp3, mp4, txt",
               textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-                color: Colors.black,
-              ),
+              style: mySubTitleStyle(),
             ),
           ],
         ),

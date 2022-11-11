@@ -6,8 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lspapp/model/user_model.dart';
 import 'package:lspapp/pages/auth/login_page.dart';
-import 'package:lspapp/pages/home/home_controller_page.dart';
 import 'package:lspapp/pages/auth/user_disabled_page.dart';
+import 'package:lspapp/pages/home_page.dart';
 
 final userDb = FirebaseFirestore.instance.collection("usuarios");
 final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -101,7 +101,7 @@ class UserService {
                 var status = userIsEnabled(context);
                 if (status) {
                   Navigator.pushNamedAndRemoveUntil(
-                      context, HomeControllerPage.id, (_) => false);
+                      context, HomePage.id, (_) => false);
                 } else if (!status) {
                   Navigator.pushNamedAndRemoveUntil(
                       context, UserDisabledPage.id, (_) => false);
@@ -110,7 +110,7 @@ class UserService {
                 createUser(value.user!.uid, value.user!.displayName!,
                     value.user!.email!, value.user!.photoURL!);
                 Navigator.pushNamedAndRemoveUntil(
-                    context, HomeControllerPage.id, (_) => false);
+                    context, HomePage.id, (_) => false);
               }
             },
           );

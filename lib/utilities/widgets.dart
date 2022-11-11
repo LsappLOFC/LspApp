@@ -69,7 +69,7 @@ Future<dynamic> popUpSendComment(
             commentType == 'recomendacion'
                 ? '¿Enviar esta recomendación?'
                 : "¿Enviar esta sugerencia?",
-            style: popUpBodyStyle(),
+            style: myContentTextStyle(),
           ),
           actions: [
             TextButton(
@@ -77,7 +77,10 @@ Future<dynamic> popUpSendComment(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text("NO"),
+              child: Text(
+                "NO",
+                style: popTitleStyle(),
+              ),
             ),
             TextButton(
               onPressed: () {
@@ -86,7 +89,10 @@ Future<dynamic> popUpSendComment(
                 Navigator.pop(context);
                 Navigator.pop(context);
               },
-              child: Text("SI"),
+              child: Text(
+                "SI",
+                style: popTitleStyle(),
+              ),
             ),
           ],
         )),
@@ -96,8 +102,8 @@ Future<dynamic> popUpSendComment(
 Container sendButton(BuildContext context) {
   return Container(
     alignment: Alignment.center,
-    height: MediaQuery.of(context).size.height * 0.15,
-    width: MediaQuery.of(context).size.width * 0.25,
+    height: MediaQuery.of(context).size.height * 0.115,
+    width: MediaQuery.of(context).size.width * 0.215,
     decoration: BoxDecoration(
       color: myMainColor,
       borderRadius: BorderRadius.circular(8.0),

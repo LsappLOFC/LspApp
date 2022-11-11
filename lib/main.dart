@@ -5,11 +5,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lspapp/model/user_model.dart';
 import 'package:lspapp/pages/auth/login_page.dart';
-import 'package:lspapp/pages/home/home_controller_page.dart';
+import 'package:lspapp/pages/home_page.dart';
 import 'package:lspapp/pages/auth/user_disabled_page.dart';
 import 'package:lspapp/pages/settings/indications_page.dart';
 import 'package:lspapp/pages/settings/recommendations_page.dart';
-import 'package:lspapp/pages/settings/settings_page.dart';
 import 'package:lspapp/pages/settings/suggestions_page.dart';
 
 import 'services/user_service.dart';
@@ -30,12 +29,13 @@ class MyApp extends StatelessWidget {
       initialRoute: MyHomeApp.id,
       routes: {
         MyHomeApp.id: ((context) => MyHomeApp()),
+        HomePage.id: ((context) => HomePage()),
+
+        //!Auth
         LoginPage.id: ((context) => LoginPage()),
         UserDisabledPage.id: ((context) => UserDisabledPage()),
-        HomeControllerPage.id: ((context) => HomeControllerPage()),
 
         //!Settings
-        SettingsPage.id: ((context) => SettingsPage()),
         IndicationsPage.id: ((context) => IndicationsPage()),
         RecommendationsPage.id: ((context) => RecommendationsPage()),
         SuggestionsPage.id: ((context) => SuggestionsPage()),
@@ -66,7 +66,7 @@ class MyHomeApp extends StatelessWidget {
                 return LoginPage();
               }
               if (usersnap.data!.isEnabled!) {
-                return HomeControllerPage();
+                return HomePage();
               }
               return UserDisabledPage();
             },

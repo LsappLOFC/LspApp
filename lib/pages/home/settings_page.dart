@@ -12,7 +12,6 @@ import 'package:lspapp/services/user_service.dart';
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
 
-  static String id = '/settings';
   @override
   State<SettingsPage> createState() => _SettingsPageState();
 }
@@ -39,14 +38,14 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
+      color: mySecundaryColor,
       padding: EdgeInsets.symmetric(
           horizontal: MediaQuery.of(context).size.width * 0.1),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           signSpeed(),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.05),
           indications(context),
           recommendations(context),
           suggestions(context),
@@ -61,7 +60,7 @@ class _SettingsPageState extends State<SettingsPage> {
       children: [
         Text(
           "Velocidad de señas",
-          style: mySettingTitleStyle(),
+          style: myTitleStyle(),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -78,7 +77,10 @@ class _SettingsPageState extends State<SettingsPage> {
                         values = value as RadioValues?;
                       });
                     }),
-                Text("Lento"),
+                Text(
+                  "Lento",
+                  style: mySubTitleStyle(),
+                ),
               ],
             ),
             Row(
@@ -93,7 +95,10 @@ class _SettingsPageState extends State<SettingsPage> {
                         values = value as RadioValues?;
                       });
                     }),
-                Text("Normal"),
+                Text(
+                  "Normal",
+                  style: mySubTitleStyle(),
+                ),
               ],
             ),
             Row(
@@ -108,7 +113,10 @@ class _SettingsPageState extends State<SettingsPage> {
                         values = value as RadioValues?;
                       });
                     }),
-                Text("Rápido"),
+                Text(
+                  "Rápido",
+                  style: mySubTitleStyle(),
+                ),
               ],
             ),
           ],
@@ -124,7 +132,7 @@ class _SettingsPageState extends State<SettingsPage> {
         ListTile(
           title: Text(
             "Indicaciones de uso",
-            style: mySettingTitleStyle(),
+            style: myTitleStyle(),
           ),
           trailing: Icon(
             Icons.navigate_next_sharp,
@@ -144,7 +152,7 @@ class _SettingsPageState extends State<SettingsPage> {
       children: [
         myDivider(),
         ListTile(
-          title: Text("Recomendaciones", style: mySettingTitleStyle()),
+          title: Text("Recomendaciones", style: myTitleStyle()),
           trailing: Icon(
             Icons.navigate_next_sharp,
             size: 40.0,
@@ -163,7 +171,7 @@ class _SettingsPageState extends State<SettingsPage> {
       children: [
         myDivider(),
         ListTile(
-          title: Text("Sugerencias", style: mySettingTitleStyle()),
+          title: Text("Sugerencias", style: myTitleStyle()),
           trailing: Icon(
             Icons.navigate_next_sharp,
             size: 40.0,
@@ -182,7 +190,7 @@ class _SettingsPageState extends State<SettingsPage> {
       children: [
         myDivider(),
         ListTile(
-          title: Text("Cerrar sesión", style: mySettingTitleStyle()),
+          title: Text("Cerrar sesión", style: myTitleStyle()),
           trailing: Icon(
             Icons.output_sharp,
             size: 30.0,

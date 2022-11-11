@@ -6,6 +6,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
+import 'package:lspapp/utilities/constraints.dart';
+import 'package:lspapp/utilities/widgets.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:google_speech/google_speech.dart';
 import 'package:audio_session/audio_session.dart';
@@ -13,25 +15,25 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:http/http.dart' as http;
 import 'package:lspapp/utilities/variables.dart' as variables;
-import '../../utilities/api_path.dart';
 
 const int tSampleRate = 16000;
 typedef _Fn = void Function();
 
-class MainPage extends StatefulWidget {
-  const MainPage({Key? key}) : super(key: key);
+class VictorPage extends StatefulWidget {
+  const VictorPage({Key? key}) : super(key: key);
 
   @override
-  State<MainPage> createState() => _MainPageState();
+  State<VictorPage> createState() => _VictorPageState();
 }
 
-class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
+class _VictorPageState extends State<VictorPage> with TickerProviderStateMixin {
+  final _keyForm = GlobalKey<FormState>();
+  final ScrollController _scrollController = ScrollController();
   FlutterSoundRecorder? _mRecorder = FlutterSoundRecorder();
   late StreamSubscription? _mRecordingDataSubscription;
   bool _mRecorderIsInited = false;
   late BehaviorSubject<List<int>> audioStream;
   final _textController = TextEditingController();
-  bool _validateText = false;
   late bool _firstLoad;
   late bool _isConsumingAPI;
   late int _animIndex;
@@ -43,75 +45,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   late AnimationController listenController;
   late List<String> singleLetter;
   late List<String> singleWords;
-  final _signDictionary = [
-    '0',
-    '1',
-    '2',
-    '3',
-    '4',
-    '5',
-    '6',
-    '7',
-    '8',
-    '9',
-    '10',
-    'A',
-    'B',
-    'C',
-    'D',
-    'E',
-    'F',
-    'G',
-    'H',
-    'I',
-    'K',
-    'L',
-    'LL',
-    'M',
-    'N',
-    'Ñ',
-    'O',
-    'P',
-    'Q',
-    'R',
-    'S',
-    'T',
-    'U',
-    'V',
-    'W',
-    'X',
-    'Y',
-    'Z',
-    'ENFERMO',
-    'HOSPITAL',
-    'PERU',
-    'MI',
-    'COMER',
-    'ESCUCHAR',
-    'TOMAR',
-    'MI',
-    'YO',
-    'SI',
-    'CUANTO',
-    'DONDE',
-    'TU',
-    'CUANDO',
-    'QUE',
-    'PORQUE',
-    'COMO',
-    'QUIEN',
-    'AYUDA',
-    'BAÑO',
-    'CUAL',
-    'AÑO',
-    'DIA',
-    'ESTUDIAR',
-    'MAMA',
-    'PAPA',
-    'NOCHE',
-    'NOMBRE',
-    'TRABAJAR'
-  ];
 
   Future<List> _getNLP(String sentence) async {
     print('STARTING NLP');
@@ -343,6 +276,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       str = str.replaceAll(withDia[i], withoutDia[i]);
     }
 
+    str = str.replaceAll("\n", "");
+
     return str;
   }
 
@@ -391,7 +326,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     _victorQueue.clear();
     singleWords = text.trim().split(' ');
     for (String word in singleWords) {
-      if (_signDictionary.contains(word)) {
+      if (signDictionary.contains(word)) {
         setState(() {
           _signToAdd = 'assets/sign/$word.json';
           _victorQueue.add(_signToAdd);
@@ -412,117 +347,107 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-          },
-          child: Scaffold(
-              resizeToAvoidBottomInset: false,
-              backgroundColor: const Color.fromARGB(43, 139, 198, 207),
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(30.0),
-                      child: Container(
-                        height: MediaQuery.of(context).size.height * 0.20,
-                        width: MediaQuery.of(context).size.width * 0.85,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            border: Border.all(
-                              color: const Color(0XFF007AFF),
-                              width: 2.0,
-                            )),
-                        child: SingleChildScrollView(
-                          child: TextField(
-                            controller: _textController,
-                            keyboardType: TextInputType.multiline,
-                            maxLines: null,
-                            decoration: InputDecoration(
-                              hintText: "Esperando traducción",
-                              fillColor: Colors.transparent,
-                              filled: true,
-                              border: InputBorder.none,
-                              labelText: "",
-                              errorText:
-                                  _validateText ? 'Ingresar Texto' : null,
-                              contentPadding: EdgeInsets.only(
-                                left: 15,
-                                bottom: 11,
-                                top: 11,
-                                right: 15,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        if (_textController.text.isEmpty ||  _textController.text==" " || _textController.text=="  " || _textController.text=="\n"
-                        || _textController.text=="\n\n"|| _textController.text=="\n\n\n"|| _textController.text=="\n\n\n\n"
-                        || _textController.text=="\n\n\n\n\n") {
-                          _validateText = true;
-                        } else {
-                          _validateText = false;
-                          FocusScope.of(context).unfocus();
-                          _onPressedLoadQueue();
-                        }
-                      },
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal:
-                                MediaQuery.of(context).size.width * 0.40),
-                        child: Container(
-                            alignment: Alignment.center,
-                            height: 70.0,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF007AFF),
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: const Icon(
-                              Icons.front_hand_outlined,
-                              size: 60.0,
-                              color: Colors.white,
-                            )),
-                      ),
-                    ),
-                    Expanded(
-                        child: Align(
-                            alignment: FractionalOffset.bottomCenter,
-                            child: _firstLoad
-                                ? Lottie.asset('assets/sign/IDLE.json',
-                                    animate: false)
-                                : _mRecorder!.isRecording
-                                    ? Lottie.asset('assets/sign/ESCUCHAR.json',
-                                        controller: listenController,
-                                        onLoaded: (composition) {
-                                        listenController.forward();
-                                      })
-                                    : _isConsumingAPI
-                                        ? Lottie.asset('assets/sign/IDLE.json',
-                                            animate: false)
-                                        : Lottie.asset(_signToAnim[_animIndex],
-                                            controller: controller,
-                                            onLoaded: (composition) {
-                                            controller.forward();
-                                          }))),
-                  ],
-                ),
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: mySecundaryColor,
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: Form(
+          key: _keyForm,
+          child: Column(
+            children: <Widget>[
+              _inputBox(context),
+              _sendbutton(context),
+              _victor(),
+            ],
+          ),
+        ),
+      ),
+      floatingActionButton: Align(
+        alignment: Alignment.bottomRight,
+        child: Container(
+          padding:
+              EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.08),
+          height: MediaQuery.of(context).size.height * 0.2,
+          width: MediaQuery.of(context).size.width * 0.2,
+          child: FittedBox(
+            child: FloatingActionButton(
+              backgroundColor: myMainColor,
+              onPressed: getRecorderFn(),
+              tooltip: 'Listen',
+              child: Icon(
+                _mRecorder!.isRecording ? Icons.mic : Icons.mic_off,
+                size: 35,
               ),
-              floatingActionButton: FloatingActionButton(
-                onPressed: getRecorderFn(),
-                tooltip: 'Listen',
-                child: Icon(
-                  _mRecorder!.isRecording ? Icons.mic : Icons.mic_off,
-                ),
-              )),
-        ));
+            ),
+          ),
+        ),
+      ),
+    );
   }
+
+  Expanded _victor() {
+    return Expanded(
+      child: Align(
+        alignment: FractionalOffset.bottomCenter,
+        child: _firstLoad
+            ? Lottie.asset('assets/sign/IDLE.json', animate: false)
+            : _mRecorder!.isRecording
+                ? Lottie.asset('assets/sign/ESCUCHAR.json',
+                    controller: listenController, onLoaded: (composition) {
+                    listenController.forward();
+                  })
+                : _isConsumingAPI
+                    ? Lottie.asset('assets/sign/IDLE.json', animate: false)
+                    : Lottie.asset(_signToAnim[_animIndex],
+                        controller: controller, onLoaded: (composition) {
+                        controller.forward();
+                      }),
+      ),
+    );
+  }
+
+  Container _inputBox(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(
+          top: MediaQuery.of(context).size.height * 0.05,
+          bottom: MediaQuery.of(context).size.height * 0.02,
+          left: MediaQuery.of(context).size.width * 0.1,
+          right: MediaQuery.of(context).size.width * 0.1),
+      child: Scrollbar(
+        controller: _scrollController,
+        child: TextFormField(
+          minLines: 8,
+          maxLines: 8,
+          keyboardType: TextInputType.multiline,
+          controller: _textController,
+          validator: (value) {
+            return _validateText(value!.trim());
+          },
+          decoration: myInputDecoration(
+              'Hable por el micrófono o escriba aquí para traducir'),
+          style: myTitleStyle(),
+        ),
+      ),
+    );
+  }
+
+  InkWell _sendbutton(BuildContext context) {
+    return InkWell(
+        onTap: () {
+          if (_keyForm.currentState!.validate()) {
+            _onPressedLoadQueue();
+          }
+        },
+        child: sendButton(context));
+  }
+}
+
+String? _validateText(String value) {
+  if (value.isEmpty) {
+    return 'Diga algo para traducirlo';
+  }
+  return null;
 }
