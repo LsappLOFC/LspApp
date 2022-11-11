@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -79,6 +79,16 @@ final signDictionary = [
 const Color myMainColor = Color(0XFF007AFF);
 const Color mySecundaryColor = Color.fromARGB(43, 139, 198, 207);
 const Color myBlueGreyColor = Colors.blueGrey;
+
+TextStyle appTitle() {
+  return GoogleFonts.poppins(
+      fontSize: 72,
+      fontWeight: FontWeight.bold,
+      foreground: Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3
+        ..color = Colors.white);
+}
 
 TextStyle popTitleStyle() {
   return GoogleFonts.poppins(

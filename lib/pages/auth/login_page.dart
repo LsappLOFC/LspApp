@@ -19,61 +19,61 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       backgroundColor: myMainColor,
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          SizedBox(height: MediaQuery.of(context).size.height * 0.25),
+          Text(
+            "LSAPP",
+            style: appTitle(),
+          ),
           //! Imagen
           Flexible(
             child: Image.asset(
-              "assets/images/img_1.png",
+              "assets/images/img_2.png",
             ),
           ),
           //!
-          Flexible(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(45.0)),
-              ),
-              child: GestureDetector(
-                onTap: () {
-                  loginPaciente(context);
-                },
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(20),
-                      margin: EdgeInsets.all(30),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(45),
-                        border: Border.all(
-                          width: 2.0,
-                          color: myMainColor,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            "assets/images/google_logo.png",
-                            width: 30,
-                          ),
-                          Text(
-                            "Ingresar con Google",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ],
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(45.0)),
+            ),
+            child: GestureDetector(
+              onTap: () {
+                loginPaciente(context);
+              },
+              child: Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(20),
+                    margin: EdgeInsets.all(30),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(45),
+                      border: Border.all(
+                        width: 2.0,
+                        color: myMainColor,
                       ),
                     ),
-                  ],
-                ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          "assets/images/google_logo.png",
+                          width: 30,
+                        ),
+                        Text(
+                          "Ingresar con Google",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
