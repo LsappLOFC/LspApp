@@ -7,6 +7,7 @@ import 'package:lspapp/model/user_model.dart';
 import 'package:lspapp/pages/auth/login_page.dart';
 import 'package:lspapp/pages/home/home_controller_page.dart';
 import 'package:lspapp/pages/auth/user_disabled_page.dart';
+import 'package:lspapp/pages/settings/indications_page.dart';
 import 'package:lspapp/pages/settings/recommendations_page.dart';
 import 'package:lspapp/pages/settings/settings_page.dart';
 import 'package:lspapp/pages/settings/suggestions_page.dart';
@@ -35,8 +36,9 @@ class MyApp extends StatelessWidget {
 
         //!Settings
         SettingsPage.id: ((context) => SettingsPage()),
+        IndicationsPage.id: ((context) => IndicationsPage()),
         RecommendationsPage.id: ((context) => RecommendationsPage()),
-        SuggestionsPage.id: ((context) => SettingsPage()),
+        SuggestionsPage.id: ((context) => SuggestionsPage()),
       },
     );
   }

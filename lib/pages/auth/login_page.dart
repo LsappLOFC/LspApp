@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:lspapp/constants/constraints.dart';
+import 'package:lspapp/utilities/constraints.dart';
 import 'package:lspapp/services/user_service.dart';
 
 class LoginPage extends StatefulWidget {

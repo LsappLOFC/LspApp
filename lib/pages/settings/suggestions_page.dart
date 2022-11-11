@@ -1,8 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:lspapp/constants/constraints.dart';
-import 'package:lspapp/constants/widgets.dart';
+import 'package:lspapp/utilities/constraints.dart';
+import 'package:lspapp/utilities/widgets.dart';
 
 class SuggestionsPage extends StatefulWidget {
   const SuggestionsPage({Key? key}) : super(key: key);
@@ -26,59 +26,62 @@ class _SuggestionsPageState extends State<SuggestionsPage> {
       },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        appBar: myAppBar(context),
-        body: Form(
-          key: _keyForm,
-          child: Center(
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: MediaQuery.of(context).size.width * 0.1),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  //!Title
-                  Text(
-                    "Sugerencias",
-                    style: myCommentTitleStyle(),
-                    textAlign: TextAlign.start,
-                  ),
-                  myDivider(),
-                  //!Subtitle
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        vertical: MediaQuery.of(context).size.height * 0.05),
-                    child: Text(
-                      "Envíanos tus sugerencias sobre el uso de la Lengua de Señas Peruanas (LSP)",
-                      textAlign: TextAlign.justify,
-                      style: myCommentSubTitleStyle(),
+        appBar: mySecundaryAppBar(context, ''),
+        body: Container(
+          color: mySecundaryColor,
+          child: Form(
+            key: _keyForm,
+            child: Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: MediaQuery.of(context).size.width * 0.1),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    //!Title
+                    Text(
+                      "Sugerencias",
+                      style: myCommentTitleStyle(),
+                      textAlign: TextAlign.start,
                     ),
-                  ),
-                  //!Comment Body
-                  Container(
-                    margin: EdgeInsets.zero,
-                    child: TextFormField(
-                      maxLength: 160,
-                      maxLines: 5,
-                      controller: _textRecommendation,
-                      validator: (value) {
-                        return validateComment(value!.trim());
+                    myDivider(),
+                    //!Subtitle
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          vertical: MediaQuery.of(context).size.height * 0.05),
+                      child: Text(
+                        "Envíanos tus sugerencias sobre el uso de la Lengua de Señas Peruanas (LSP)",
+                        textAlign: TextAlign.justify,
+                        style: myCommentSubTitleStyle(),
+                      ),
+                    ),
+                    //!Comment Body
+                    Container(
+                      margin: EdgeInsets.zero,
+                      child: TextFormField(
+                        maxLength: 160,
+                        maxLines: 5,
+                        controller: _textRecommendation,
+                        validator: (value) {
+                          return validateComment(value!.trim());
+                        },
+                        decoration: myCommentDecoration('sugerencias'),
+                        style: myCommentBodyStyle(),
+                      ),
+                    ),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                    //!Send Button
+                    InkWell(
+                      onTap: () {
+                        if (_keyForm.currentState!.validate()) {
+                          popUpSendComment(
+                              context, _textRecommendation.text, 'sugerencia');
+                        }
                       },
-                      decoration: myCommentDecoration('sugerencias'),
-                      style: myCommentBodyStyle(),
+                      child: sendButton(context),
                     ),
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                  //!Send Button
-                  InkWell(
-                    onTap: () {
-                      if (_keyForm.currentState!.validate()) {
-                        popUpSendComment(
-                            context, _textRecommendation.text, 'sugerencia');
-                      }
-                    },
-                    child: sendButton(context),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

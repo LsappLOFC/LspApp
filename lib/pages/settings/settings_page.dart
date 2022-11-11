@@ -1,12 +1,12 @@
 // ignore_for_file: constant_identifier_names, prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:lspapp/constants/constraints.dart';
-import 'package:lspapp/constants/widgets.dart';
-import 'package:lspapp/pages/home/indicaciones_page.dart';
+import 'package:lspapp/utilities/constraints.dart';
+import 'package:lspapp/utilities/widgets.dart';
+import 'package:lspapp/pages/settings/indications_page.dart';
 import 'package:lspapp/pages/settings/recommendations_page.dart';
 import 'package:lspapp/pages/settings/suggestions_page.dart';
-import 'package:lspapp/pages/home/variables.dart' as variables;
+import 'package:lspapp/utilities/variables.dart' as variables;
 import 'package:lspapp/services/user_service.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -39,31 +39,19 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Configuración",
-          style: myAppBarTitleStyle(),
-        ),
-        centerTitle: true,
-        backgroundColor: myMainColor,
-        automaticallyImplyLeading: false,
-      ),
-      backgroundColor: mySecundaryColor,
-      body: Padding(
-        padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width * 0.1),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            signSpeed(),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.05),
-            indications(context),
-            recommendations(context),
-            suggestions(context),
-            signOut(context),
-          ],
-        ),
+    return Padding(
+      padding: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.1),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          signSpeed(),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+          indications(context),
+          recommendations(context),
+          suggestions(context),
+          signOut(context),
+        ],
       ),
     );
   }
@@ -141,13 +129,10 @@ class _SettingsPageState extends State<SettingsPage> {
           trailing: Icon(
             Icons.navigate_next_sharp,
             size: 40.0,
-            color: Colors.blue,
+            color: myMainColor,
           ),
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const IndicacionesPage()),
-            );
+            Navigator.pushNamed(context, IndicationsPage.id);
           },
         ),
       ],
@@ -160,17 +145,13 @@ class _SettingsPageState extends State<SettingsPage> {
         myDivider(),
         ListTile(
           title: Text("Recomendaciones", style: mySettingTitleStyle()),
-          trailing: const Icon(
+          trailing: Icon(
             Icons.navigate_next_sharp,
             size: 40.0,
-            color: Colors.blue,
+            color: myMainColor,
           ),
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const RecommendationsPage()),
-            );
+            Navigator.pushNamed(context, RecommendationsPage.id);
           },
         ),
       ],
@@ -183,16 +164,13 @@ class _SettingsPageState extends State<SettingsPage> {
         myDivider(),
         ListTile(
           title: Text("Sugerencias", style: mySettingTitleStyle()),
-          trailing: const Icon(
+          trailing: Icon(
             Icons.navigate_next_sharp,
             size: 40.0,
-            color: Colors.blue,
+            color: myMainColor,
           ),
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const SuggestionsPage()),
-            );
+            Navigator.pushNamed(context, SuggestionsPage.id);
           },
         ),
       ],
@@ -205,10 +183,10 @@ class _SettingsPageState extends State<SettingsPage> {
         myDivider(),
         ListTile(
           title: Text("Cerrar sesión", style: mySettingTitleStyle()),
-          trailing: const Icon(
+          trailing: Icon(
             Icons.output_sharp,
             size: 30.0,
-            color: Colors.blue,
+            color: myMainColor,
           ),
           onTap: () async {
             UserService userService = UserService();

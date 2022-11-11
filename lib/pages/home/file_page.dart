@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'dart:convert';
 
@@ -9,24 +9,21 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:google_speech/google_speech.dart';
 import 'package:ffmpeg_kit_flutter_full/ffmpeg_kit.dart';
+import 'package:lspapp/utilities/constraints.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:lottie/lottie.dart';
 
 class FilePage extends StatefulWidget {
-  const FilePage({Key? key}) : super(key: key);
+  const FilePage({super.key});
 
   @override
   State<FilePage> createState() => _FilePageState();
 }
 
-class _FilePageState extends State<FilePage>
-    with SingleTickerProviderStateMixin {
-  bool signsIsSelected = true;
-  bool textIsSelected = false;
+class _FilePageState extends State<FilePage> with TickerProviderStateMixin {
   bool recognizing = false;
   bool recognizeFinished = false;
   String text = '';
-  String convertedPath = '';
   late bool _firstLoad;
   late bool _isConsumingAPI;
   late int _animIndex;
@@ -107,9 +104,14 @@ class _FilePageState extends State<FilePage>
     'TRABAJAR'
   ];
 
+  int selectedPage = 0;
+  TabController? tabController;
   @override
   void initState() {
+    tabController =
+        TabController(length: 2, initialIndex: selectedPage, vsync: this);
     super.initState();
+
     _isConsumingAPI = false;
     _animIndex = 0;
     _animLenght = 1;
@@ -137,7 +139,6 @@ class _FilePageState extends State<FilePage>
           }
         }
         controller.reset();
-
       }
     });
   }
@@ -145,7 +146,64 @@ class _FilePageState extends State<FilePage>
   @override
   void dispose() {
     controller.dispose();
+
+    tabController!.dispose();
     super.dispose();
+  }
+
+  void _pickFile() async {
+    _isConsumingAPI = true;
+    final res = await FilePicker.platform.pickFiles(allowMultiple: false);
+    if (res != null) {
+      final path = res.files.single.path!;
+      setState(() {
+        text = '';
+      });
+      print('NOMBRE DEL ARCHIVO: ${res.files.single.name}');
+      print('EXTENSION DEL ARCHIVO: ${res.files.single.extension}');
+      print('PATH DEL ARCHIVO ${res.files.single.path}');
+      var status = await Permission.storage.status;
+      if (!status.isGranted) {
+        await Permission.storage.request();
+      }
+      final file = File(path);
+      Stream<String> lines = file
+          .openRead()
+          .transform(utf8.decoder) // Decode bytes to UTF-8.
+          .transform(
+              const LineSplitter()); // Convert stream to individual lines.
+      try {
+        await for (var line in lines) {
+          print(line);
+          setState(() {
+            text = line;
+          });
+          _onTextResultToSign(line);
+        }
+        print('File is now closed.');
+      } catch (e) {
+        print('Error: $e');
+      }
+      //TODO: No almacenar en memoria interna, guardar en una variable o caché y traducirlo
+
+      var fileName = res.files.single.name;
+      var fileFormat = fileName.substring(fileName.lastIndexOf('.'));
+      fileName = fileName.replaceAll(fileFormat, '');
+
+      final convertedFilePath = '/storage/emulated/0/download/$fileName.mp3';
+      FFmpegKit.execute(
+              '-i $path -q:a 0 -map a -vn -acodec libmp3lame $convertedFilePath')
+          .then((session) async {
+        final logs = await session.getLogs();
+        for (var log in logs) {
+          print(log.getMessage());
+        }
+        //this.audio = File(convertedFilePath).readAsBytesSync().toList();
+        recognize(convertedFilePath);
+      });
+    } else {
+      return;
+    }
   }
 
   Future<void> _victorPlayer() async {
@@ -247,268 +305,161 @@ class _FilePageState extends State<FilePage>
       sampleRateHertz: 8000,
       languageCode: 'es-PE');
 
-  bool showContent() {
-    if (signsIsSelected) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  void _pickFile() async {
-    _isConsumingAPI = true;
-    final res = await FilePicker.platform.pickFiles(allowMultiple: false);
-    if (res != null) {
-      final path = res.files.single.path!;
-      setState(() {
-        text = '';
-      });
-      print('NOMBRE DEL ARCHIVO: ${res.files.single.name}');
-      print('EXTENSION DEL ARCHIVO: ${res.files.single.extension}');
-      print('PATH DEL ARCHIVO ${res.files.single.path}');
-      var status = await Permission.storage.status;
-      if (!status.isGranted) {
-        await Permission.storage.request();
-      }
-      final file = File(path);
-      Stream<String> lines = file
-          .openRead()
-          .transform(utf8.decoder) // Decode bytes to UTF-8.
-          .transform(
-              const LineSplitter()); // Convert stream to individual lines.
-      try {
-        await for (var line in lines) {
-          print(line);
-          setState(() {
-            text = line;
-          });
-          _onTextResultToSign(line);
-        }
-        print('File is now closed.');
-      } catch (e) {
-        print('Error: $e');
-      }
-      //TODO: No almacenar en memoria interna, guardar en una variable o caché y traducirlo
-
-      var fileName = res.files.single.name;
-      var fileFormat = fileName.substring(fileName.lastIndexOf('.'));
-      fileName = fileName.replaceAll(fileFormat, '');
-
-      final convertedFilePath = '/storage/emulated/0/download/$fileName.mp3';
-      FFmpegKit.execute(
-              '-i $path -q:a 0 -map a -vn -acodec libmp3lame $convertedFilePath')
-          .then((session) async {
-        final logs = await session.getLogs();
-        for (var log in logs) {
-          print(log.getMessage());
-        }
-        //this.audio = File(convertedFilePath).readAsBytesSync().toList();
-        recognize(convertedFilePath);
-      });
-    } else {
-      return;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color.fromARGB(43, 139, 198, 207),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              color: const Color(0XFF007AFF),
-              padding: const EdgeInsets.only(top: 40.0, left: 20.0),
-              alignment: Alignment.centerLeft,
-              child: const Text(
-                "Traducir Archivos",
-                style: TextStyle(
-                  fontFamily: 'Roboto',
-                  fontSize: 32.0,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 40.0,
-            ),
-            Container(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                alignment: Alignment.center,
-                width: 180.0,
-                height: 50.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(40.0),
-                  gradient: const LinearGradient(
-                    colors: [
-                      Color(0XFF007AFF),
-                      Color.fromARGB(43, 139, 198, 207),
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+    return Column(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: mySecundaryColor,
+            border: Border(bottom: BorderSide(width: 2, color: myMainColor)),
+          ),
+          child: TabBar(
+            unselectedLabelColor: myBlueGreyColor,
+            controller: tabController,
+            labelColor: Colors.black,
+            tabs: [
+              //!Sings
+              Tab(
+                height: 80,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    signsIsSelected
-                        ? Container(
-                            width: 66.0,
-                            height: 40.0,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(40.0)),
-                            child: const Center(
-                              child: Text(
-                                "Señas",
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          )
-                        : InkWell(
-                            onTap: () {
-                              setState(() {
-                                textIsSelected = !textIsSelected;
-                                signsIsSelected = !signsIsSelected;
-                              });
-                            },
-                            child: const Text(
-                              "Señas",
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                    textIsSelected
-                        ? Container(
-                            width: 66.0,
-                            height: 40.0,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(40.0)),
-                            child: const Center(
-                              child: Text(
-                                "Text",
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          )
-                        : InkWell(
-                            onTap: () {
-                              setState(() {
-                                textIsSelected = !textIsSelected;
-                                signsIsSelected = !signsIsSelected;
-                              });
-                            },
-                            child: const Text(
-                              "Text",
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
+                    Icon(
+                      Icons.back_hand,
+                      size: 45,
+                    ),
+                    Text("Señas")
                   ],
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 20.0,
-            ),
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 20.0, left: 30.0),
-                  child: InkWell(
-                    onTap: () {
-                      _pickFile();
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const Icon(
-                          Icons.upload_sharp,
-                          size: 30.0,
-                          color: Color(0XFF007AFF),
-                        ),
-                        Text(
-                          "Elegir Archivos",
-                          style: GoogleFonts.poppins(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.w500,
-                            color: const Color(0XFF007AFF),
-                          ),
-                        ),
-                      ],
+              //!Text
+              Tab(
+                height: 80,
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.abc,
+                      size: 50,
                     ),
-                  ),
+                    Text("Texto")
+                  ],
                 ),
-                Container(
-                  padding: const EdgeInsets.only(top: 20.0, left: 40.0),
-                  alignment: Alignment.bottomLeft,
-                  child: Text(
-                    "Tipos de archivos admitidos: \nwav, mp3, mp4, txt",
-                    style: GoogleFonts.poppins(
-                      fontSize: 15.0,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-              ],
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: TabBarView(controller: tabController, children: [
+            signsBodyTab(),
+            textBodyTab(),
+          ]),
+        )
+      ],
+    );
+  }
+
+  Widget signsBodyTab() {
+    return Container(
+      color: mySecundaryColor,
+      child: Column(
+        children: [
+          uploadFile(),
+          Expanded(
+            child: Align(
+              alignment: FractionalOffset.bottomCenter,
+              child: _firstLoad
+                  ? Lottie.asset('assets/sign/IDLE.json', animate: false)
+                  : _isConsumingAPI
+                      ? Lottie.asset('assets/sign/IDLE.json', animate: false)
+                      : Lottie.asset(_signToAnim[_animIndex],
+                          controller: controller, onLoaded: (composition) {
+                          controller.forward();
+                        }),
             ),
-            showContent()
-                ? Align(
-                    alignment: FractionalOffset.bottomCenter,
-                    child: _firstLoad
-                        ? Lottie.asset('assets/sign/IDLE.json', animate: false)
-                        : _isConsumingAPI
-                            ? Lottie.asset('assets/sign/IDLE.json',
-                                animate: false)
-                            : Lottie.asset(_signToAnim[_animIndex],
-                                controller: controller,
-                                onLoaded: (composition) {
-                                controller.forward();
-                              })) //)
-                : Padding(
-                    padding: const EdgeInsets.all(30.0),
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * 0.35,
-                      width: MediaQuery.of(context).size.width * 0.85,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          border: Border.all(
-                            color: const Color(0XFF007AFF),
-                            width: 2.0,
-                          )),
-                      child: SingleChildScrollView(
-                        child: text == ''
-                            ? const Text(
-                                'Esperando traducción...',
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: 18),
-                              )
-                            : Text(
-                                text,
-                                style: const TextStyle(fontSize: 18),
-                              ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget textBodyTab() {
+    return Container(
+      color: mySecundaryColor,
+      child: Column(
+        children: [
+          uploadFile(),
+          Expanded(
+            child: Container(
+              margin: EdgeInsets.only(
+                  top: MediaQuery.of(context).size.height * 0.02,
+                  bottom: MediaQuery.of(context).size.height * 0.04),
+              width: MediaQuery.of(context).size.width * 0.9,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.0),
+                  border: Border.all(
+                    color: myMainColor,
+                    width: 2.0,
+                  )),
+              child: text == ''
+                  ? Center(
+                      child: Text(
+                        'Esperando traducción...',
+                        style: TextStyle(color: Colors.black, fontSize: 18),
+                      ),
+                    )
+                  : Container(
+                      padding: EdgeInsets.all(20),
+                      child: Text(
+                        text,
+                        textAlign: TextAlign.justify,
+                        style: GoogleFonts.poppins(
+                          fontSize: 24,
+                        ),
                       ),
                     ),
-                  )
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Container uploadFile() {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.9,
+      margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.02),
+      decoration: BoxDecoration(
+          border: Border.all(width: 2, color: myMainColor),
+          borderRadius: BorderRadius.circular(15)),
+      child: InkWell(
+        onTap: () {
+          _pickFile();
+        },
+        child: Column(
+          children: [
+            Text(
+              "Subir archivo",
+              style: GoogleFonts.poppins(
+                fontSize: 32,
+                fontWeight: FontWeight.w500,
+                color: myMainColor,
+              ),
+            ),
+            Icon(
+              Icons.upload_sharp,
+              size: 90,
+              color: myMainColor,
+            ),
+            Text(
+              "Formatos admitidos: \nwav, mp3, mp4, txt",
+              textAlign: TextAlign.center,
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+                color: Colors.black,
+              ),
+            ),
           ],
         ),
       ),

@@ -12,8 +12,8 @@ import 'package:audio_session/audio_session.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:http/http.dart' as http;
-import 'package:lspapp/pages/home/variables.dart' as variables;
-import '../../constants/api_path.dart';
+import 'package:lspapp/utilities/variables.dart' as variables;
+import '../../utilities/api_path.dart';
 
 const int tSampleRate = 16000;
 typedef _Fn = void Function();
