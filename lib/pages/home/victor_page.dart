@@ -419,8 +419,8 @@ class _VictorPageState extends State<VictorPage> with TickerProviderStateMixin {
       child: Scrollbar(
         controller: _scrollController,
         child: TextFormField(
-          minLines: 8,
-          maxLines: 8,
+          minLines: 6,
+          maxLines: 6,
           keyboardType: TextInputType.multiline,
           controller: _textController,
           validator: (value) {
