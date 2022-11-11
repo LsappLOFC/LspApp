@@ -65,7 +65,7 @@ class _SettingsPageState extends State<SettingsPage> {
       children: [
         Text(
           "Velocidad de señas",
-          style: myTitleStyle(),
+          style: mySubTitleStyle(),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -84,7 +84,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     }),
                 Text(
                   "Lento",
-                  style: mySubTitleStyle(),
+                  style: myRadiusTextStyle(),
                 ),
               ],
             ),
@@ -102,7 +102,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     }),
                 Text(
                   "Normal",
-                  style: mySubTitleStyle(),
+                  style: myRadiusTextStyle(),
                 ),
               ],
             ),
@@ -120,7 +120,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     }),
                 Text(
                   "Rápido",
-                  style: mySubTitleStyle(),
+                  style: myRadiusTextStyle(),
                 ),
               ],
             ),
@@ -134,7 +134,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return ListTile(
       title: Text(
         "Indicaciones de uso",
-        style: myTitleStyle(),
+        style: mySubTitleStyle(),
       ),
       trailing: Icon(
         Icons.navigate_next_sharp,
@@ -149,7 +149,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   ListTile recommendations(BuildContext context) {
     return ListTile(
-      title: Text("Recomendaciones", style: myTitleStyle()),
+      title: Text("Recomendaciones", style: mySubTitleStyle()),
       trailing: Icon(
         Icons.navigate_next_sharp,
         size: 40.0,
@@ -163,7 +163,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   ListTile suggestions(BuildContext context) {
     return ListTile(
-      title: Text("Sugerencias", style: myTitleStyle()),
+      title: Text("Sugerencias", style: mySubTitleStyle()),
       trailing: Icon(
         Icons.navigate_next_sharp,
         size: 40.0,
@@ -177,7 +177,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   ListTile signOut(BuildContext context) {
     return ListTile(
-      title: Text("Cerrar sesión", style: myTitleStyle()),
+      title: Text("Cerrar sesión", style: mySubTitleStyle()),
       trailing: Icon(
         Icons.output_sharp,
         size: 30.0,

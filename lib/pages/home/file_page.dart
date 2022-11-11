@@ -342,6 +342,7 @@ class _FilePageState extends State<FilePage> with TickerProviderStateMixin {
   Container uploadFile() {
     return Container(
       width: MediaQuery.of(context).size.width * 0.9,
+      height: MediaQuery.of(context).size.height * 0.2,
       margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.02),
       decoration: myBoxDecoration(),
       child: InkWell(
@@ -354,10 +355,14 @@ class _FilePageState extends State<FilePage> with TickerProviderStateMixin {
               "Elegir archivo",
               style: uploadFileTitleStyle(),
             ),
-            Icon(
-              Icons.upload_sharp,
-              size: 90,
-              color: myMainColor,
+            Expanded(
+              child: FittedBox(
+                fit: BoxFit.fill,
+                child: Icon(
+                  Icons.upload_sharp,
+                  color: myMainColor,
+                ),
+              ),
             ),
             Text(
               "Tipos de archivos admitidos:\nwav, mp3, mp4, txt",

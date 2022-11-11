@@ -119,6 +119,14 @@ TextStyle mySubTitleStyle() {
   );
 }
 
+TextStyle myRadiusTextStyle() {
+  return GoogleFonts.poppins(
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+    color: Colors.black,
+  );
+}
+
 TextStyle myAppBarTitleStyle() {
   return GoogleFonts.poppins(
     fontSize: 30,

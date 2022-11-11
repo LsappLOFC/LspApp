@@ -411,6 +411,8 @@ class _VictorPageState extends State<VictorPage> with TickerProviderStateMixin {
 
   Container _inputBox(BuildContext context) {
     return Container(
+      width: MediaQuery.of(context).size.width * 0.9,
+      height: MediaQuery.of(context).size.height * 0.20,
       margin: EdgeInsets.only(
           top: MediaQuery.of(context).size.height * 0.05,
           bottom: MediaQuery.of(context).size.height * 0.02,
@@ -419,7 +421,7 @@ class _VictorPageState extends State<VictorPage> with TickerProviderStateMixin {
       child: Scrollbar(
         controller: _scrollController,
         child: TextFormField(
-          minLines: 6,
+          minLines: 4,
           maxLines: 6,
           keyboardType: TextInputType.multiline,
           controller: _textController,

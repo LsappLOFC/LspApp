@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:lspapp/main.dart';
 import 'package:lspapp/model/user_model.dart';
 import 'package:lspapp/pages/auth/login_page.dart';
 import 'package:lspapp/pages/auth/user_disabled_page.dart';
@@ -123,7 +124,7 @@ class UserService {
     try {
       await _googleSignIn.signOut();
       await _auth.signOut();
-      Navigator.pushNamedAndRemoveUntil(context, LoginPage.id, (_) => false);
+      Navigator.pushNamedAndRemoveUntil(context, MyHomeApp.id, (_) => false);
     } on FirebaseAuthException catch (e) {
       print(e.message);
     }
