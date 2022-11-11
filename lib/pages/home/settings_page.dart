@@ -41,14 +41,19 @@ class _SettingsPageState extends State<SettingsPage> {
     return Container(
       color: mySecundaryColor,
       padding: EdgeInsets.symmetric(
+          vertical: MediaQuery.of(context).size.height * 0.1,
           horizontal: MediaQuery.of(context).size.width * 0.1),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           signSpeed(),
+          myDivider(),
           indications(context),
+          myDivider(),
           recommendations(context),
+          myDivider(),
           suggestions(context),
+          myDivider(),
           signOut(context),
         ],
       ),
@@ -125,83 +130,63 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Column indications(BuildContext context) {
-    return Column(
-      children: [
-        myDivider(),
-        ListTile(
-          title: Text(
-            "Indicaciones de uso",
-            style: myTitleStyle(),
-          ),
-          trailing: Icon(
-            Icons.navigate_next_sharp,
-            size: 40.0,
-            color: myMainColor,
-          ),
-          onTap: () {
-            Navigator.pushNamed(context, IndicationsPage.id);
-          },
-        ),
-      ],
+  ListTile indications(BuildContext context) {
+    return ListTile(
+      title: Text(
+        "Indicaciones de uso",
+        style: myTitleStyle(),
+      ),
+      trailing: Icon(
+        Icons.navigate_next_sharp,
+        size: 40.0,
+        color: myMainColor,
+      ),
+      onTap: () {
+        Navigator.pushNamed(context, IndicationsPage.id);
+      },
     );
   }
 
-  Column recommendations(BuildContext context) {
-    return Column(
-      children: [
-        myDivider(),
-        ListTile(
-          title: Text("Recomendaciones", style: myTitleStyle()),
-          trailing: Icon(
-            Icons.navigate_next_sharp,
-            size: 40.0,
-            color: myMainColor,
-          ),
-          onTap: () {
-            Navigator.pushNamed(context, RecommendationsPage.id);
-          },
-        ),
-      ],
+  ListTile recommendations(BuildContext context) {
+    return ListTile(
+      title: Text("Recomendaciones", style: myTitleStyle()),
+      trailing: Icon(
+        Icons.navigate_next_sharp,
+        size: 40.0,
+        color: myMainColor,
+      ),
+      onTap: () {
+        Navigator.pushNamed(context, RecommendationsPage.id);
+      },
     );
   }
 
-  Column suggestions(BuildContext context) {
-    return Column(
-      children: [
-        myDivider(),
-        ListTile(
-          title: Text("Sugerencias", style: myTitleStyle()),
-          trailing: Icon(
-            Icons.navigate_next_sharp,
-            size: 40.0,
-            color: myMainColor,
-          ),
-          onTap: () {
-            Navigator.pushNamed(context, SuggestionsPage.id);
-          },
-        ),
-      ],
+  ListTile suggestions(BuildContext context) {
+    return ListTile(
+      title: Text("Sugerencias", style: myTitleStyle()),
+      trailing: Icon(
+        Icons.navigate_next_sharp,
+        size: 40.0,
+        color: myMainColor,
+      ),
+      onTap: () {
+        Navigator.pushNamed(context, SuggestionsPage.id);
+      },
     );
   }
 
-  Column signOut(BuildContext context) {
-    return Column(
-      children: [
-        myDivider(),
-        ListTile(
-          title: Text("Cerrar sesión", style: myTitleStyle()),
-          trailing: Icon(
-            Icons.output_sharp,
-            size: 30.0,
-            color: myMainColor,
-          ),
-          onTap: () async {
-            UserService userService = UserService();
-            userService.signOut(context);
-          },
-        ),
-      ],
+  ListTile signOut(BuildContext context) {
+    return ListTile(
+      title: Text("Cerrar sesión", style: myTitleStyle()),
+      trailing: Icon(
+        Icons.output_sharp,
+        size: 30.0,
+        color: myMainColor,
+      ),
+      onTap: () async {
+        UserService userService = UserService();
+        userService.signOut(context);
+      },
     );
   }
 }
